@@ -60,6 +60,7 @@
 'Functions with no doctests will result in [passed] tests.': 'Funciones sin doctests equivalen a pruebas [aceptadas].',
 'Group ID': 'ID de Grupo',
 'Hello World': 'Hola Mundo',
+'Hola': 'Hola',
 'How did you get here?': 'How did you get here?',
 'Import/Export': 'Importar/Exportar',
 'Index': 'Indice',
