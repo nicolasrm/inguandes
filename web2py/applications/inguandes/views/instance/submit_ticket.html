@@ -1,0 +1,191 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span6">
+        <h2>Emitir un ticket</h2>
+        <h4>{{=inst.title}}</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="span4">
+        <div class="well" style="padding: 8px 0;">
+            <ul class="nav nav-list">
+                <li class="nav-header">Categorías</li>
+                <li class="divider"></li>
+                {{ for c in categories: }}
+                <li {{=XML('class="active"') if selected_c is not None and selected_c==c['id'] else ''}}><a href="{{=URL('ticket_categories', args=[inst.id, c['id']])}}">{{=XML(c['name'])}}</a></li>
+                <li class="divider"></li>
+                {{ pass }}
+            </ul>
+            <nav id="menu">
+                <ul>       
+                    <li><a data-toggle="modal" href="#modal-new-category" rel="tooltip" title="Agregar una categoría"><i class="icon-plus"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {{ if selected_c is not None: }}
+    <div class="span4">
+        <div class="well" style="padding: 8px 0;">
+            <ul class="nav nav-list">
+                <li class="nav-header">Subcategorías</li>
+                <li class="divider"></li>
+                {{ for sub in subcategories: }}
+                <li {{=XML('class="active"') if selected_sc is not None and selected_sc==sub['id'] else ''}}><a href="{{=URL('ticket_categories', args=[inst.id,selected_c, sub['id']])}}">{{=XML(sub['name'])}}</a></li>
+                <li class="divider"></li>
+                {{ pass }}
+            </ul>
+            <nav id="menu">
+                <ul>       
+                    <li><a data-toggle="modal" href="#modal-new-subcategory" rel="tooltip" title="Agregar una subcategoria a la categoría seleccionada"><i class="icon-plus"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {{ pass }}
+    {{ if selected_sc is not None: }}
+    <div class="span4">
+        <div class="well" style="padding: 8px 0;">
+            <ul class="nav nav-list">
+                <li class="nav-header">Configuración</li>
+                <li class="divider"></li>
+            </ul>
+        </div>
+    </div>
+    {{ pass }}
+</div>
+
+<div class="modal hide fade in" id="modal-new-category" style="width: 800px; margin: -250px 0 0 -400px;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Crear nueva categoría</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_ticket_category')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="category-name">Categoría</label>
+                    <div class="controls">
+                        <input type="text" class="span3" id="category-name" name="category" style="margin: 0 auto;">
+                        <p class="help-block">Escriba el nombre de la categoría.</p>
+                    </div>
+                </div>
+                <input type="hidden" name="instanceid" value="{{=inst.id}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-subcategory" style="width: 800px; margin: -250px 0 0 -400px;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Crear nueva subcategoría</h3>
+        <p id="modal-question-text"></p>
+    </div>
+    <div class="modal-body">
+        <form action="{{=URL('add_ticket_subcategory')}}" method="POST">
+            <div class="well form-inline">
+                <input type="text" class="input-large" id="subcategory-name" name="subcategory" placeholder="Subcategoría"/>
+                <label class="checkbox"><input type="checkbox" name="multiple">Permitir múltiples tickets</label>
+                <label class="checkbox"><input type="checkbox" name="is_appealable">Permitir apelación</label>
+            </div>
+            <div class="well">
+                <div class="btn-group" data-toggle-name="btn-is-to-all" data-toggle="buttons-radio" >
+                  <button  type="button" id="btn-to-all" value="1" class="btn" data-toggle="button">Aplicar a todas</button>
+                  <button  type="button" id="btn-by-section" value="0" class="btn" data-toggle="button">Por sección</button>
+                </div>
+            </div>
+            <div id="bysections" class="well">
+                <table class="table">
+                    <tbody>
+                    {{if sections:}}  
+                        {{for s in sections:}}
+                        <tr>
+                            <td><span class="label" style="vertical-align:bottom;" rel="tooltip" title="NRC">{{=s.nrc}}</span></td>
+                            <td><input type="text" class="input-medium" id="subcategory-opening-{{=s.nrc}}" name="opening-{{=s.nrc}}" placeholder="Fecha apertura"/></td>
+                            <td><input type="text" class="input-medium" id="subcategory-closing-{{=s.nrc}}" name="closing-{{=s.nrc}}" placeholder="Fecha cierre"/></td>
+                            <td><select id="subcategory-moderator-{{=s.nrc}}" name="moderator-{{=s.nrc}}">
+                                <option value="">Elegir moderador...</option>
+                                    {{if moderators:}}
+                                        {{for m in moderators:}}
+                                            <option value="{{=m['id']}}">{{=m['email']}}</option>
+                                        {{pass}}
+                                    {{pass}}
+                                </select></td>
+                        </tr>
+                        {{pass}}
+                    {{pass}}
+                    </tbody>
+                </table>
+            </div>
+            <div id="all" class="well">
+                <table class="table">
+                    <tbody>                        
+                        <tr>
+                            <td><span class="label" style="vertical-align:bottom;" rel="tooltip" title="NRC">Todas</span></td>
+                            <td><input type="text" class="input-medium" id="subcategory-opening" name="opening" placeholder="Fecha apertura"/></td>
+                            <td><input type="text" class="input-medium" id="subcategory-closing" name="closing" placeholder="Fecha cierre"/></td>
+                            <td><select id="subcategory-moderator" name="moderator">
+                                <option value="">Elegir moderador...</option>
+                                    {{if moderators:}}
+                                        {{for m in moderators:}}
+                                            <option value="{{=m['id']}}">{{=m['email']}}</option>
+                                        {{pass}}
+                                    {{pass}}
+                                </select></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+                <input type="hidden" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" name="categoryid" value="{{=selected_c}}"/>
+                <input type="hidden" id="hdd-is-to-all" name="is_to_all"/>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script src="{{=URL('static','js/wysihtml5-0.3.0_rc2.js')}}"></script>
+<script src="{{=URL('static','js/bootstrap-wysihtml5-0.0.2.js')}}"></script>
+<script>
+$(document).ready( function () {
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+    $(".collapse").collapse();
+    $('.typeahead').typeahead();
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
+    
+    $('#btn-to-all').on('click', changeToAll);
+    
+    $('#btn-by-section').on('click', changeBySections);
+    
+    $('.wysihtml5').wysihtml5({
+        'font-styles': false,
+        'html': true
+    });
+    
+    $('#btn-to-all').button('toggle');
+    changeToAll();
+});
+function changeBySections() {
+    $("#hdd-is-to-all").val(0)
+    $("#all").hide();
+    $("#bysections").show();
+    
+}
+function changeToAll() {
+    $("#hdd-is-to-all").val(1)
+    $("#bysections").hide();
+    $("#all").show();
+}
+</script>
+{{end}}
