@@ -13,3 +13,5 @@ databases
 errors
 private
 sessions
+
+*.pyc
