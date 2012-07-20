@@ -166,12 +166,13 @@ def add_ticket_subcategory():
             redirect(URL('ticket_categories', args=[instanceId, categoryId]))
 
 def submit_ticket():
-    if len(request.args) == 0:
-        instances = get_user_student_instances(auth.user.id)
-
-
-    instanceId = int(request.args[0])
-    inst = db.instance[instanceId]            
+    instances = get_user_student_instances(auth.user.id)
+    selected_i = None
+    if len(request.args) > 0:
+        instanceId = int(request.args[0])
+        inst = db.instance[instanceId]
+        selected_i = instanceId
+    return dict(instances=instances, selected_i=selected_i)
 
 @request.restful()
 def quiz():

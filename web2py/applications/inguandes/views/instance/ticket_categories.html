@@ -23,35 +23,6 @@
             </nav>
         </div>
     </div>
-    {{ if selected_c is not None: }}
-    <div class="span4">
-        <div class="well" style="padding: 8px 0;">
-            <ul class="nav nav-list">
-                <li class="nav-header">Subcategorías</li>
-                <li class="divider"></li>
-                {{ for sub in subcategories: }}
-                <li {{=XML('class="active"') if selected_sc is not None and selected_sc==sub['id'] else ''}}><a href="{{=URL('ticket_categories', args=[inst.id,selected_c, sub['id']])}}">{{=XML(sub['name'])}}</a></li>
-                <li class="divider"></li>
-                {{ pass }}
-            </ul>
-            <nav id="menu">
-                <ul>       
-                    <li><a data-toggle="modal" href="#modal-new-subcategory" rel="tooltip" title="Agregar una subcategoria a la categoría seleccionada"><i class="icon-plus"></i></a></li>
-                </ul>
-            </nav>
-        </div>
-    </div>
-    {{ pass }}
-    {{ if selected_sc is not None: }}
-    <div class="span4">
-        <div class="well" style="padding: 8px 0;">
-            <ul class="nav nav-list">
-                <li class="nav-header">Configuración</li>
-                <li class="divider"></li>
-            </ul>
-        </div>
-    </div>
-    {{ pass }}
 </div>
 
 <div class="modal hide fade in" id="modal-new-category" style="width: 800px; margin: -250px 0 0 -400px;">
