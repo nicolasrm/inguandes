@@ -44,51 +44,61 @@
                 </a>
                 
                 
-                <a class="brand" href="#">IngUandes</a>
-                
-                <div class="nav-collapse">
-                    <ul class="nav">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mis Cursos<b class="caret"></b></a>
+                <a class="brand" href="{{=URL('default', 'index')}}">IngUandes</a>
+                {{ if auth.user is not None: }}
+                <ul class="nav">
+                    {{
+                    u_insts = get_user_instances(db, auth.user.id)
+                    if len(u_insts) > 0:
+                    }}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mis Cursos<b class="caret"></b></a>
+                    
+                        <ul class="dropdown-menu">
+                            {{ for instance in u_insts: }}
+                            <li><a href="{{=URL('instance', 'view', args=[instance['id']])}}">{{=instance['title']}}</a></li>
+                            {{ pass }}
+                        </ul>
+                    </li>
+                    {{ pass }}
+                    <li class="divider-vertical"></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrar<b class="caret"></b></a>
                         
-                            <ul class="dropdown-menu">
-                                {{ for instance in db().select(db.instance.ALL): }}
-                                <li><a href="{{=URL('instance', 'view', args=[instance.id])}}">{{=instance.title}}</a></li>
-                                {{ pass }}
-                            </ul>
-                        </li>
-                        <li class="divider-vertical"></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrar<b class="caret"></b></a>
-                            
-                            <ul class="dropdown-menu">
-                                <li><a href="{{=URL('admin', 'view_terms')}}">Semestres</a></li>                                
-                                <li><a href="{{=URL('admin', 'view_courses')}}">Cursos</a></li>
-                                <li><a href="{{=URL('admin', 'view_instances')}}">Instancias</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Preguntas<b class="caret"></b></a>
-                            
-                            <ul class="dropdown-menu">
-                                {{ for course in db().select(db.course.ALL): }}
-                                <li><a href="{{=URL('questions', 'view', args=[course.id])}}">{{=course.name}}</a></li>
-                                {{ pass }}
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="{{=URL('tickets', 'view', args=[instance.id])}}">Tickets</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="nav-collapse">
-                    <ul class="nav">                    
-                        <li>
-                              {{='auth' in globals() and auth.navbar(separators=('',' | ',''))}}
-                        </li> 
-                    </ul>
-                </div>
-            </div>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{=URL('admin', 'view_terms')}}">Semestres</a></li>                                
+                            <li><a href="{{=URL('admin', 'view_courses')}}">Cursos</a></li>
+                            <li><a href="{{=URL('admin', 'view_instances')}}">Instancias</a></li>
+                        </ul>
+                    </li>
+                    {{ 
+                    u_courses = get_user_courses(db, auth.user.id)
+                    if len(u_courses) > 0:
+                    }}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Preguntas<b class="caret"></b></a>
+                        
+                        <ul class="dropdown-menu">
+                            {{ for course in u_courses: }}
+                            <li><a href="{{=URL('questions', 'view', args=[course.id])}}">{{=course.name}}</a></li>
+                            {{ pass }}
+                        </ul>
+                    </li>
+                    {{ pass }}
+                    <li>
+                        <a href="{{=URL('tickets', 'view')}}">Tickets</a>
+                    </li>
+                </ul>    
+                <ul class="nav pull-right">
+                    <li><p class="label label-info" style="margin-top: 10px;">Hola {{=auth.user.first_name}}</p></li>
+                    <li><a href="{{=auth.url(auth.settings.function) +'/logout'}}">Salir</a></li>
+                </ul>
+                {{ else: }}
+                <ul class="nav pull-right">
+                    <li><a href="{{=auth.url(auth.settings.function) +'/login'}}">Ingresar</a></li>
+                </ul>
+                {{ pass }}
+            </div>            
         </div>
     </div>
     <div class="container">

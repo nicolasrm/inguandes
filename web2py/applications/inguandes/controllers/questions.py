@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+@auth.requires_login()
 def view():
     if len(request.args) == 0:
         redirect(URL('default', 'index'))
@@ -19,6 +19,7 @@ def view():
     
     return dict(co=course, cats=cats, questions=questions, category=category, selected_q=selected_q, alternatives=alternatives)
     
+@auth.requires_login()
 def add_question():
     courseId = int(request.vars.courseid)
     q_id = None
@@ -32,6 +33,7 @@ def add_question():
     else:
         redirect(URL('view', args=[courseId, q_id], vars=href_vars))
     
+@auth.requires_login()
 def add_alternative():
     courseId = int(request.vars.courseid)
     questionId = int(request.vars.questionid)

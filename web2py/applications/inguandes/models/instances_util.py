@@ -56,6 +56,14 @@ def add_organized_content(list, cols, type, icon, col_href, a_attrs, contents, p
             contents[c_cg]['required'].append(obj)
         else:
             contents[c_cg]['optional'].append(obj)
+            
+def get_user_instances(db, userId):
+    u_insts = db((db.user_section.the_user == userId) & (db.user_section.section == db.section.id) & (db.section.instance == db.instance.id)).select(db.instance.ALL)
+    return u_insts
+    
+def get_user_role(db, instanceId, userId):
+    u_role = db((db.user_section.the_user == userId) & (db.user_section.section == db.section.id) & (db.section.instance == instanceId)).select(db.user_section.the_role).first()
+    return u_role.the_role
 
 def get_instance_ticket_categories(instanceId):
     categories = db(db.ticket_category_index.instance==instanceId).select(db.ticket_category_index.id, db.ticket_category_index.name).as_list()
