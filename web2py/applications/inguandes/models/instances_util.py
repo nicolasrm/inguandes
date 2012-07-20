@@ -65,6 +65,19 @@ def get_user_role(db, instanceId, userId):
     u_role = db((db.user_section.the_user == userId) & (db.user_section.section == db.section.id) & (db.section.instance == instanceId)).select(db.user_section.the_role).first()
     return u_role.the_role
 
+def get_user_tasks(db, instanceId, userId):
+    u_qzs = get_quizzes(db, instanceId, userId)
+    u_asgs = get_assignments(db, instanceId, userId)
+    
+    u_tasks = u_qzs
+    for (k,v) in u_asgs.iteritems():
+        if k in u_tasks:
+            u_tasks[k] = u_tasks[k] + v
+        else:
+            u_tasks[k] = v
+            
+    return u_tasks
+    
 def get_instance_ticket_categories(instanceId):
     categories = db(db.ticket_category_index.instance==instanceId).select(db.ticket_category_index.id, db.ticket_category_index.name).as_list()
     cats = [c['name'] for c in categories]

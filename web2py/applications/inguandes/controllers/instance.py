@@ -13,11 +13,11 @@ def view():
     
     questions, cats = get_questions(db, courseId)
         
-    quizzes = get_quizzes(db, instanceId, auth.user.id)
+    u_tasks = get_user_tasks(db, instanceId, auth.user.id)
     
     user_role = get_user_role(db, instanceId, auth.user.id)
             
-    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, quizzes=quizzes, user_role=user_role)
+    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role)
     
 @auth.requires_login()
 def add_contentgroup():
@@ -203,3 +203,27 @@ def quiz():
             return response.json({'message': 'error'})
         
     return locals()
+    
+@request.restful()
+def assignment():
+    @auth.requires_login()
+    def GET(assignmentId):
+        redirect(URL('assignment', 'view', args=[assignmentId]))
+    
+    @auth.requires_login()
+    def POST(**fields):  
+        if len(fields['name'].strip()) > 0 and len(fields['starting'].strip()) > 0:
+            assignmentId = db.assignment.insert(name=fields['name'],
+                                                starting=fields['starting'],
+                                                ending=fields['ending'],
+                                                instance=fields['instance'],
+                                                file_types=fields['file_types'],
+                                                multiple=fields['multiple'])   
+            
+            session.flash = "Trabajo agregado con éxito"
+            redirect(URL('view', args=[fields['instance']]))
+        else:
+            session.flash = "No fue posible agregar el trabajo solicitado"        
+        
+    return locals()
+    

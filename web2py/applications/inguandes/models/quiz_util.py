@@ -12,6 +12,8 @@ def get_quizzes(db, instanceId, userId):
     today = datetime.date.today()
     for q in qzs:
         u_quiz = get_user_quiz(db, q.id, userId)
+        q['type'] = 'quiz'
+        q['icon'] = 'icon-th-list'
         if q.starting > today:
             qzs_dict['pending'].append(q)
         elif q.ending >= today and (u_quiz is None or u_quiz['questions_pending'] > 0):

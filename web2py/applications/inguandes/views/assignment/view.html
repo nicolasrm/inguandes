@@ -1,0 +1,43 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span12">
+        <h2>{{=asgn_info['name']}}</h2>
+        <h4><a href="{{=URL('instance','view', args=[asgn_info['instance_id']])}}">{{=asgn_info['instance']}}</a></h4>
+    </div>
+</div>
+<div class="row">    
+    <div class="span4 well">
+        <h3>Información del Trabajo</h3>
+        <dl class="dl-horizontal">
+            <dt>Nombre</dt>
+            <dd>{{=asgn_info['name']}}</dd>
+            <dt>Inicio</dt>
+            <dd>Se puede comenzar a subir desde las 00:00 del <span class="label">{{=asgn_info['starting']}}</span></dd>
+            <dt>Fin</dt>
+            <dd>Se debe subir a más tardar el <span class="label label-important">{{=asgn_info['ending']}}</span> a las 23:59</dd>
+            <dt>Tipo de archivos</dt>
+            <dd>{{='Sin restricción' if not asgn_info['file_types'] else 'Se permiten archivos con las extensiones ' + asgn_info['file_types']}}</dd>
+            <dt># Archivos</dt>
+            <dd>{{='Uno' if not asgn_info['multiple'] else 'Uno o más'}}</dd>
+        </dl>
+    </div>    
+    <div class="span7 well">
+        <h3>Instrucciones</h3>
+        <p>Estas a punto de comenzar a desarrollar el quiz <i>{{=asgn_info['name']}}</i>. Ten en consideración las siguientes instrucciones antes de comenzar:</p>
+        <ul>
+            <li>Tendrás 60 segundos para responder cada pregunta, una vez completado ese tiempo se considera incorrecta.</li>
+            <li>Al finalizar cada pregunta, se te pedirá que indiques cuando quieres pasar a la siguiente.</li>
+            <li>Una vez enviada una respuesta no puedes cambiarla.</li>
+            <li>Si en cualquier momento dejas de completar el quiz, ya sea porque te cambias de página o cierras el navegador, si estabas en una nueva pregunta, esta se considerará incorrecta.</li>
+        </ul>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script>
+
+</script>
+{{end}}
+
+
+

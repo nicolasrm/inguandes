@@ -101,6 +101,7 @@ db.define_table('content_link',
         Field('content_group', type=db.content_group)
         )
 
+########## Questions & Quizzes ##########
 db.define_table('question',
         Field('text', type='text'),
         Field('category', type='string'),
@@ -139,6 +140,16 @@ db.define_table('user_quiz_question',
         Field('started_on', type='datetime'),
         Field('answer_on', type='datetime')
         )
+
+########## Assignments ##########
+db.define_table('assignment',
+        Field('name', type='string', requires=IS_NOT_EMPTY()),
+        Field('starting', type='date'),
+        Field('ending', type='date'),
+        Field('instance', type=db.instance, notnull=True),
+        Field('file_types', type='string'),
+        Field('multiple', type='boolean', default=False),
+        )   
         
 ########## Tickets ##########
 
