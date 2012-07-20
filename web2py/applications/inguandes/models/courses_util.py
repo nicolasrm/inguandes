@@ -16,3 +16,7 @@ def get_courses(db):
                         )
         courses_a.append(course)
     return courses_a
+    
+def get_user_courses(db, userId, role=3):
+    u_courses = db((db.user_section.the_user == userId) & (db.user_section.the_role == role) & (db.user_section.section == db.section.id) & (db.section.course == db.course.id)).select(db.course.ALL)
+    return u_courses

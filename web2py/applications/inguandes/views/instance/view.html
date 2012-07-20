@@ -37,12 +37,14 @@
                 {{ pass }}                
                 <li class="divider"></li>
             </ul>
+            {{ if user_roles[user_role] == 'Profesor': }}
             <nav id="menu">
                 <ul>                                       
                     <li><a data-btn-type="new-quiz" data-toggle="modal" href="#modal-new-quiz" rel="tooltip" title="Agregar un quiz"><i class="icon-plus"></i><i class="icon-th-list"></i></a></li>
                     <li><a data-btn-type="new-task" href="#" rel="tooltip" title="Agregar una tarea o entrega"><i class="icon-plus"></i><i class="icon-upload"></i></a></li>
                 </ul>
             </nav>
+            {{ pass }}
         </div>
     </div>
     <div class="span8">    
@@ -84,6 +86,7 @@
                                 </ul>
                             </div>
                         </div>
+                        {{ if user_roles[user_role] == 'Profesor': }}
                         <div class="row accordion-admin-row">
                             <div class="span4">
                                 <nav id="menu">
@@ -98,6 +101,7 @@
                                 
                             </div>
                         </div>
+                        {{ pass }}
                     </div>
                 </div>
             </div>            
@@ -121,7 +125,7 @@
                     <li><a href="#" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
                 </ul>
             </div>
-            
+            {{ if user_roles[user_role] == 'Profesor': }}
             <!-- admin options -->
             <div class="nav-collapse">
                 <ul class="nav pull-right">
@@ -130,6 +134,7 @@
                     <li><a href="{{=URL('ticket_categories', args=[inst.id])}}" rel="tooltip" title="Administrar tickets"><i class="icon-user icon-white"></i><i class="icon-tags icon-white"></i></a></li>
                 </ul>
             </div>
+            {{ pass }}
         </div>
     </div>
 </div>
@@ -145,6 +150,7 @@
     </div>
 </div>
 
+{{ if user_roles[user_role] == 'Profesor': }}
 <!-- Instance admin modals -->
 <div class="modal hide fade in" id="modal-new-contentgroup">
     <div class="modal-header">
@@ -336,6 +342,7 @@
         <a href="#" class="btn btn-primary new-quiz-action">Crear</a>
     </div>
 </div>
+{{ pass }}
 
 {{block pagescripts}}
 <script src="{{=URL('static', 'js/instance/view.js')}}"></script>

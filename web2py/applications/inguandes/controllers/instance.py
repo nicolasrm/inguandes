@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+@auth.requires_login()
 def view():
     if len(request.args) == 0:
         redirect(URL('default', 'index'))
@@ -11,12 +12,14 @@ def view():
     courseId = db(db.section.instance == instanceId).select().first().course
     
     questions, cats = get_questions(db, courseId)
+        
+    quizzes = get_quizzes(db, instanceId, auth.user.id)
     
-    # TODO: Cambiar valor por auth.user
-    quizzes = get_quizzes(db, instanceId, 1)
+    user_role = get_user_role(db, instanceId, auth.user.id)
             
-    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, quizzes=quizzes)
+    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, quizzes=quizzes, user_role=user_role)
     
+@auth.requires_login()
 def add_contentgroup():
     instanceId = int(request.vars.instanceid)
     if request.vars.title is not None:
@@ -24,6 +27,7 @@ def add_contentgroup():
                                 instance=instanceId)
     redirect(URL('view', args=[instanceId]))
     
+@auth.requires_login()
 def add_content():
     instanceId = int(request.vars.instanceid)
     if request.vars.contenttype is not None and request.vars.name is not None:
@@ -50,9 +54,11 @@ def add_content():
         session.flash = "No fue posible agregar el contenido"
     redirect(URL('view', args=[instanceId]))
     
+@auth.requires_login()
 def download_content_file():
     return response.download(request, db)
 
+@auth.requires_login()
 def ticket_categories():
     if len(request.args) == 0:
         redirect(URL('default', 'index'))
@@ -79,6 +85,7 @@ def ticket_categories():
 
     return dict(inst=inst, cats=cats, categories=categories, subcategories=subcategories, selected_c=selected_c, selected_sc=selected_sc, sc_config=sc_config, moderators=moderators, sections=sections)
 
+@auth.requires_login()
 def add_ticket_category():
     instanceId = int(request.vars.instanceid)
     if request.vars.category:
@@ -86,6 +93,7 @@ def add_ticket_category():
                                     instance=instanceId)
         redirect(URL('ticket_categories', args=[instanceId]))
 
+@auth.requires_login()
 def add_ticket_subcategory():
     from datetime import datetime
     isToAll = request.vars.is_to_all == '1'
@@ -164,11 +172,14 @@ def add_ticket_subcategory():
         else:
             session.flash = 'Debe ingresar el nombre de la subcategoría'
             redirect(URL('ticket_categories', args=[instanceId, categoryId]))
+
 @request.restful()
 def quiz():
+    @auth.requires_login()
     def GET(quizId):
         redirect(URL('quiz', 'start', args=[quizId]))
     
+    @auth.requires_login()
     def POST(**fields):  
         if len(fields['name'].strip()) > 0 and len(fields['starting'].strip()) > 0:
             courseId = db(db.section.instance == fields['instance']).select().first().course
