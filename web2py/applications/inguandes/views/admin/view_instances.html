@@ -1,0 +1,152 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span6">
+        <h2>Instancias</h2>
+    </div>
+    <div class="span2 offset4">
+        <a class="btn btn-success" data-toggle="modal" href="#modal-new-instance"><i class="icon-plus icon-white"></i> Crear Instancia</a>        
+    </div>
+</div>
+
+<div class="row">
+    <div class="span8 offset2">
+        {{ if len(instances) > 0: }}
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Secciones</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ for c in instances: }}
+                <tr>
+                    <td><a href="{{=URL('instance', 'view', args=[c['id']])}}">{{=c['title']}}</a></td>
+                    <td><a class="badge badge-inverse" href="#">{{=c['sections']}}</a></td>
+                    <td><a data-btn-type="new-instance-relation" data-instance-id="{{=c['id']}}" data-instance-title="{{=c['title']}}" class="btn btn-success" rel="tooltip" title="Asociar sección a la instancia" href="#"><i class="icon-plus icon-white"></i> Sección</a></td>
+                    <td><a data-btn-type="delete" data-instance-id="{{=c['id']}}" data-instance-title="{{=c['title']}}" class="btn btn-danger" rel="tooltip" title="Eliminar instancia" href="#"><i class="icon-remove icon-white"></i></a></td>
+                </tr>
+                {{ pass }}
+            </tbody>
+        </table>
+        {{ else: }}
+            <h4>No hay instancias.</h4>
+        {{ pass }}
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-instance">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Crear nueva instancia</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_instance')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="title">Título</label>
+                    <div class="controls">
+                        <input type="text" id="title" name="title"/>
+                        <p class="help-block">Título para reconocer la instancia de forma interna.</p>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-delete-instance">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Eliminar instancia</h3>
+    </div>
+    <div class="modal-body">
+        <p>¿Está seguro que desea borrar la instancia <b><span id="delete-instance-name"></span></b>?</p>
+        <form action="{{=URL('delete_instance')}}" method="POST">
+            <input type="hidden" class="instance-id" name="instanceid" />
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Eliminar</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-relation">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar sección a instancia</h3>
+        <h4><span id="new-relation-instance"></span></h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_instance_relation')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="section">Sección</label>
+                    <div class="controls">
+                        <select id="section" name="section">
+                        {{ for s in sections: }}
+                            <option value="{{=s['id']}}">{{="{0} - {1}".format(s['nrc'], s['term_name']) }}</option>
+                        {{ pass }}
+                        </select>
+                        <p class="help-block">Seleccione la sección que desea asociar a la instancia.</p>
+                    </div>
+                </div>
+                <input type="hidden" class="instance-id" name="instanceid" />
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Agregar</a>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script>
+$(document).ready( function () {
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
+        
+    $('[data-btn-type="delete"]').click( function ( event ) {
+        var modal, instanceId, instanceTitle;
+        
+        data = $(event.currentTarget).data();
+        instanceId = data.instanceId;
+        instanceTitle = data.instanceTitle;
+        
+        modal = $('#modal-delete-instance');
+        modal.find('#delete-instance-name').text(instanceTitle);
+        modal.find('.instance-id').val(instanceId);
+        
+        modal.modal('show');
+    });
+    
+    $('[data-btn-type="new-instance-relation"]').click( function ( event ) {
+        var modal, instanceId, instanceTitle;
+        
+        data = $(event.currentTarget).data();
+        instanceId = data.instanceId;
+        instanceTitle = data.instanceTitle;
+        
+        modal = $('#modal-new-relation');
+        modal.find('#new-relation-instance').text(instanceTitle);
+        modal.find('.instance-id').val(instanceId);
+        
+        modal.modal('show');
+    });
+});
+</script>
+{{end}}
+
+
+

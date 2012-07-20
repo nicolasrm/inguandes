@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html class="no-js" lang="{{=T.accepted_language or 'es'}}">
+<head>
+  <meta charset="utf-8" />
+    
+  <title>{{=response.title or request.application}}</title>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="application-name" content="{{=request.application}}" />
+   
+  <link href="{{=URL('static', 'css/bootstrap-wysihtml5.css')}}" rel="stylesheet">
+  <link href="{{=URL('static', 'css/bootstrap.css')}}" rel="stylesheet">
+  <link href="{{=URL('static', 'css/inguandes.css')}}" rel="stylesheet">  
+  
+  
+  <!-- Place favicon.ico and apple-touch-icon.png in the root of your domain and delete these references -->
+  <link rel="shortcut icon" href="{{=URL('static','favicon.ico')}}" type="image/x-icon">
+    
+  <script src="{{=URL('static','js/modernizr.custom.js')}}"></script>    
+  <script src="{{=URL('static','js/jquery.js')}}"></script>  
+  <script src="{{=URL('static','js/bootstrap.js')}}"></script>  
+  <script src="{{=URL('static','js/web2py.js')}}"></script>    
+  <script>
+    var INGUANDES = {};
+    INGUANDES.api_url = '{{=URL('api')}}'.slice(0,-'api'.length);
+    INGUANDES.static_js_url = '{{=URL("static", "js")}}';
+    INGUANDES.static_css_url = '{{=URL("static", "css")}}';
+    INGUANDES.static_img_url = '{{=URL("static", "img")}}';
+  </script>
+ 
+  {{
+  response.include_files()
+  }}
+  
+</head>
+<body>    
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                
+                
+                <a class="brand" href="#">IngUandes</a>
+                
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mis Cursos<b class="caret"></b></a>
+                        
+                            <ul class="dropdown-menu">
+                                {{ for instance in db().select(db.instance.ALL): }}
+                                <li><a href="{{=URL('instance', 'view', args=[instance.id])}}">{{=instance.title}}</a></li>
+                                {{ pass }}
+                            </ul>
+                        </li>
+                        <li class="divider-vertical"></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrar<b class="caret"></b></a>
+                            
+                            <ul class="dropdown-menu">
+                                <li><a href="{{=URL('admin', 'view_terms')}}">Semestres</a></li>                                
+                                <li><a href="{{=URL('admin', 'view_courses')}}">Cursos</a></li>
+                                <li><a href="{{=URL('admin', 'view_instances')}}">Instancias</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Preguntas<b class="caret"></b></a>
+                            
+                            <ul class="dropdown-menu">
+                                {{ for course in db().select(db.course.ALL): }}
+                                <li><a href="{{=URL('questions', 'view', args=[course.id])}}">{{=course.name}}</a></li>
+                                {{ pass }}
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{=URL('tickets', 'view', args=[instance.id])}}">Tickets</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="nav-collapse">
+                    <ul class="nav">                    
+                        <li>
+                              {{='auth' in globals() and auth.navbar(separators=('',' | ',''))}}
+                        </li> 
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+          <div class="span12">
+            {{block center}}
+            {{include}}
+            {{end}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="span12">
+            {{block footer}} 
+            {{end}}	
+          </div>
+        </div>
+    </div><!-- /container -->
+    <div class="row hide" data-type="template-alert">        
+        <div class="alert span8 offset2">
+            <a class="close" data-dismiss="alert" href="#">&times;</a>
+            <span data-type="alert-text"></span>
+        </div>
+        <div class="span2">&nbsp;</div>
+    </div>
+    <script>
+    $(document).ready(function() {
+        $('.dropdown-toggle').dropdown();
+        {{  if response.flash: }}
+        INGUANDES.notify('', '{{=response.flash}}');
+        {{  pass }}
+    });
+    </script>
+    <script src="{{=URL('static','js/inguandes.js')}}"></script>
+    {{block pagescripts}}
+    {{end}}
+</body>
+</html>

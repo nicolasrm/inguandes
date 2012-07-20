@@ -1,0 +1,180 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span6">
+        <h2>Semestres</h2>
+    </div>
+    <div class="span2 offset4">
+        <a class="btn btn-success" data-toggle="modal" href="#modal-new-term"><i class="icon-plus icon-white"></i> Crear Semestre</a>        
+    </div>
+</div>
+
+<div class="row">
+    <div class="span8 offset2">
+        {{ if len(terms) > 0: }}
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ for term in terms: }}
+                <tr>
+                    <td>{{=term.name}}</td>
+                    <td>{{=term.starting}}</td>
+                    <td>{{=term.ending}}</td>
+                    <td><a data-btn-type="edit" data-term-id="{{=term.id}}" data-term-name="{{=term.name}}" data-term-starting="{{=term.starting}}" data-term-ending="{{=term.ending}}" class="btn btn-primary" rel="tooltip" title="Editar semestre" href="#"><i class="icon-edit icon-white"></i></a></td>
+                    <td><a data-btn-type="delete" data-term-id="{{=term.id}}" data-term-name="{{=term.name}}" class="btn btn-danger" rel="tooltip" title="Eliminar semestre" href="#"><i class="icon-remove icon-white"></i></a></td>
+                </tr>
+                {{ pass }}
+            </tbody>
+        </table>
+        {{ else: }}
+            <h4>No hay semestres.</h4>
+        {{ pass }}
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-term">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Crear nuevo semestre</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_term')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="name">Nombre</label>
+                    <div class="controls">
+                        <input type="text" id="name" name="name"/>
+                        <p class="help-block">Nombre identificatorio para el semestre.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="starting">Fecha comienzo</label>
+                    <div class="controls">
+                        <input type="date" class="input-small" id="starting" name="starting"/>
+                        <p class="help-block">Fecha en la cual se considera que comienza el semestre.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="ending">Fecha fin</label>
+                    <div class="controls">
+                        <input type="date" class="input-small" id="ending" name="ending"/>
+                        <p class="help-block">Fecha en la cual se da por finalizado el semestre.</p>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-edit-term">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Editar semestre</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('edit_term')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="name">Nombre</label>
+                    <div class="controls">
+                        <input type="text" id="edit-name" name="name"/>
+                        <p class="help-block">Nombre identificatorio para el semestre.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="starting">Fecha comienzo</label>
+                    <div class="controls">
+                        <input type="date" class="input-small" id="edit-starting" name="starting"/>
+                        <p class="help-block">Fecha en la cual se considera que comienza el semestre.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="ending">Fecha fin</label>
+                    <div class="controls">
+                        <input type="date" class="input-small" id="edit-ending" name="ending"/>
+                        <p class="help-block">Fecha en la cual se da por finalizado el semestre.</p>
+                    </div>
+                </div>
+                <input type="hidden" class="term-id" name="termid"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Editar</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-delete-term">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Eliminar semestre</h3>
+    </div>
+    <div class="modal-body">
+        <p>¿Está seguro que desea borrar el semestre <b><span id="delete-term-name"></span></b>?</p>
+        <form action="{{=URL('delete_term')}}" method="POST">
+            <input type="hidden" class="term-id" name="termid" />
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Eliminar</a>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script>
+$(document).ready( function () {
+    INGUANDES.startDateFields();
+    
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
+    
+    $('[data-btn-type="edit"]').click( function ( event ) {
+        var modal, termId, termName, termStarting, termEnding;
+        
+        data = $(event.currentTarget).data();
+        termId = data.termId;
+        termName = data.termName;
+        termStarting = data.termStarting;
+        termEnding = data.termEnding;
+        
+        modal = $('#modal-edit-term');
+        modal.find('#edit-name').val(termName);
+        modal.find('#edit-starting').val(termStarting);
+        modal.find('#edit-ending').val(termEnding);
+        modal.find('.term-id').val(termId);
+        
+        modal.modal('show');
+    });
+    
+    $('[data-btn-type="delete"]').click( function ( event ) {
+        var modal, termId, termName;
+        
+        data = $(event.currentTarget).data();
+        termId = data.termId;
+        termName = data.termName;
+        
+        modal = $('#modal-delete-term');
+        modal.find('#delete-term-name').text(termName);
+        modal.find('.term-id').val(termId);
+        
+        modal.modal('show');
+    });
+});
+</script>
+{{end}}

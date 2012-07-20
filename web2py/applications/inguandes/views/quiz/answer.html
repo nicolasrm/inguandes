@@ -1,0 +1,122 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span6">
+        <h2>{{=quiz_info['name']}}</h2>
+        <h4>{{=quiz_info['instance']}}</h4>
+    </div>
+</div>
+{{ if c_question is not None: }}
+<div class="row well">    
+    <div class="span12">
+        <div class="row">
+            <div class="span10">
+                <span class="label label-info">{{=str(q_idx) + ' de ' + str(total_q)}}</span>
+            </div>
+            <div class="span2">
+                <div id="countdown"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span11">
+            {{=XML(c_question['text'])}}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row well">  
+    <div class="span11">
+        <ul class="nav nav-list" id="alternative-list">
+            {{ for (alt_id,alt_text) in c_question['alternatives'].iteritems(): }}
+                <li><a class="alternative" data-alt-id="{{=alt_id}}" href="#"><i class="icon-star-empty"></i> {{=XML(alt_text)}}</a></li>                    
+                <li class="divider"></li>
+            {{ pass }}
+        </ul>
+        <a class="btn btn-large btn-danger pull-right" id="btn-answer" href="#"><i class="icon-screenshot icon-white"></i> Responder</a>
+    </div>
+</div>
+{{ else: }}
+<div class="row">    
+    <div class="span12 well">
+        <h1>Este quiz ya lo finalizaste!!!</h1>
+    </div>
+</div>
+{{ pass }}
+
+{{block pagescripts}}
+{{ if c_question is not None: }}
+<script src="{{=URL('static','js/jquery.countdown.min.js')}}"></script>
+<script>
+$(document).ready( function () {  
+    $('#countdown').countdown({        
+        format: 'sss',
+        startTime: '60',
+        digitWidth: 28,
+        digitHeight: 40,
+        timerEnd: function() { timeEnd(); },
+        image: "{{=URL('static','img/digits.png')}}"
+    });
+  
+    $('.alternative').on('click', function (event) {
+        var li = $(event.target).closest('li'),
+            icon = $(event.target).find('i'),
+            alt_list = $('#alternative-list');
+        alt_list.find('li').removeClass('active');
+        alt_list.find('i').removeClass('icon-star');
+        alt_list.find('i').addClass('icon-star-empty');
+        li.addClass('active');
+        icon.removeClass('icon-star-empty');
+        icon.addClass('icon-star');
+    });
+    
+    $('#btn-answer').on('click', function (event) {
+        var button = $(event.target),
+            alt_selected = $('li.active > a');
+            
+        if (alt_selected.size() == 1) {    
+            alt_id = alt_selected.attr('data-alt-id');
+            button.addClass('hide');
+            $.ajax({
+                    url: INGUANDES.api_url + 'call/json/receive_answer/{{=c_question['uq_id']}}/' + alt_id,
+                    dataType: 'json',
+                    error: function (jqXHR, textStatus, errorThrown) {  
+                        var data = $.parseJSON(jqXHR.responseText),
+                            message = data.message || 'No se pudo enviar la respuesta.';
+                        button.removeClass('hide');
+                        INGUANDES.notify('error', message);
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        blockAnswer();             
+                        button.removeClass('hide');                        
+                        INGUANDES.notify('success', 'Respuesta enviada correctamente.');
+                    }
+            });
+        }
+        else {
+            INGUANDES.notify('warning', 'Debes seleccionar una alternativa para poder responder.');
+        }
+    });    
+});
+
+function blockAnswer () {
+    var button = $('#btn-answer');
+    button.removeClass('btn-danger');
+    button.addClass('btn-primary');
+    button.html('<i class="icon-step-forward icon-white"></i> Siguiente');
+    button.attr('href', window.location.pathname);
+    button.off('click');
+    $('.alternative').off('click');
+    $('#countdown').addClass('hide');
+};
+
+function timeEnd () {
+    if (!$('#countdown').hasClass('hide')) {
+        blockAnswer();
+        INGUANDES.notify('error', 'Se acabó el tiempo y no respondiste.');
+    }
+};
+{{pass}}
+</script>
+{{end}}
+
+
+

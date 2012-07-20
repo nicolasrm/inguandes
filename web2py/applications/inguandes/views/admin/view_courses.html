@@ -1,0 +1,164 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span6">
+        <h2>Cursos</h2>
+    </div>
+    <div class="span2 offset4">
+        <a class="btn btn-success" data-toggle="modal" href="#modal-new-course"><i class="icon-plus icon-white"></i> Crear Curso</a>        
+    </div>
+</div>
+
+<div class="row">
+    <div class="span8 offset2">
+        {{ if len(courses) > 0: }}
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Secciones</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ for c in courses: }}
+                <tr>
+                    <td>{{=c['code']}}</td>
+                    <td>{{=c['name']}}</td>
+                    <td><a class="badge badge-inverse" href="{{=URL('view_sections', args=[c['id']])}}">{{=c['sections']}}</a></td>
+                    <td><a data-btn-type="edit" data-course-id="{{=c['id']}}" data-course-name="{{=c['name']}}" data-course-code="{{=c['code']}}" class="btn btn-primary" rel="tooltip" title="Editar curso" href="#"><i class="icon-edit icon-white"></i></a></td>
+                    <td><a data-btn-type="delete" data-course-id="{{=c['id']}}" data-course-name="{{=c['name']}}" class="btn btn-danger" rel="tooltip" title="Eliminar curso" href="#"><i class="icon-remove icon-white"></i></a></td>
+                </tr>
+                {{ pass }}
+            </tbody>
+        </table>
+        {{ else: }}
+            <h4>No hay cursos.</h4>
+        {{ pass }}
+    </div>
+</div>
+<div class="modal hide fade in" id="modal-new-course">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Crear nuevo curso</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_course')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="code">Código</label>
+                    <div class="controls">
+                        <input type="text" id="code" name="code"/>
+                        <p class="help-block">Código único que identifica el curso.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="name">Nombre</label>
+                    <div class="controls">
+                        <input type="text" id="name" name="name"/>
+                        <p class="help-block">Nombre identificatorio para el curso.</p>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-edit-course">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Editar curso</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('edit_course')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="code">Código</label>
+                    <div class="controls">
+                        <input type="text" id="edit-code" name="code"/>
+                        <p class="help-block">Código único que identifica el curso.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="name">Nombre</label>
+                    <div class="controls">
+                        <input type="text" id="edit-name" name="name"/>
+                        <p class="help-block">Nombre identificatorio para el curso.</p>
+                    </div>
+                </div>
+                <input type="hidden" class="course-id" name="courseid" />
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Editar</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-delete-course">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Eliminar curso</h3>
+    </div>
+    <div class="modal-body">
+        <p>¿Está seguro que desea borrar el curso <b><span id="delete-course-name"></span></b>?</p>
+        <form action="{{=URL('delete_course')}}" method="POST">
+            <input type="hidden" class="course-id" name="courseid" />
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Eliminar</a>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script>
+$(document).ready( function () {
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
+    
+    $('[data-btn-type="edit"]').click( function ( event ) {
+        var modal, courseId, courseName, courseCode;
+        
+        data = $(event.currentTarget).data();
+        courseId = data.courseId;
+        courseName = data.courseName;
+        courseCode = data.courseCode;
+        
+        modal = $('#modal-edit-course');
+        modal.find('#edit-name').val(courseName);
+        modal.find('#edit-code').val(courseCode);
+        modal.find('.course-id').val(courseId);
+        
+        modal.modal('show');
+    });
+    
+    $('[data-btn-type="delete"]').click( function ( event ) {
+        var modal, courseId, courseName;
+        
+        data = $(event.currentTarget).data();
+        courseId = data.courseId;
+        courseName = data.courseName;
+        
+        modal = $('#modal-delete-course');
+        modal.find('#delete-course-name').text(courseName);
+        modal.find('.course-id').val(courseId);
+        
+        modal.modal('show');
+    });
+});
+</script>
+{{end}}
+
+
+

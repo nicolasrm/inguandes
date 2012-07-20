@@ -1,0 +1,161 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span6">
+        <h2>Administración de Preguntas</h2>
+        <h4>{{=co.name}}</h4>
+    </div>
+</div>
+{{
+url_vars = None
+if category is not None:
+    url_vars={'category':category}
+pass
+}}
+<div class="row">
+    <div class="span12">
+        <div class="well" style="padding: 8px 0;">
+            <ul class="nav nav-list">
+                <li class="nav-header">Categorías</li>
+                <li class="divider"></li>
+            </ul>            
+            <ul class="nav nav-pills">                
+                <li {{=XML('class="active"') if category is None else ''}}><a href="{{=URL('view', args=[co.id])}}">Todas</a></li>
+                {{ for c in cats: }}                
+                <li {{=XML('class="active"') if category is not None and category==c else ''}}><a href="{{=URL('view', args=[co.id], vars={'category':c})}}">{{=c}}</a></li>
+                {{ pass }}
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="span6">
+        <div class="well" style="padding: 8px 0;">
+            <ul class="nav nav-list">
+                <li class="nav-header">Preguntas</li>
+                <li class="divider"></li>
+                {{ for q in questions: }}
+                <li {{=XML('class="active"') if selected_q is not None and selected_q==q['id'] else ''}}><a href="{{=URL('view', args=[co.id, q['id']], vars=url_vars)}}">{{=XML(q['text'])}}</a></li>
+                <li class="divider"></li>
+                {{ pass }}
+            </ul>
+            <nav id="menu">
+                <ul>       
+                    <li><a data-toggle="modal" href="#modal-new-question" rel="tooltip" title="Agregar una pregunta"><i class="icon-plus"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {{ if selected_q is not None: }}
+    <div class="span6">
+        <div class="well" style="padding: 8px 0;">
+            <ul class="nav nav-list">
+                <li class="nav-header">Alternativas</li>
+                <li class="divider"></li>
+                {{ for a in alternatives: }}
+                <li><a href="#"><i class="icon-{{='ok' if a.is_correct else 'remove'}}"></i> {{=XML(a['text'])}}</a></li>
+                <li class="divider"></li>
+                {{ pass }}
+            </ul>
+            <nav id="menu">
+                <ul>       
+                    <li><a data-toggle="modal" href="#modal-new-alternative" rel="tooltip" title="Agregar una alternativa a la pregunta seleccionada"><i class="icon-plus"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {{ pass }}
+</div>
+
+<div class="modal hide fade in" id="modal-new-question" style="width: 800px; margin: -250px 0 0 -400px;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar nueva pregunta</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_question')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="question-text">Pregunta</label>
+                    <div class="controls">
+                        <textarea class="input-xxlarge wysihtml5" id="question-text" name="text" placeholder="Ingrese la pregunta aquí"></textarea>
+                        <p class="help-block">Escriba el texto de la pregunta.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="question-category">Categoría</label>
+                    <div class="controls">
+                        <input type="text" class="span3" id="question-category" name="category" style="margin: 0 auto;" data-provide="typeahead" data-source="{{=XML(XML(cats).replace("'", "&quot;"))}}">
+                        <p class="help-block">Indique la categoría para la pregunta.</p>
+                    </div>
+                </div>
+                
+                <input type="hidden" name="courseid" value="{{=co.id}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-alternative" style="width: 800px; margin: -250px 0 0 -400px;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar nueva alternativa</h3>
+        <p id="modal-question-text"></p>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_alternative')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="alternative-text">Alternativa</label>
+                    <div class="controls">
+                        <textarea class="input-xxlarge wysihtml5" id="alternative-text" name="text" placeholder="Ingrese la alternativa aquí"></textarea>
+                        <p class="help-block">Escriba el texto de la alternativa.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="alternative-correct">Correcta</label>
+                    <div class="controls">
+                        <label class="checkbox"><input type="checkbox" id="alternative-correct" name="iscorrect">indicar si la alternativa se considera correcta.</label>
+                    </div>
+                </div>
+                
+                <input type="hidden" name="courseid" value="{{=co.id}}"/>
+                <input type="hidden" name="questionid" value="{{=selected_q}}"/>
+                {{ if category is not None: }}
+                <input type="hidden" name="category" value="{{=category}}"/>
+                {{ pass }}
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script src="{{=URL('static','js/wysihtml5-0.3.0_rc2.js')}}"></script>
+<script src="{{=URL('static','js/bootstrap-wysihtml5-0.0.2.js')}}"></script>
+<script>
+$(document).ready( function () {
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+    $(".collapse").collapse();
+    $('.typeahead').typeahead();
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
+    
+    $('.wysihtml5').wysihtml5({
+        'font-styles': false,
+        'html': true
+    });
+});
+</script>
+{{end}}
+
+
+

@@ -1,0 +1,25 @@
+body {
+    padding-top: 40px;
+}
+
+.accordion-inner {
+    background-color: #f5f5f5;
+}
+
+.accordion-admin-row {
+    border-top: 1px solid #eeeeee;
+}
+
+nav#menu {
+    min-height: 20px;
+}
+
+nav#menu ul li {
+  float: left;
+  display: inline;
+  position: relative;
+  z-index: 100;
+  margin-left: 0;
+  margin-right: 9px;
+  list-style: none;
+}

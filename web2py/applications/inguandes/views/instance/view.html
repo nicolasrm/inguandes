@@ -1,0 +1,348 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span6">
+        <h2>{{=inst.title}}</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="span4">
+        <div class="well" style="padding: 8px 0;">
+            <ul class="nav nav-list">
+                <li class="nav-header">Evaluaciones Pendientes</li>
+                {{ for q in quizzes['pending']: }}
+                    <li>
+                        <i class="icon-th-list"></i>{{=q['name']}}
+                        <span class="label pull-right">{{=q['starting']}}</span>
+                    </li> 
+                {{ pass }}   
+                <li class="divider"></li>                
+                <li class="nav-header">Evaluaciones Activas</li>                       
+                {{ for q in quizzes['actived']: }}
+                    <li>
+                        <a href="{{=URL('quiz', args=[q.id])}}">
+                            <i class="icon-th-list"></i>{{=q['name']}}
+                            <span class="label label-warning pull-right">{{=q['ending']}}</span>
+                        </a>
+                    </li> 
+                {{ pass }}
+                <li class="divider"></li>
+                <li class="nav-header">Evaluaciones Cerradas</li>
+                {{ for q in quizzes['closed']: }}
+                    <li>
+                        <a href="{{=URL('quiz', 'result', args=[q.id])}}">
+                            <i class="icon-th-list"></i>{{=q['name']}}
+                            <span class="label label-info pull-right">{{=q['ending']}}</span>
+                        </a>
+                    </li> 
+                {{ pass }}                
+                <li class="divider"></li>
+            </ul>
+            <nav id="menu">
+                <ul>                                       
+                    <li><a data-btn-type="new-quiz" data-toggle="modal" href="#modal-new-quiz" rel="tooltip" title="Agregar un quiz"><i class="icon-plus"></i><i class="icon-th-list"></i></a></li>
+                    <li><a data-btn-type="new-task" href="#" rel="tooltip" title="Agregar una tarea o entrega"><i class="icon-plus"></i><i class="icon-upload"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="span8">    
+        <div class="accordion" id="accordion_cgs">
+        {{ for cg in c_groups: 
+            accordion_group_id = 'collapse' + str(cg['id'])
+        }}
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion_cgs" href="#{{=accordion_group_id}}"><i class="icon-book"></i> {{=cg['title']}}</a>
+                </div>
+                <div id="{{=accordion_group_id}}" class="accordion-body in collapse" style="height: auto; ">
+                    <div class="accordion-inner">
+                        <div class="row">
+                            <div class="span3">
+                                <ul class="nav nav-list">
+                                    <li class="nav-header">Contenido Mínimo</li>
+                                    {{  if cg['id'] in contents:
+                                            for c in contents[cg['id']]['required']: 
+                                                a_c = [I(_class='icon-' + c['icon']), c['name']]
+                                                c['a_attrs']['_href'] = c['href']
+                                                response.write(LI(A(*a_c, **c['a_attrs'])))
+                                            pass
+                                        pass
+                                    }}
+                                </ul>
+                            </div>
+                            <div class="span3 offset1">
+                                <ul class="nav nav-list">
+                                    <li class="nav-header">Contenido Adicional</li>
+                                    {{  if cg['id'] in contents:
+                                            for c in contents[cg['id']]['optional']: 
+                                                a_c = [I(_class='icon-' + c['icon']), c['name']]
+                                                c['a_attrs']['_href'] = c['href']
+                                                response.write(LI(A(*a_c, **c['a_attrs'])))
+                                            pass
+                                        pass
+                                    }}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row accordion-admin-row">
+                            <div class="span4">
+                                <nav id="menu">
+                                    <ul>                                
+                                        <li><a data-btn-type="new-content" data-new-content-type="file" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un archivo"><i class="icon-plus"></i><i class="icon-file"></i></a></li>
+                                        <li><a data-btn-type="new-content" data-new-content-type="video" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un video"><i class="icon-plus"></i><i class="icon-facetime-video"></i></a></li>
+                                        <li><a data-btn-type="new-content" data-new-content-type="link" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un link"><i class="icon-plus"></i><i class="icon-bookmark"></i></a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <div class="span4">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        {{ pass }}
+        </div>
+    </div>
+</div>
+<!-- Navegation bar at bottom -->
+<div class="navbar navbar-fixed-bottom">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a href="#" rel="tooltip" title="Noticias"><i class="icon-bullhorn icon-white"></i></a></li>
+                    <li><a href="#" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
+                </ul>
+            </div>
+            
+            <!-- admin options -->
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                    <li class="divider-vertical"></li>
+                    <li><a rel="tooltip" title="Agregar grupo de contenido" data-toggle="modal" href="#modal-new-contentgroup"><i class="icon-plus icon-white"></i><i class="icon-book icon-white"></i></a></li>
+                    <li><a href="{{=URL('ticket_categories', args=[inst.id])}}" rel="tooltip" title="Administrar tickets"><i class="icon-user icon-white"></i><i class="icon-tags icon-white"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video modal -->
+<div class="modal hide fade in" id="modal-show-video" style="width: 600px; margin: -250px 0 0 -300px;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3><span id="video-content-name"></span></h3>
+    </div>
+    <div class="modal-body">
+        <iframe id="video-content-url" width="560" height="315" frameborder="0" allowfullscreen></iframe>
+    </div>
+</div>
+
+<!-- Instance admin modals -->
+<div class="modal hide fade in" id="modal-new-contentgroup">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar grupo de contenidos</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_contentgroup')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="title">Título</label>
+                    <div class="controls">
+                        <input type="text" id="title" name="title"/>
+                        <p class="help-block">Título que se desplegará para identificar el grupo de contenidos.</p>
+                    </div>
+                </div>
+                
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-content-file">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar archivo</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_content')}}" method="POST" enctype="multipart/form-data">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="file-name">Nombre</label>
+                    <div class="controls">
+                        <input type="text" id="file-name" name="name"/>
+                        <p class="help-block">Título que se desplegará para identificar el contenido.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="file-file">Archivo</label>
+                    <div class="controls">
+                        <input type="file" id="file-file" name="file"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="file-required">Requerido</label>
+                    <div class="controls">
+                        <label class="checkbox"><input type="checkbox" id="file-required" name="isrequired">indicar si el contenido se considera mínimo para el estudio.</label>
+                    </div>
+                </div>
+                
+                <input type="hidden" class="content-type" name="contenttype" value="file"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="content-group-id" name="cgid"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Agregar</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-content-video">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar video</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_content')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="video-name">Nombre</label>
+                    <div class="controls">
+                        <input type="text" id="video-name" name="name"/>
+                        <p class="help-block">Título que se desplegará para identificar el contenido.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="video-url">URL</label>
+                    <div class="controls">
+                        <input type="text" id="video-url" name="url"/>
+                        <p class="help-block">Dirección donde se encuentra publicado el video.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="video-required">Requerido</label>
+                    <div class="controls">
+                        <label class="checkbox"><input type="checkbox" id="video-required" name="isrequired">indicar si el contenido se considera mínimo para el estudio.</label>
+                    </div>
+                </div>
+                
+                <input type="hidden" class="content-type" name="contenttype" value="video"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="content-group-id" name="cgid"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Agregar</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-content-link">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar link</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_content')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="link-name">Nombre</label>
+                    <div class="controls">
+                        <input type="text" id="link-name" name="name"/>
+                        <p class="help-block">Título que se desplegará para identificar el contenido.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="link-url">URL</label>
+                    <div class="controls">
+                        <input type="text" id="link-url" name="url"/>
+                        <p class="help-block">Dirección del contenido al cual se quiere apuntar.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="link-required">Requerido</label>
+                    <div class="controls">
+                        <label class="checkbox"><input type="checkbox" id="link-required" name="isrequired">indicar si el contenido se considera mínimo para el estudio.</label>
+                    </div>
+                </div>
+                
+                <input type="hidden" class="content-type" name="contenttype" value="link"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="content-group-id" name="cgid"/>                
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Agregar</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-quiz">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar nuevo quiz</h3>
+    </div>
+    <div class="modal-body">
+        <div class="well">
+            <form id="quiz-main-form" class="form-inline" action="{{=URL('quiz')}}" method="POST">
+                <input type="text" id="quiz-name" name="name" placeholder="Nombre del quiz"/>
+                <input type="date" class="input-small" id="quiz-starting" name="starting" placeholder="Inicio"/>
+                <input type="date" class="input-small" id="quiz-ending" name="ending" placeholder="Fin"/>
+                <input type="hidden" class="instance-id" id="quiz-instanceid" value="{{=inst.id}}"/>
+            </form>
+        </div>
+        <div class="well">
+            <form action="#" class="form-inline">
+                <select id="quiz-category" placeholder="Categoría">
+                {{ for cat in cats: }}
+                        <option value="{{=cat}}">{{=cat}}</option>
+                {{ pass}}
+                </select>
+                <input type="text" class="input-small" id="quiz-category-count" placeholder="# Preguntas"/>
+                <a id="new-quiz-add-category" class="btn" href="#" rel="tooltip" title="Agregar categoria"><i class="icon-plus"></i></a>
+            </form>
+            <table class="table table-bordered" id="new-quiz-categories-table">
+                <thead>
+                    <tr>
+                        <th style="width: 55%;">Categoría</th>
+                        <th style="width: 30%;"># Preguntas</th>
+                        <th style="width: 15%;">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary new-quiz-action">Crear</a>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script src="{{=URL('static', 'js/instance/view.js')}}"></script>
+<script>
+
+</script>
+{{end}}
+
+
+
