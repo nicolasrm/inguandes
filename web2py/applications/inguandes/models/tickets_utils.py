@@ -8,7 +8,7 @@ def get_ticket_categories(db, instanceId):
 def get_ticket_categories_with_sub_for_user(db, instanceId):
     categories = db(db.ticket_category_index.instance==instanceId).select()
     cats = {}
-    for c in categories:
+    #for c in categories:
         
     cats = [c['name'] for c in categories]
     return cats, categories
