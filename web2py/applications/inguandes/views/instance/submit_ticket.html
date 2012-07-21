@@ -4,77 +4,69 @@
         <h2>Emitir un ticket</h2>
     </div>
 </div>
+
 <div class="row">
+    <div class="span6">
+        <div class="row">
+            <div class="span6">
+                <div class="well" style="padding: 8px 0;">
+                    <ul class="nav nav-list">
+                        <li class="nav-header">Cursos</li>
+                        <li class="divider"></li>
+                        {{ for i in instances: }}
+                            <li {{=XML('class="active"') if selected_i is not None and selected_i==i['id'] else ''}}><a         href="{{=URL('submit_ticket', args=[i['id']])}}">{{=XML(i['title'])}}</a></li>
+                            <li class="divider"></li>
+                        {{ pass }}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {{if selected_i:}}
+            <div class="row">
+                <div class="span6">
+                    <div class="well" style="padding: 8px 0;">
+                        <ul class="nav nav-list">
+                            <li class="nav-header">Categorías</li>
+                            <li class="divider"></li>
+                            <li class="active"><a href="#"><i class="icon-home icon-white"></i> Home</a></li>
+                            <li><a href="#"><i class="icon-book"></i> Library</a></li>
+                            <li><a href="#"><i class="icon-pencil"></i> Applications</a></li>
+                            <li><a href="#"><i class="i"></i> Misc</a></li>
+                        </ul>
+                    </div> <!-- /well -->
+                </div>
+            </div>
+        {{pass}}
+    </div>
     <div class="span6">
         <div class="well" style="padding: 8px 0;">
             <ul class="nav nav-list">
-                <li class="nav-header">Cursos</li>
+                <li class="nav-header">Instrucciones</li>
                 <li class="divider"></li>
-                {{print instances}}
-                {{ for i in instances: }}
-                <li {{=XML('class="active"') if selected_i is not None and selected_i==i['id'] else ''}}><a href="{{=URL('submit_ticket', args=[i['id']])}}">{{=XML(i['title'])}}</a></li>
-                <li class="divider"></li>
-                {{ pass }}
+                <dl class="dl-horizontal">
+                        <dt>Description lists</dt>
+                        <dd>A description list is perfect for defining terms.</dd>
+                        <dt>Euismod</dt>
+                        <dd>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.</dd>
+                        <dd>Donec id elit non mi porta gravida at eget metus.</dd>
+                        <dt>Malesuada porta</dt>
+                        <dd>Etiam porta sem malesuada magna mollis euismod.</dd>
+                        <dt>Felis euismod semper eget lacinia</dt>
+                        <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
+                        <dt>Felis euismod semper eget lacinia</dt>
+                        <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
+                        <dt>Felis euismod semper eget lacinia</dt>
+                        <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
+                        <dt>Felis euismod semper eget lacinia</dt>
+                        <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
+                        <dt>Felis euismod semper eget lacinia</dt>
+                        <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
+                      </dl>
             </ul>
-        </div>
+        </div> <!-- /well -->
     </div>
-    {{if selected_i:}}
-    <div class="span6">
-          <div class="well" style="padding: 8px 0;">
-            <ul class="nav nav-list">
-              <li class="nav-header">Categorías</li>
-              <li class="divider"></li>
-              <li class="active"><a href="#"><i class="icon-home icon-white"></i> Home</a></li>
-              <li><a href="#"><i class="icon-book"></i> Library</a></li>
-              <li><a href="#"><i class="icon-pencil"></i> Applications</a></li>
-              <li><a href="#"><i class="i"></i> Misc</a></li>
-            </ul>
-          </div> <!-- /well -->
-    </div>
-    {{pass}}
 </div>
-{{if selected_i:}}
-<div class="row">
-<div class="span6">
-      <div class="well" style="padding: 8px 0;">
-        <ul class="nav nav-list">
-          <li class="nav-header">Descripción</li>
-          <li class="divider"></li>
-          <dl class="dl-horizontal">
-                  <dt>Description lists</dt>
-                  <dd>A description list is perfect for defining terms.</dd>
-                  <dt>Euismod</dt>
-                  <dd>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.</dd>
-                  <dd>Donec id elit non mi porta gravida at eget metus.</dd>
-                  <dt>Malesuada porta</dt>
-                  <dd>Etiam porta sem malesuada magna mollis euismod.</dd>
-                  <dt>Felis euismod semper eget lacinia</dt>
-                  <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
-                </dl>
-        </ul>
-      </div> <!-- /well -->
-</div>
-<div class="span6">
-      <div class="well" style="padding: 8px 0;">
-        <ul class="nav nav-list">
-          <li class="nav-header">Ticket</li>
-          <li class="divider"></li>
-          <dl class="dl-horizontal">
-                  <dt>Description lists</dt>
-                  <dd>A description list is perfect for defining terms.</dd>
-                  <dt>Euismod</dt>
-                  <dd>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.</dd>
-                  <dd>Donec id elit non mi porta gravida at eget metus.</dd>
-                  <dt>Malesuada porta</dt>
-                  <dd>Etiam porta sem malesuada magna mollis euismod.</dd>
-                  <dt>Felis euismod semper eget lacinia</dt>
-                  <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
-                </dl>
-        </ul>
-      </div> <!-- /well -->
-</div>
-</div>
-{{pass}}
+
 
 
 {{block pagescripts}}

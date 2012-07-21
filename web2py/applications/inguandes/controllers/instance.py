@@ -65,7 +65,7 @@ def ticket_categories():
     instanceId = int(request.args[0])
     inst = db.instance[instanceId]
 
-    cats, categories = get_instance_ticket_categories(instanceId)
+    cats, categories = get_ticket_categories(db, instanceId)
 
     selected_c = None
     subcategories = None
@@ -74,8 +74,8 @@ def ticket_categories():
     if len(request.args) > 1:
         selected_c = int(request.args[1])
         subcategories = db(db.ticket_subcategory.index==selected_c).select(db.ticket_subcategory.id ,db.ticket_subcategory.name).as_list()
-        moderators = get_instance_moderators(instanceId)
-        sections = get_instance_sections(instanceId)
+        moderators = get_instance_moderators(db, instanceId)
+        sections = get_instance_sections(db, instanceId)
 
     selected_sc = None
     sc_config = None
@@ -120,7 +120,7 @@ def add_ticket_subcategory():
                 session.flash = 'Fecha de apertura o cierre inválida'
                 redirect(URL('ticket_categories', args=[instanceId, categoryId]))
             configs = []
-            for s in get_instance_sections(instanceId):
+            for s in get_instance_sections(db, instanceId):
                 configs.append(db.section_ticket_subcategory.insert(the_section=s.id,
                                                                     opening=opening,
                                                                     closing=closing,
@@ -138,7 +138,7 @@ def add_ticket_subcategory():
     else:
         if request.vars.subcategory:
             openings, closings, moderators = [], [], []
-            sections = get_instance_sections(instanceId)
+            sections = get_instance_sections(db, instanceId)
             try:
                 multiple=bool(request.vars.multiple),
                 is_appealable=bool(request.vars.is_appealable)
@@ -172,6 +172,17 @@ def add_ticket_subcategory():
         else:
             session.flash = 'Debe ingresar el nombre de la subcategoría'
             redirect(URL('ticket_categories', args=[instanceId, categoryId]))
+
+@auth.requires_login()
+def submit_ticket():
+    instances = get_user_student_instances(db, auth.user.id)
+    selected_i = None
+    if len(request.args) > 0:
+        instanceId = int(request.args[0])
+        inst = db.instance[instanceId]
+        selected_i = instanceId
+        
+    return dict(instances=instances, selected_i=selected_i)
 
 @request.restful()
 def quiz():
