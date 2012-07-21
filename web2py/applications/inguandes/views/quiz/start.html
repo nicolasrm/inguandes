@@ -2,7 +2,7 @@
 <div class="row">
     <div class="span12">
         <h2>{{=quiz_info['name']}}</h2>
-        <h4>{{=quiz_info['instance']}}</h4>
+        <h4><a href="{{=URL('instance','view', args=[quiz_info['instance_id']])}}">{{=quiz_info['instance']}}</a></h4>
     </div>
 </div>
 <div class="row">    

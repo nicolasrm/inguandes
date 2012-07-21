@@ -8,30 +8,30 @@
     <div class="span4">
         <div class="well" style="padding: 8px 0;">
             <ul class="nav nav-list">
-                <li class="nav-header">Evaluaciones Pendientes</li>
-                {{ for q in quizzes['pending']: }}
+                <li class="nav-header">Próximas Evaluaciones</li>
+                {{ for t in u_tasks['pending']: }}
                     <li>
-                        <i class="icon-th-list"></i>{{=q['name']}}
-                        <span class="label pull-right">{{=q['starting']}}</span>
+                        <i class="{{=t['icon']}}"></i>{{=t['name']}}
+                        <span class="label label-success pull-right" rel="tooltip" title="Fecha de inicio">{{=t['starting']}}</span>
                     </li> 
                 {{ pass }}   
                 <li class="divider"></li>                
                 <li class="nav-header">Evaluaciones Activas</li>                       
-                {{ for q in quizzes['actived']: }}
+                {{ for t in u_tasks['actived']: }}
                     <li>
-                        <a href="{{=URL('quiz', args=[q.id])}}">
-                            <i class="icon-th-list"></i>{{=q['name']}}
-                            <span class="label label-warning pull-right">{{=q['ending']}}</span>
+                        <a href="{{=URL(t['type'], args=[t['id']])}}">
+                            <i class="{{=t['icon']}}"></i>{{=t['name']}}
+                            <span class="label label-warning pull-right" rel="tooltip" title="Fecha de cierre">{{=t['ending']}}</span>
                         </a>
                     </li> 
                 {{ pass }}
                 <li class="divider"></li>
                 <li class="nav-header">Evaluaciones Cerradas</li>
-                {{ for q in quizzes['closed']: }}
+                {{ for t in u_tasks['closed']: }}
                     <li>
-                        <a href="{{=URL('quiz', 'result', args=[q.id])}}">
-                            <i class="icon-th-list"></i>{{=q['name']}}
-                            <span class="label label-info pull-right">{{=q['ending']}}</span>
+                        <a href="{{=URL(t['type'], 'result', args=[t.id])}}">
+                            <i class="{{=t['icon']}}"></i>{{=t['name']}}
+                            <span class="label label-info pull-right" rel="tooltip" title="Fecha de cierre">{{=t['ending']}}</span>
                         </a>
                     </li> 
                 {{ pass }}                
@@ -41,7 +41,7 @@
             <nav id="menu">
                 <ul>                                       
                     <li><a data-btn-type="new-quiz" data-toggle="modal" href="#modal-new-quiz" rel="tooltip" title="Agregar un quiz"><i class="icon-plus"></i><i class="icon-th-list"></i></a></li>
-                    <li><a data-btn-type="new-task" href="#" rel="tooltip" title="Agregar una tarea o entrega"><i class="icon-plus"></i><i class="icon-upload"></i></a></li>
+                    <li><a data-btn-type="new-task" data-toggle="modal" href="#modal-new-assignment" rel="tooltip" title="Agregar una entrega de trabajo"><i class="icon-plus"></i><i class="icon-upload"></i></a></li>
                 </ul>
             </nav>
             {{ pass }}
@@ -341,6 +341,33 @@
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
         <a href="#" class="btn btn-primary new-quiz-action">Crear</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-assignment">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar nuevo Trabajo</h3>
+    </div>
+    <div class="modal-body">        
+            <form id="quiz-main-form" action="{{=URL('assignment')}}" method="POST">
+                <div class="well">
+                    <input type="text" class="input-large" id="assignment-name" name="name" placeholder="Nombre del trabajo"/>
+                    <input type="date" class="input-small" id="assignment-starting" name="starting" placeholder="Inicio"/>
+                    <input type="date" class="input-small" id="assignment-ending" name="ending" placeholder="Fin"/>
+                    <input type="hidden" class="instance-id" id="assignment-instanceid" name="instance" value="{{=inst.id}}"/>
+                </div>
+                <div class="well form-inline">
+                    <input type="text" class="input-large" id="assignment-file_types" name="file_types" placeholder="Tipo de archivos (ej: *.java|*.pdf)"/>
+                    <label class="checkbox" id="assignment-multiple">
+                        <input type="checkbox" name="multiple"> Más de un archivo
+                    </label>
+                </div>
+            </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
     </div>
 </div>
 {{ pass }}
