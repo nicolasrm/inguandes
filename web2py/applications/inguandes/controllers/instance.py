@@ -177,12 +177,19 @@ def add_ticket_subcategory():
 def submit_ticket():
     instances = get_user_student_instances(db, auth.user.id)
     selected_i = None
+    categories = None
     if len(request.args) > 0:
         instanceId = int(request.args[0])
         inst = db.instance[instanceId]
         selected_i = instanceId
+        categories = get_ticket_categories_with_sub_for_user(db, instanceId, auth.user.id)
         
-    return dict(instances=instances, selected_i=selected_i)
+    selected_sc = None
+    if len(request.args) > 1:
+        subcategoryId = int(request.args[1])
+        selected_sc = subcategoryId
+        
+    return dict(instances=instances, selected_i=selected_i, categories=categories, selected_sc=selected_sc)
 
 @request.restful()
 def quiz():

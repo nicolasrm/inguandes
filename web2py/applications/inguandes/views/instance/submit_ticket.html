@@ -14,7 +14,7 @@
                         <li class="nav-header">Cursos</li>
                         <li class="divider"></li>
                         {{ for i in instances: }}
-                            <li {{=XML('class="active"') if selected_i is not None and selected_i==i['id'] else ''}}><a         href="{{=URL('submit_ticket', args=[i['id']])}}">{{=XML(i['title'])}}</a></li>
+                            <li {{=XML('class="active"') if selected_i is not None and selected_i==i['id'] else ''}}><a href="{{=URL('submit_ticket', args=[i['id']])}}"><i class="icon-chevron-right"></i>{{=XML(i['title'])}}</a></li>
                             <li class="divider"></li>
                         {{ pass }}
                     </ul>
@@ -28,16 +28,24 @@
                         <ul class="nav nav-list">
                             <li class="nav-header">Categorías</li>
                             <li class="divider"></li>
-                            <li class="active"><a href="#"><i class="icon-home icon-white"></i> Home</a></li>
-                            <li><a href="#"><i class="icon-book"></i> Library</a></li>
-                            <li><a href="#"><i class="icon-pencil"></i> Applications</a></li>
-                            <li><a href="#"><i class="i"></i> Misc</a></li>
+                            {{for k, v in categories.iteritems():}}
+                                <li><a href="#">{{=k}}</a></li>
+                                    <li>
+                                        <ul class="nav nav-list">
+                                            {{for s in v:}}
+                                                <li {{=XML('class="active"') if selected_sc is not None and selected_sc==s['id'] else ''}}><a href="{{=URL('submit_ticket', args=[selected_i ,s['id']])}}"><i class="icon-chevron-right"></i>{{=XML(s['name'])}}</a></li>
+                                            {{pass}}
+                                        </ul>
+                                    </li>
+                                <li class="divider"></li>
+                            {{pass}}
                         </ul>
                     </div> <!-- /well -->
                 </div>
             </div>
         {{pass}}
     </div>
+    {{if selected_sc:}}
     <div class="span6">
         <div class="well" style="padding: 8px 0;">
             <ul class="nav nav-list">
@@ -57,14 +65,13 @@
                         <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
                         <dt>Felis euismod semper eget lacinia</dt>
                         <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
-                        <dt>Felis euismod semper eget lacinia</dt>
-                        <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
-                        <dt>Felis euismod semper eget lacinia</dt>
-                        <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
                       </dl>
+                <li class="divider"></li>
             </ul>
+            <a class="btn btn-small btn-primary" style="margin-left: 275px;" href="/inguandes/quiz/answer/1"><i class="icon-check icon-white"></i>He leído las instrucciones</a>
         </div> <!-- /well -->
     </div>
+    {{pass}}
 </div>
 
 
