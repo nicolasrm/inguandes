@@ -1,0 +1,17 @@
+*.pyc
+applications/*/cache
+applications/*/sessions
+applications/*/databases
+applications/*/errors
+applications/*/uploads
+applications/*/private
+*.log
+*.pid
+*.w2p
+cron.master
+logs
+parameters_*.py
+.project
+.pydevproject
+.settings
+*.bak
