@@ -20,6 +20,8 @@
             <dd>{{='Sin restricción' if not asgn_info['file_types'] else XML('Se permiten archivos con las extensiones <span class="label label-warning">' + asgn_info['file_types_text'] + '</span>')}}</dd>
             <dt># Archivos</dt>
             <dd>{{='Uno' if not asgn_info['multiple'] else 'Uno o más'}}</dd>
+            <dt>Tamaño máximo</dt>
+            <dd><span class="label label-info">{{=file_size_options[asgn_info['max_size']]}}</span> por archivo</dd>
         </dl>
     </div>    
     <div class="span7 well">
@@ -168,6 +170,7 @@ $(function () {
     {{ pass }}    
     
     INGUANDES.allowed_multiple = {{='false' if not asgn_info['multiple'] else 'true'}};
+    INGUANDES.max_size = {{=file_size_options_kb[asgn_info['max_size']]}}
 });
 
 function splitFilename(filename) {
@@ -188,24 +191,31 @@ function addNewFile(file) {
     split = splitFilename(file.name);
     
     if (INGUANDES.allowed_ext.length == 0 || $.inArray(split.ext, INGUANDES.allowed_ext) != -1) {    
-        INGUANDES.files.push(file);
-        fileindex = INGUANDES.files.indexOf(file);
-    
-        row_file = $('#tr-new-file-template').clone();
-        row_file.attr('id', 'tr-new-file-' + fileindex);
+        file_size = file.size/1024;
         
-        row_file.find('td[data-name]').text(split.name);
-        row_file.find('td[data-extension]').text(split.ext);
-        row_file.find('td[data-size]').text(Math.round(file.size/1024) + ' KB');
+        if (file_size <= INGUANDES.max_size) {        
+            INGUANDES.files.push(file);
+            fileindex = INGUANDES.files.indexOf(file);
         
-        row_file.find('[data-remove-file]')
-                .on('click', {
-                    fileindex: fileindex
-                }, removeNewFile);
+            row_file = $('#tr-new-file-template').clone();
+            row_file.attr('id', 'tr-new-file-' + fileindex);
+            
+            row_file.find('td[data-name]').text(split.name);
+            row_file.find('td[data-extension]').text(split.ext);
+            row_file.find('td[data-size]').text(Math.round(file_size) + ' KB');
+            
+            row_file.find('[data-remove-file]')
+                    .on('click', {
+                        fileindex: fileindex
+                    }, removeNewFile);
 
-        row_file.find('[rel="tooltip"]').tooltip();
-        
-        table_new_files.append(row_file);
+            row_file.find('[rel="tooltip"]').tooltip();
+            
+            table_new_files.append(row_file);
+        }
+        else {
+            INGUANDES.notify('error', 'El archivo <strong>' + file.name + '</strong> es más grande que lo permitido.');
+        }
     }
     else {
         INGUANDES.notify('error', 'El archivo <strong>' + file.name + '</strong> no es de un tipo permitido.');

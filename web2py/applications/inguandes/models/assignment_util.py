@@ -35,6 +35,7 @@ def get_assignment(db, asgnId):
     asgn_info['file_types'] = cAsgn.file_types.split(';')
     asgn_info['file_types_text'] = cAsgn.file_types
     asgn_info['multiple'] = cAsgn.multiple
+    asgn_info['max_size'] = cAsgn.max_size
     asgn_info['instance'] = cAsgn.instance.title
     asgn_info['instance_id'] = cAsgn.instance
     

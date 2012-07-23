@@ -30,7 +30,11 @@ def assignment_files():
             for f in array_files:
                 o_filename, o_ext = os.path.splitext(f.filename)
                 
-                if len(asgn_info['file_types']) == 0 or o_ext[1:] in asgn_info['file_types']:            
+                f.file.seek(0, os.SEEK_END)
+                file_size = f.file.tell()/1024
+                f.file.seek(0, os.SEEK_SET)
+                
+                if (len(asgn_info['file_types']) == 0 or o_ext[1:] in asgn_info['file_types']) and file_size <= asgn_info['max_size']:            
                     n_filename = f.filename if len(o_filename) < 30 else o_filename[:30] + o_ext
                     file_id = db.user_assignment_file.insert(   the_user=auth.user.id,
                                                                 assignment=assignment_id,

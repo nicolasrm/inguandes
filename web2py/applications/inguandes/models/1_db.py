@@ -142,6 +142,22 @@ db.define_table('user_quiz_question',
         )
 
 ########## Assignments ##########
+file_size_options = {
+    0: '500 KB',
+    1: '1 MB',
+    2: '5 MB',
+    3: '10 MB',
+    4: '50 MB'
+}
+
+file_size_options_kb = {
+    0: '500',
+    1: '1024',
+    2: '5120',
+    3: '10240',
+    4: '51200'
+}
+
 db.define_table('assignment',
         Field('name', type='string', requires=IS_NOT_EMPTY()),
         Field('starting', type='date'),
@@ -149,6 +165,7 @@ db.define_table('assignment',
         Field('instance', type=db.instance, notnull=True),
         Field('file_types', type='string'),
         Field('multiple', type='boolean', default=False),
+        Field('max_size', type='integer', requires=IS_IN_SET(file_size_options)),
         )   
         
 db.define_table('user_assignment_file',
