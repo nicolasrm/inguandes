@@ -30,7 +30,7 @@
                 alert_element.addClass(local_level);
             }
             alert_element.addClass('fade in');
-            alert_element.find('[data-type=alert-text]').text(message);
+            alert_element.find('[data-type=alert-text]').html(message);
             $('div.container').append(alert_row);
             alert_row.fadeIn(200, function () {
                 setTimeout(function () {

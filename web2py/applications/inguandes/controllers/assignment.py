@@ -20,16 +20,24 @@ def view():
 def assignment_files():
 
     def POST(assignment_id, **fields):        
+        asgn_info = get_assignment(db, assignment_id)
         uploaded_files = []
         array_files = fields['files[]']
         if not isinstance(fields['files[]'], (list, tuple)):
             array_files = [fields['files[]']]
-        for f in array_files:
-            file_id = db.user_assignment_file.insert(   the_user=auth.user.id,
-                                                        assignment=assignment_id,
-                                                        file=db.user_assignment_file.file.store(f.file, f.filename))
-                        
-            uploaded_files.append(get_assignment_file_info(db, file_id))
+            
+        if asgn_info['multiple'] or len(array_files) == 1:            
+            for f in array_files:
+                o_filename, o_ext = os.path.splitext(f.filename)
+                
+                if len(asgn_info['file_types']) == 0 or o_ext[1:] in asgn_info['file_types']:            
+                    n_filename = f.filename if len(o_filename) < 30 else o_filename[:30] + o_ext
+                    file_id = db.user_assignment_file.insert(   the_user=auth.user.id,
+                                                                assignment=assignment_id,
+                                                                original_filename=o_filename,
+                                                                file=db.user_assignment_file.file.store(f.file, n_filename))
+                                
+                    uploaded_files.append(get_assignment_file_info(db, file_id))
         
         if request.ajax:
             if request.env.http_accept.find('application/json'):
@@ -44,7 +52,7 @@ def assignment_files():
                 return response.json([{
                     'code': 'Error',
                     'message': 'Error al guardar archivo'
-                    }])
+                    }])        
     
     def DELETE(file_id):
         db(db.user_assignment_file.id == file_id).delete()

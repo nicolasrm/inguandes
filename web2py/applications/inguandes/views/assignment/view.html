@@ -17,7 +17,7 @@
             <dt>Fin</dt>
             <dd>Se debe subir a más tardar el <span class="label label-important">{{=asgn_info['ending']}}</span> a las 23:59</dd>
             <dt>Tipo de archivos</dt>
-            <dd>{{='Sin restricción' if not asgn_info['file_types'] else 'Se permiten archivos con las extensiones ' + asgn_info['file_types']}}</dd>
+            <dd>{{='Sin restricción' if not asgn_info['file_types'] else XML('Se permiten archivos con las extensiones <span class="label label-warning">' + asgn_info['file_types_text'] + '</span>')}}</dd>
             <dt># Archivos</dt>
             <dd>{{='Uno' if not asgn_info['multiple'] else 'Uno o más'}}</dd>
         </dl>
@@ -130,11 +130,13 @@
 $(function () {
     var file_list = [],
         file;
-    INGUANDES.files = []
+    INGUANDES.files = [];
+    INGUANDES.allowed_ext = [];
+    
     $('#form-file-upload').fileupload({
         dataType: 'json',
         type: 'POST',
-        add: function (e, data) {
+        add: function (e, data) {            
             $.each(data.files, function (index, file) {    
                 addNewFile(file);
             });
@@ -142,7 +144,7 @@ $(function () {
         progressall: updateProgress
     });
     
-    $('#start-upload').on('click', uploadFiles);
+    $('#start-upload').on('click', startUploadFiles);
     
     {{ 
     if len(asgn_files) > 0: 
@@ -161,13 +163,18 @@ $(function () {
         addFile(file);
     });
     {{ pass }}
+    {{ for ft in asgn_info['file_types']: }}
+    INGUANDES.allowed_ext.push('{{=ft}}');
+    {{ pass }}    
+    
+    INGUANDES.allowed_multiple = {{='false' if not asgn_info['multiple'] else 'true'}};
 });
 
 function splitFilename(filename) {
     var ext,
         onlyname;
     ext = filename.split('.').pop();
-    onlyname = filename.substring(0, filename.lastIndexOf('.')).replace(/\./g, '_').replace(/\ /g, '_');
+    onlyname = filename.substring(0, filename.lastIndexOf('.'));
     
     return {name: onlyname, ext: ext}
 }
@@ -178,26 +185,31 @@ function addNewFile(file) {
         split,
         fileindex;
     
-    INGUANDES.files.push(file);
-    fileindex = INGUANDES.files.indexOf(file);
-    
     split = splitFilename(file.name);
     
-    row_file = $('#tr-new-file-template').clone();
-    row_file.attr('id', 'tr-new-file-' + fileindex);
+    if (INGUANDES.allowed_ext.length == 0 || $.inArray(split.ext, INGUANDES.allowed_ext) != -1) {    
+        INGUANDES.files.push(file);
+        fileindex = INGUANDES.files.indexOf(file);
     
-    row_file.find('td[data-name]').text(split.name);
-    row_file.find('td[data-extension]').text(split.ext);
-    row_file.find('td[data-size]').text(Math.round(file.size/1024) + ' KB');
-    
-    row_file.find('[data-remove-file]')
-            .on('click', {
-                fileindex: fileindex
-            }, removeNewFile);
+        row_file = $('#tr-new-file-template').clone();
+        row_file.attr('id', 'tr-new-file-' + fileindex);
+        
+        row_file.find('td[data-name]').text(split.name);
+        row_file.find('td[data-extension]').text(split.ext);
+        row_file.find('td[data-size]').text(Math.round(file.size/1024) + ' KB');
+        
+        row_file.find('[data-remove-file]')
+                .on('click', {
+                    fileindex: fileindex
+                }, removeNewFile);
 
-    row_file.find('[rel="tooltip"]').tooltip();
-    
-    table_new_files.append(row_file);
+        row_file.find('[rel="tooltip"]').tooltip();
+        
+        table_new_files.append(row_file);
+    }
+    else {
+        INGUANDES.notify('error', 'El archivo <strong>' + file.name + '</strong> no es de un tipo permitido.');
+    }
 }
 
 function removeNewFile(event) {    
@@ -206,20 +218,32 @@ function removeNewFile(event) {
             
     event.preventDefault();
     
+    INGUANDES.files.splice(fileindex,1);
+    
     row_file.find('[rel="tooltip"]').tooltip('hide');    
     row_file.remove();
 }
 
-function uploadFiles(event) {
+function startUploadFiles(event) {
     var jqXHR,
         bar = $('#upload-progress');
-    
-    bar.removeClass('hide');
-    
+        
     event.preventDefault();
-    jqXHR = $('#form-file-upload').fileupload('send', {files: INGUANDES.files})
-        .success(uploadSuccess)
-        .error(uploadError);
+    
+    if (!INGUANDES.allowed_multiple && INGUANDES.files.length > 1) {
+        INGUANDES.notify('error', 'Este trabajo permite un solo archivo.');
+    }
+    else {
+        bar.removeClass('hide');
+        $('#upload-progress .bar').css(
+            'width',
+            0 + '%'
+        );
+        
+        jqXHR = $('#form-file-upload').fileupload('send', {files: INGUANDES.files})
+            .success(uploadSuccess)
+            .error(uploadError);
+    }
 }
 
 function uploadSuccess(result, textStatus, jqXHR) {        

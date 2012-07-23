@@ -32,7 +32,8 @@ def get_assignment(db, asgnId):
     asgn_info['name'] = cAsgn.name
     asgn_info['starting'] = cAsgn.starting
     asgn_info['ending'] = cAsgn.ending
-    asgn_info['file_types'] = cAsgn.file_types
+    asgn_info['file_types'] = cAsgn.file_types.split(';')
+    asgn_info['file_types_text'] = cAsgn.file_types
     asgn_info['multiple'] = cAsgn.multiple
     asgn_info['instance'] = cAsgn.instance.title
     asgn_info['instance_id'] = cAsgn.instance
@@ -44,7 +45,7 @@ def get_assignment_file_info(db, file_id):
     filename, file_stream = db.user_assignment_file.file.retrieve(up_file.file)
     only_name, file_extension = os.path.splitext(filename)
     
-    return {'filename': only_name,
+    return {'filename': up_file.original_filename,
             'id': up_file.id,
             'size': round(os.fstat(file_stream.fileno()).st_size/1024, 1),
             'type': file_extension,
