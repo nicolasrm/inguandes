@@ -151,6 +151,13 @@ db.define_table('assignment',
         Field('multiple', type='boolean', default=False),
         )   
         
+db.define_table('user_assignment_file',
+        Field('the_user', type=db.auth_user),
+        Field('assignment', type=db.assignment),
+        Field('created_on', type='datetime', default=request.now),
+        Field('file', type='upload')
+        )
+        
 ########## Tickets ##########
 
 ticket_status = {

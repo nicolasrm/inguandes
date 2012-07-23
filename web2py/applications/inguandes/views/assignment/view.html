@@ -7,6 +7,7 @@
 </div>
 <div class="row">    
     <div class="span4 well">
+        
         <h3>Información del Trabajo</h3>
         <dl class="dl-horizontal">
             <dt>Nombre</dt>
@@ -32,9 +33,260 @@
         </ul>
     </div>
 </div>
+<div class="row">
+    </div class="span12">
+        <div class="well">            
+            <div class="row">
+                <div class="span11">                    
+                    <form id="form-file-upload" action="{{=URL('assignment_files', args=[asgn_info['id']])}}" method="POST" enctype="multipart/form-data">
+                        <div class="row fileupload-buttonbar">  
+                            <div class="span5">
+                                <span class="btn btn-primary fileinput-button">
+                                    <i class="icon-plus icon-white"></i>
+                                    <span>Agregar archivos...</span>
+                                    <input id="fileupload" type="file" name="files[]" multiple>
+                                </span>
+                                <button id="start-upload" class="btn btn-success start">
+                                    <i class="icon-upload icon-white"></i>
+                                    <span>Enviar archivos</span>
+                                </button>
+                            </div>
+                            <div class="span3">
+                                <div id="upload-progress" class="progress progress-striped active hide">
+                                    <div class="bar" style="width: 0%;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span11">
+                    <h3>Nuevos Archivos <small>arhcivos aún no enviados</small></h3>                    
+                    <table class="table table-striped table-bordered" id="tb-new-files">
+                        <thead>
+                            <tr>
+                                <th>Nombre Archivo</th>
+                                <th>Tipo</th>
+                                <th>Tamaño</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span11">
+                    <h3>Archivos Enviados</h3>
+                    <table class="table table-striped table-bordered" id="tb-files">
+                        <thead>
+                            <tr>
+                                <th>Nombre Archivo</th>
+                                <th>Tipo</th>
+                                <th>Tamaño</th>
+                                <th>Modificado</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hide">
+    <table>
+        <tr id="tr-new-file-template">
+            <td data-name></td>
+            <td data-extension></td>
+            <td data-size></td>
+            <td data-remove>
+                <a class="btn" rel="tooltip" title="Descartar archivo" href="#" data-remove-file><i class="icon-remove"></i></a>
+            </td>
+        </tr>
+        <tr id="tr-file-template">
+            <td data-name></td>
+            <td data-extension></td>
+            <td data-size></td>
+            <td data-uploaded></td>
+            <td data-remove>
+                <a class="btn" rel="tooltip" title="Eliminar archivo" href="#" data-remove-file><i class="icon-remove"></i></a>
+            </td>
+        </tr>
+    </table>
+</div>
 
 {{block pagescripts}}
+<script src="{{=URL('static','js/jquery.ui.widget.js')}}"></script>
+<script src="{{=URL('static','js/jquery.iframe-transport.js')}}"></script>
+<script src="{{=URL('static','js/jquery.fileupload.js')}}"></script>
 <script>
+$(function () {
+    var file_list = [],
+        file;
+    INGUANDES.files = []
+    $('#form-file-upload').fileupload({
+        dataType: 'json',
+        type: 'POST',
+        add: function (e, data) {
+            $.each(data.files, function (index, file) {    
+                addNewFile(file);
+            });
+        },
+        progressall: updateProgress
+    });
+    
+    $('#start-upload').on('click', uploadFiles);
+    
+    {{ 
+    if len(asgn_files) > 0: 
+        for uf in asgn_files:
+    }}
+    file = {}
+    file.id = '{{=uf['id']}}';
+    file.filename = '{{=uf['filename']}}';
+    file.type = '{{=uf['type']}}';
+    file.size = '{{=uf['size']}}';
+    file.uploaded = '{{=uf['uploaded']}}';
+    
+    file_list.push(file);
+    {{  pass }}
+    $.each(file_list, function (index, file) {    
+        addFile(file);
+    });
+    {{ pass }}
+});
+
+function splitFilename(filename) {
+    var ext,
+        onlyname;
+    ext = filename.split('.').pop();
+    onlyname = filename.substring(0, filename.lastIndexOf('.')).replace(/\./g, '_').replace(/\ /g, '_');
+    
+    return {name: onlyname, ext: ext}
+}
+
+function addNewFile(file) {
+    var row_file,
+        table_new_files = $('#tb-new-files tbody'),
+        split,
+        fileindex;
+    
+    INGUANDES.files.push(file);
+    fileindex = INGUANDES.files.indexOf(file);
+    
+    split = splitFilename(file.name);
+    
+    row_file = $('#tr-new-file-template').clone();
+    row_file.attr('id', 'tr-new-file-' + fileindex);
+    
+    row_file.find('td[data-name]').text(split.name);
+    row_file.find('td[data-extension]').text(split.ext);
+    row_file.find('td[data-size]').text(Math.round(file.size/1024) + ' KB');
+    
+    row_file.find('[data-remove-file]')
+            .on('click', {
+                fileindex: fileindex
+            }, removeNewFile);
+
+    row_file.find('[rel="tooltip"]').tooltip();
+    
+    table_new_files.append(row_file);
+}
+
+function removeNewFile(event) {    
+    var fileindex = event.data.fileindex,
+        row_file = $('#tr-new-file-' + fileindex);
+            
+    event.preventDefault();
+    
+    row_file.find('[rel="tooltip"]').tooltip('hide');    
+    row_file.remove();
+}
+
+function uploadFiles(event) {
+    var jqXHR,
+        bar = $('#upload-progress');
+    
+    bar.removeClass('hide');
+    
+    event.preventDefault();
+    jqXHR = $('#form-file-upload').fileupload('send', {files: INGUANDES.files})
+        .success(uploadSuccess)
+        .error(uploadError);
+}
+
+function uploadSuccess(result, textStatus, jqXHR) {        
+    var bar = $('#upload-progress'),
+        table_new_files = $('#tb-new-files tbody');
+    bar.fadeOut(800);
+    
+    $.each(result, function (index, file) {    
+        addFile(file);
+    });
+    
+    INGUANDES.files = []
+    table_new_files.empty();
+}
+
+function uploadError(jqXHR, textStatus, errorThrown) {
+    var bar = $('#upload-progress');
+    bar.fadeOut(200);
+    INGUANDES.notify('error', 'Hubo un error al subir los archivos.');
+}
+
+function updateProgress(e, data) {
+    var progress = parseInt(data.loaded / data.total * 100, 10);    
+    $('#upload-progress .bar').css(
+        'width',
+        progress + '%'
+    );
+}
+
+function addFile(file) {
+    var row_file,
+        table_files = $('#tb-files tbody');
+            
+    row_file = $('#tr-file-template').clone();
+    row_file.attr('id', 'tr-file-' + file.id);
+    
+    row_file.find('td[data-name]').text(file.filename);
+    row_file.find('td[data-extension]').text(file.type);
+    row_file.find('td[data-size]').text(file.size + ' KB');
+    row_file.find('td[data-uploaded]').text(file.uploaded);
+    
+    row_file.find('[data-remove-file]')
+            .on('click', {
+                fileid: file.id
+            }, removeFile);
+
+    row_file.find('[rel="tooltip"]').tooltip();
+    
+    table_files.append(row_file);
+}
+
+function removeFile(event) {    
+    var fileid = event.data.fileid,
+        row_file = $('#tr-file-' + fileid);
+            
+    event.preventDefault();
+    
+    $.ajax({
+        url: INGUANDES.api_url + 'assignment_files/' + fileid,
+        type: 'DELETE',
+        success: function (data) {
+            INGUANDES.notify('success', 'Archivo eliminado');
+            row_file.find('[rel="tooltip"]').tooltip('hide');    
+            row_file.remove();
+        }
+    });
+}
 
 </script>
 {{end}}

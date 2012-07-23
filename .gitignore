@@ -15,3 +15,9 @@ private
 sessions
 
 *.pyc
+/web2py/gluon/contrib/simplejson/__init__.pyc
+/web2py/gluon/contrib/simplejson/decoder.pyc
+/web2py/gluon/contrib/simplejson/encoder.pyc
+/web2py/gluon/contrib/simplejson/scanner.pyc
+/web2py/gluon/__init__.pyc
+/web2py/gluon/admin.pyc
