@@ -173,7 +173,8 @@ db.define_table('user_assignment_file',
         Field('assignment', type=db.assignment),
         Field('created_on', type='datetime', default=request.now),
         Field('original_filename', type='string'),
-        Field('file', type='upload')
+        Field('file', type='upload'),
+        Field('available', type='boolean', default=True),
         )
         
 ########## Tickets ##########

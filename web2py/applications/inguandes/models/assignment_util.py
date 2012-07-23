@@ -44,19 +44,22 @@ def get_assignment(db, asgnId):
 def get_assignment_file_info(db, file_id):
     up_file = db.user_assignment_file[file_id]
     filename, file_stream = db.user_assignment_file.file.retrieve(up_file.file)
-    only_name, file_extension = os.path.splitext(filename)
+    only_name, file_extension = os.path.splitext(up_file.original_filename)
+    same_name_files = db(db.user_assignment_file.original_filename == up_file.original_filename).select(db.user_assignment_file.id, orderby=~db.user_assignment_file.created_on)
     
-    return {'filename': up_file.original_filename,
+    return {'filename': only_name,
             'id': up_file.id,
             'size': round(os.fstat(file_stream.fileno()).st_size/1024, 1),
             'type': file_extension,
-            'uploaded': up_file.created_on
+            'uploaded': up_file.created_on,
+            'available': up_file.available,
+            'history': [sf.id for sf in same_name_files]
             }
 
 def get_user_files(db, asgnId, userId):
-    u_files = db((db.user_assignment_file.the_user == userId) & (db.user_assignment_file.assignment == asgnId)).select()
+    u_files = db((db.user_assignment_file.the_user == userId) & (db.user_assignment_file.assignment == asgnId)).select(orderby =~ db.user_assignment_file.created_on)
     files_info = []
     for uf in u_files:
         files_info.append(get_assignment_file_info(db, uf.id))
         
-    return files_info
+    return files_info        

@@ -35,10 +35,15 @@ def assignment_files():
                 f.file.seek(0, os.SEEK_SET)
                 
                 if (len(asgn_info['file_types']) == 0 or o_ext[1:] in asgn_info['file_types']) and file_size <= asgn_info['max_size']:            
+                    # Discard previous file with the same name if this exists
+                    old_file = db((db.user_assignment_file.original_filename == f.filename) & (db.user_assignment_file.available == True)).select().first()
+                    if old_file is not None:
+                        old_file.update_record(available=False)
+                    
                     n_filename = f.filename if len(o_filename) < 30 else o_filename[:30] + o_ext
                     file_id = db.user_assignment_file.insert(   the_user=auth.user.id,
                                                                 assignment=assignment_id,
-                                                                original_filename=o_filename,
+                                                                original_filename=f.filename,
                                                                 file=db.user_assignment_file.file.store(f.file, n_filename))
                                 
                     uploaded_files.append(get_assignment_file_info(db, file_id))
@@ -59,7 +64,8 @@ def assignment_files():
                     }])        
     
     def DELETE(file_id):
-        db(db.user_assignment_file.id == file_id).delete()
+        db.user_assignment_file[file_id].update_record(available=False)
+        
         response.headers['Content-Type'] = 'application/json'
         response.status = 200
         return response.json({'mensaje': 'archivo ' + file_id + ' eliminado'})
