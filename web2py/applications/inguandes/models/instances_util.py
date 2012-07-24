@@ -22,9 +22,9 @@ def get_instance_content(db, instanceId):
     links = db((db.content_link.content_group == db.content_group.id) & (db.content_group.instance == instanceId)).select(db.content_link.ALL)    
     
     contents = {}
-    add_organized_content(files, ['id', 'name'], 'file', 'file', 'file', {'_target':'_blank'}, contents, URL('instance', 'download_content_file'))
-    add_organized_content(videos, ['id', 'name', 'url'], 'video', 'facetime-video', None, None, contents)
-    add_organized_content(links, ['id', 'name', 'url'], 'link', 'bookmark', 'url', {'_target':'_blank'}, contents)
+    add_organized_content(files, ['id', 'name', 'description'], 'file', 'file', 'file', {'_target':'_blank'}, contents, URL('instance', 'download_content_file'))
+    add_organized_content(videos, ['id', 'name', 'url', 'description'], 'video', 'facetime-video', None, None, contents)
+    add_organized_content(links, ['id', 'name', 'url', 'description'], 'link', 'bookmark', 'url', {'_target':'_blank'}, contents)
             
     return contents
     
@@ -63,7 +63,7 @@ def get_user_instances(db, userId):
     
 def get_user_role(db, instanceId, userId):
     u_role = db((db.user_section.the_user == userId) & (db.user_section.section == db.section.id) & (db.section.instance == instanceId)).select(db.user_section.the_role).first()
-    return u_role.the_role
+    return u_role.the_role if u_role is not None else None
 
 def get_user_tasks(db, instanceId, userId):
     u_qzs = get_quizzes(db, instanceId, userId)

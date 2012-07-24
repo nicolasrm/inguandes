@@ -21,7 +21,8 @@
     $(document).ready( function () {
         INGUANDES.startDateFields();
     
-        $("[rel=tooltip]").tooltip({placement: 'top'});        
+        $("[rel=tooltip]").tooltip({placement: 'top'});
+        $("[rel=popover]").popover();
         $(".collapse").collapse();
         
         $('.modal .modal-action').click( function () {

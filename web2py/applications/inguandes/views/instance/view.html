@@ -64,9 +64,18 @@
                                     <li class="nav-header">Contenido Mínimo</li>
                                     {{  if cg['id'] in contents:
                                             for c in contents[cg['id']]['required']: 
-                                                a_c = [I(_class='icon-' + c['icon']), c['name']]
+                                                a_c = [I(_class='icon-' + c['icon']), c['name']]                                                
                                                 c['a_attrs']['_href'] = c['href']
-                                                response.write(LI(A(*a_c, **c['a_attrs'])))
+                                                if c['description'] is not None and len(c['description']) > 0:
+                                                    a_c.append(' ')
+                                                    i_attr = {  '_class':'icon-info-sign',
+                                                                '_rel':'popover',
+                                                                '_title':c['name'],
+                                                                '_data-content':c['description']}
+                                                    a_c.append(I(**i_attr))
+                                                pass
+                                                o_li = LI(A(*a_c, **c['a_attrs']))                                                
+                                                response.write(o_li)
                                             pass
                                         pass
                                     }}
@@ -79,6 +88,14 @@
                                             for c in contents[cg['id']]['optional']: 
                                                 a_c = [I(_class='icon-' + c['icon']), c['name']]
                                                 c['a_attrs']['_href'] = c['href']
+                                                if c['description'] is not None and len(c['description']) > 0:
+                                                    a_c.append(' ')
+                                                    i_attr = {  '_class':'icon-info-sign',
+                                                                '_rel':'popover',
+                                                                '_title':c['name'],
+                                                                '_data-content':c['description']}
+                                                    a_c.append(I(**i_attr))
+                                                pass
                                                 response.write(LI(A(*a_c, **c['a_attrs'])))
                                             pass
                                         pass
@@ -206,6 +223,12 @@
                         <label class="checkbox"><input type="checkbox" id="file-required" name="isrequired">indicar si el contenido se considera mínimo para el estudio.</label>
                     </div>
                 </div>
+                <div class="control-group">
+                    <label class="control-label" for="file-description">Descripción</label>
+                    <div class="controls">
+                        <textarea id="file-description" name="description"></textarea>
+                    </div>
+                </div>
                 
                 <input type="hidden" class="content-type" name="contenttype" value="file"/>
                 <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
@@ -247,6 +270,12 @@
                         <label class="checkbox"><input type="checkbox" id="video-required" name="isrequired">indicar si el contenido se considera mínimo para el estudio.</label>
                     </div>
                 </div>
+                <div class="control-group">
+                    <label class="control-label" for="video-description">Descripción</label>
+                    <div class="controls">
+                        <textarea id="video-description" name="description"></textarea>
+                    </div>
+                </div>
                 
                 <input type="hidden" class="content-type" name="contenttype" value="video"/>
                 <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
@@ -286,6 +315,12 @@
                     <label class="control-label" for="link-required">Requerido</label>
                     <div class="controls">
                         <label class="checkbox"><input type="checkbox" id="link-required" name="isrequired">indicar si el contenido se considera mínimo para el estudio.</label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="link-description">Descripción</label>
+                    <div class="controls">
+                        <textarea id="link-description" name="description"></textarea>
                     </div>
                 </div>
                 

@@ -81,18 +81,19 @@ if not db(db.content_group).count():
                                         instance=instances_id[0])
         cgs_id.append(id)        
     # Add some elements to content group
-    c_videos = [['Video 1',True,'http://www.youtube.com/embed/xSPyT6q-_4I',cgs_id[0]],
-                ['Video 2',True,'http://www.youtube.com/embed/pazq09wpxAM',cgs_id[0]],
-                ['Video 3',False,'http://www.youtube.com/embed/_U1uMWzQcIM',cgs_id[0]],
-                ['Un video con un texto mas largo que los otros 4',True,'http://www.youtube.com/embed/zNf4lB_GIU0',cgs_id[0]],
-                ['Video 5',False,'http://www.youtube.com/embed/ue0iiJSx7d0',cgs_id[1]],
-                ['Video 6',False,'http://www.youtube.com/embed/ndq6SVtW3TU',cgs_id[1]],
-                ['Video 7',True,'http://www.youtube.com/embed/R6zRWmRakSI',cgs_id[1]]]
+    c_videos = [['Video 1',True,'http://www.youtube.com/embed/xSPyT6q-_4I',cgs_id[0], 'Video 1 muy interesante, ver completo'],
+                ['Video 2',True,'http://www.youtube.com/embed/pazq09wpxAM',cgs_id[0], ''],
+                ['Video 3',False,'http://www.youtube.com/embed/_U1uMWzQcIM',cgs_id[0], 'Video 3 muy interesante, ver completo'],
+                ['Un video con un texto mas largo que los otros 4',True,'http://www.youtube.com/embed/zNf4lB_GIU0',cgs_id[0], 'Video 4 muy interesante, ver completo'],
+                ['Video 5',False,'http://www.youtube.com/embed/ue0iiJSx7d0',cgs_id[1], None],
+                ['Video 6',False,'http://www.youtube.com/embed/ndq6SVtW3TU',cgs_id[1], 'Video 1 muy interesante, ver completo'],
+                ['Video 7',True,'http://www.youtube.com/embed/R6zRWmRakSI',cgs_id[1]], None]
     for v in c_videos:
         db.content_video.insert(name=v[0],
                                 is_required=v[1],
                                 url=v[2],
-                                content_group=v[3])
+                                content_group=v[3],
+                                description=v[4])
     
     c_links = [ ['Link 1',True,'https://twitter.com/',cgs_id[0]],
                 ['Un link más grande que los anteriores 2',False,'http://www.latercera.com/',cgs_id[0]],

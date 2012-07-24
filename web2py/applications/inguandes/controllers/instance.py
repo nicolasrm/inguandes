@@ -16,6 +16,9 @@ def view():
     u_tasks = get_user_tasks(db, instanceId, auth.user.id)
     
     user_role = get_user_role(db, instanceId, auth.user.id)
+    if user_role is None:
+        session.flash = 'No tienes permisos para acceder a la instancia <strong>' + inst.title + '</strong>'
+        redirect(URL('default', 'index'))
             
     return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role)
     
@@ -37,17 +40,20 @@ def add_content():
             db.content_file.insert( name=request.vars.name,
                                     file=db.content_file.file.store(request.vars.file.file, request.vars.file.filename),
                                     is_required=request.vars.isrequired,
-                                    content_group=cgId)
+                                    content_group=cgId,
+                                    description=request.vars.description)
         elif cType == "video":
             db.content_video.insert(name=request.vars.name,
                                     url=request.vars.url,
                                     is_required=request.vars.isrequired,
-                                    content_group=cgId)
+                                    content_group=cgId,
+                                    description=request.vars.description)
         elif cType == "link":
             db.content_link.insert( name=request.vars.name,
                                     url=request.vars.url,
                                     is_required=request.vars.isrequired,
-                                    content_group=cgId)
+                                    content_group=cgId,
+                                    description=request.vars.description)
         else:
             session.flash = "Tipo de contenido no conocido: {0}".format(cType)
     else:

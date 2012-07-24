@@ -75,6 +75,8 @@ db.define_table('user_section',
         Field('the_role', type='integer', requires=IS_IN_SET(user_roles))
         )
         
+########## Instance content ##########
+        
 db.define_table('content_group',
         Field('title', type='string'),
         Field('instance', type=db.instance)
@@ -84,21 +86,24 @@ db.define_table('content_file',
         Field('name', type='string'),
         Field('is_required', type='boolean'),
         Field('file', type='upload'),
-        Field('content_group', type=db.content_group)
+        Field('content_group', type=db.content_group),
+        Field('description', type='text')
         )
         
 db.define_table('content_video',
         Field('name', type='string'),
         Field('is_required', type='boolean'),
         Field('url', type='string'),
-        Field('content_group', type=db.content_group)
+        Field('content_group', type=db.content_group),
+        Field('description', type='text')
         )
         
 db.define_table('content_link',
         Field('name', type='string'),
         Field('is_required', type='boolean'),
         Field('url', type='string'),
-        Field('content_group', type=db.content_group)
+        Field('content_group', type=db.content_group),
+        Field('description', type='text')
         )
 
 ########## Questions & Quizzes ##########
