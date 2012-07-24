@@ -64,7 +64,7 @@
                                     <li class="nav-header">Contenido Mínimo</li>
                                     {{  if cg['id'] in contents:
                                             for c in contents[cg['id']]['required']: 
-                                                a_c = [I(_class='icon-' + c['icon']), c['name']]                                                
+                                                a_c = [I(_class='icon-' + c['icon']), c['name']]
                                                 c['a_attrs']['_href'] = c['href']
                                                 if c['description'] is not None and len(c['description']) > 0:
                                                     a_c.append(' ')
@@ -74,8 +74,7 @@
                                                                 '_data-content':c['description']}
                                                     a_c.append(I(**i_attr))
                                                 pass
-                                                o_li = LI(A(*a_c, **c['a_attrs']))                                                
-                                                response.write(o_li)
+                                                response.write(LI(A(*a_c, **c['a_attrs'])))
                                             pass
                                         pass
                                     }}
@@ -111,6 +110,7 @@
                                         <li><a data-btn-type="new-content" data-new-content-type="file" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un archivo"><i class="icon-plus"></i><i class="icon-file"></i></a></li>
                                         <li><a data-btn-type="new-content" data-new-content-type="video" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un video"><i class="icon-plus"></i><i class="icon-facetime-video"></i></a></li>
                                         <li><a data-btn-type="new-content" data-new-content-type="link" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un link"><i class="icon-plus"></i><i class="icon-bookmark"></i></a></li>
+                                        <li><a data-btn-type="edit-content" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Editar contenidos del grupo"><i class="icon-edit"></i></a></li>
                                     </ul>
                                 </nav>
                             </div>
@@ -334,6 +334,78 @@
         <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
         <a href="#" class="btn btn-primary modal-action">Agregar</a>
     </div>
+</div>
+
+<div class="modal hide fade in" id="modal-edit-contents" style="width: 800px; margin: -250px 0 0 -400px;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Editar contenido</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row">            
+            <div class="span5">
+                <div class="alert alert-block alert-error hide fade in" id="alert-renove-content">
+                    <h4 class="alert-heading">Eliminar Contenido</h4>
+                    <p>¿Está seguro que desea eliminar <strong><span id="content-to-remove"></span></strong>?</p>
+                    <p><a class="btn btn-danger" id="alert-remove-content-confirm">Eliminar</a> <a class="btn" onclick="$('#alert-renove-content').fadeOut();" href="#">Cancelar</a></p>
+                </div>
+                <table class="table table-bordered table-condensed" id="table-edit-content">
+                    <thead>
+                        <tr>
+                            <th>Contenido</th>
+                            <th rel="tooltip" title="Se considera contenido mínimo?">R</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="span4 hide" id="edit-content-form">                   
+                <form class="form-vertical well" action="{{=URL('edit_content')}}" method="POST">
+                    <fieldset>
+                        <div class="control-group">
+                            <label class="control-label" for="edit-content-name">Nombre</label>
+                            <div class="controls">
+                                <input type="text" id="edit-content-name" name="name"/>
+                            </div>
+                        </div>                        
+                        <div class="control-group">                            
+                            <div class="controls">
+                                <label class="checkbox"><input type="checkbox" id="edit-content-required" name="isrequired">indicar si el contenido se considera mínimo.</label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="edit-content-description">Descripción</label>
+                            <div class="controls">
+                                <textarea id="edit-content-description" name="description" placeholder="Texto que da detalles del contenido..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" class="content-id" name="contentid"/>
+                        <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                        <input type="hidden" class="content-group-id" name="cgid"/>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hide">
+    <table>
+        <tr id="tr-edit-content-template">
+            <td data-name></td>
+            <td data-required></td>
+            <td data-edit>
+                <a class="btn btn-primary btn-small" rel="tooltip" title="Editar contenido" href="#" data-edit-content><i class="icon-edit icon-white"></i></a>
+            </td>
+            <td data-remove>
+                <a class="btn btn-danger btn-small" rel="tooltip" title="Eliminar contenido" href="#" data-remove-content><i class="icon-remove icon-white"></i></a>
+            </td>
+        </tr>
+    </table>
 </div>
 
 <div class="modal hide fade in" id="modal-new-quiz">

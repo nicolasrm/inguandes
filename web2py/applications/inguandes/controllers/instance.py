@@ -9,6 +9,9 @@ def view():
            
     c_groups = db(db.content_group.instance==instanceId).select()
     contents = get_instance_content(db, instanceId)
+
+    print '\n', contents[11]
+    
     courseId = db(db.section.instance == instanceId).select().first().course
     
     questions, cats = get_questions(db, courseId)

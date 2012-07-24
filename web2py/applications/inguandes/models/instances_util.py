@@ -29,6 +29,9 @@ def get_instance_content(db, instanceId):
     return contents
     
 def add_organized_content(list, cols, type, icon, col_href, a_attrs, contents, preHref=None):
+    if a_attrs is None:
+        a_attrs = {}
+    
     for c in list:
         c_cg = c['content_group']
         if c_cg not in contents:
@@ -36,13 +39,12 @@ def add_organized_content(list, cols, type, icon, col_href, a_attrs, contents, p
             contents[c_cg]['required'] = []
             contents[c_cg]['optional'] = []
         
-        if a_attrs is None:
-            a_attrs = {}
-        
         obj = {}
         obj['icon'] = icon
-        obj['a_attrs'] = a_attrs
+        obj['a_attrs'] = a_attrs.copy()
         obj['a_attrs']['_data-content-type'] = type
+        obj['a_attrs']['_data-icon'] = icon
+        obj['a_attrs']['_data-content-required'] = 'T' if c['is_required'] else 'F'
         
         if col_href is not None:
             obj['href'] = c[col_href] if preHref is None else preHref + '/' + c[col_href]
@@ -50,7 +52,7 @@ def add_organized_content(list, cols, type, icon, col_href, a_attrs, contents, p
             obj['href'] = '#'
         for col in cols:
             obj[col] = c[col]
-            obj['a_attrs']['_data-content-' + col] = c[col]
+            obj['a_attrs']['_data-content-' + col] = obj[col]
             
         if c['is_required']:
             contents[c_cg]['required'].append(obj)
