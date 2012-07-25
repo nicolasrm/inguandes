@@ -20,8 +20,10 @@ def view():
     if user_role is None:
         session.flash = 'No tienes permisos para acceder a la instancia <strong>' + inst.title + '</strong>'
         redirect(URL('default', 'index'))
+        
+    inst_links = db(db.instance_link.instance == instanceId).select()
             
-    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role)
+    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links)
     
 @auth.requires_login()
 def add_contentgroup():
@@ -303,4 +305,14 @@ def assignment():
             session.flash = "No fue posible agregar el trabajo solicitado"        
         
     return locals()
+
+@auth.requires_login()    
+def add_permanent_link():
+    instanceId = int(request.vars.instanceid)
+    if request.vars.icon is not None and request.vars.url is not None:
+        db.instance_link.insert(icon=request.vars.icon,
+                                url=request.vars.url,
+                                instance=instanceId,
+                                description=request.vars.description)
+    redirect(URL('view', args=[instanceId]))
     

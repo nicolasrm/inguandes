@@ -105,6 +105,13 @@ db.define_table('content_link',
         Field('content_group', type=db.content_group),
         Field('description', type='text')
         )
+        
+db.define_table('instance_link',
+        Field('icon', type='string'),
+        Field('url', type='string'),
+        Field('instance', type=db.instance),
+        Field('description', type='text')
+        )
 
 ########## Questions & Quizzes ##########
 db.define_table('question',

@@ -290,5 +290,12 @@
         $('#new-quiz-add-category').click(addQuizCategory);        
         $('#modal-new-quiz').on('show', prepareQuizModal);
         $('.new-quiz-action').click(createQuiz);
+        
+        $('#inst-link-icon').on('change', function (event) {
+            var select = $(event.target),
+                icon = $('#link-show-icon');
+            icon.removeClass();
+            icon.addClass('icon-' + select.val());            
+        });
     });
 }(this));

@@ -141,6 +141,10 @@
                     <li><a href="#" rel="tooltip" title="Noticias"><i class="icon-bullhorn icon-white"></i></a></li>
                     <li><a href="#" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
                     <li><a href="{{=URL('submit_ticket', args=[inst.id])}}" rel="tooltip" title="Emitir ticket"><i class="icon-plus icon-white"></i><i class="icon-tag icon-white"></i></a></li>
+                    <li class="divider-vertical"></li>
+                    {{ for il in inst_links: }}
+                    <li><a href="{{=il['url']}}" target="_blank" rel="tooltip" title="{{=il['description']}}"><i class="icon-{{=il['icon']}} icon-white"></i></a></li>
+                    {{ pass }}
                 </ul>
             </div>
             {{ if user_roles[user_role] == 'Profesor': }}
@@ -149,6 +153,7 @@
                 <ul class="nav pull-right">
                     <li class="divider-vertical"></li>
                     <li><a rel="tooltip" title="Agregar grupo de contenido" data-toggle="modal" href="#modal-new-contentgroup"><i class="icon-plus icon-white"></i><i class="icon-book icon-white"></i></a></li>
+                    <li><a rel="tooltip" title="Agregar link de instancia" data-toggle="modal" href="#modal-new-permanent-link"><i class="icon-plus icon-white"></i><i class="icon-bookmark icon-white"></i></a></li>
                     <li><a href="{{=URL('ticket_categories', args=[inst.id])}}" rel="tooltip" title="Administrar tickets"><i class="icon-user icon-white"></i><i class="icon-tags icon-white"></i></a></li>
                 </ul>
             </div>
@@ -482,6 +487,82 @@
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
         <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-permanent-link">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar link permanente</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_permanent_link')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="inst-link-icon">Icono</label>
+                    <div class="controls">
+                        <span>
+                            <select id="inst-link-icon" name="icon">
+                                <option value="adjust">adjust</option>
+                                <option value="asterisk">asterisk</option>
+                                <option value="barcode">barcode</option>
+                                <option value="bell">bell</option>
+                                <option value="briefcase">briefcase</option>
+                                <option value="calendar">calendar</option>
+                                <option value="camera">camera</option>
+                                <option value="cog">cog</option>
+                                <option value="envelope">envelope</option>
+                                <option value="fire">fire</option>
+                                <option value="flag">flag</option>
+                                <option value="gift">gift</option>
+                                <option value="glass">glass</option>
+                                <option value="globe">globe</option>
+                                <option value="hdd">hdd</option>
+                                <option value="headphones">headphones</option>
+                                <option value="heart">heart</option>
+                                <option value="leaf">leaf</option>
+                                <option value="list-alt">list</option>
+                                <option value="magnet">magnet</option>
+                                <option value="music">music</option>
+                                <option value="off">off</option>
+                                <option value="picture">picture</option>
+                                <option value="plane">plane</option>
+                                <option value="print">print</option>
+                                <option value="qrcode">qrcode</option>
+                                <option value="search">search</option>
+                                <option value="shopping-cart">shopping-cart</option>
+                                <option value="signal">signal</option>                                
+                                <option value="star">star</option>
+                                <option value="thumbs-up">thumbs-up</option>
+                                <option value="time">time</option>
+                                <option value="tint">tint</option>
+                            </select>
+                            <i class="hide" id="link-show-icon"></i>
+                        </span>
+                        <p class="help-block">Ícono que identificará el link.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inst-link-url">URL</label>
+                    <div class="controls">
+                        <input type="text" id="inst-link-url" name="url"/>
+                        <p class="help-block">Dirección del contenido al cual se quiere apuntar.</p>
+                    </div>
+                </div>                
+                <div class="control-group">
+                    <label class="control-label" for="inst-link-description">Descripción</label>
+                    <div class="controls">
+                        <textarea id="inst-link-description" name="description" placeholder="Detalles del contenido del link..."></textarea>
+                    </div>
+                </div>
+                                
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Agregar</a>
     </div>
 </div>
 {{ pass }}
