@@ -10,8 +10,6 @@ def view():
     c_groups = db(db.content_group.instance==instanceId).select()
     contents = get_instance_content(db, instanceId)
 
-    print '\n', contents[11]
-    
     courseId = db(db.section.instance == instanceId).select().first().course
     
     questions, cats = get_questions(db, courseId)
@@ -62,6 +60,29 @@ def add_content():
     else:
         session.flash = "No fue posible agregar el contenido"
     redirect(URL('view', args=[instanceId]))
+
+@auth.requires_login()    
+def remove_content():
+    if len(request.args) > 1:
+        contentId = int(request.args[0])
+        cType = request.args[1]
+        result = True
+        if cType == "file":
+            del db.content_file[contentId]
+        elif cType == "video":
+            del db.content_video[contentId]
+        elif cType == "link":
+            del db.content_link[contentId]
+        else:
+            result = False
+        
+        response.headers['Content-Type'] = 'application/json'
+        if result:
+            response.status = 200
+            return response.json({'message': 'Contenido ' + str(contentId) + ' eliminado'})
+        else:
+            response.status = 400
+            return response.json({'message': 'No fue posible eliminar el contenido ' + str(contentId)})
     
 @auth.requires_login()
 def download_content_file():

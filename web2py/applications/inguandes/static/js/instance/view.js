@@ -45,7 +45,7 @@
         var table_contents = $('#table-edit-content tbody'),
             row_content = $('#tr-edit-content-template').clone();
             
-        row_content.attr('id', 'tr-edit-content-' + content.contentId);
+        row_content.attr('id', 'tr-edit-' + content.contentType + '-' + content.contentId);
         row_content.find('td[data-name]').html('<i class="icon-' + content.icon + '"></i> ' + content.contentName);
         
         if (content.contentRequired == 'T') {
@@ -97,7 +97,7 @@
                     content: content
                 }, confirmRemoveContent);
         
-        alert.removeClass('hide');
+        alert.show();
         alert.alert();
     }
     
@@ -105,9 +105,29 @@
         var alert = $('#alert-renove-content'),
             content = event.data.content;
             
-        console.log(content);
+        $.ajax({
+            url: INGUANDES.api_url + 'remove_content/' + content.contentId + '/' + content.contentType,
+            type: 'POST',
+            success: function (data) {
+                INGUANDES.notify('success', 'Contenido eliminado con éxito.');
+                removeContent(content);
+            },
+            error: function (data) {
+                INGUANDES.notify('error', 'No fue posible eliminar el contenido.');
+            }
+        });
             
         alert.alert('close');
+    }
+    
+    function removeContent (content) {
+        var row_content = $('#tr-edit-' + content.contentType + '-' + content.contentId),
+            a_content = $('[data-content-id="' + content.contentId + '"][data-content-type="' + content.contentType + '"]');
+            
+        a_content.closest('li').remove();
+        
+            
+        row_content.remove();
     }
     
     function showVideo (event) {
