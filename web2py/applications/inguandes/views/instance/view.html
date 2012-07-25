@@ -344,7 +344,7 @@
     <div class="modal-body">
         <div class="row">            
             <div class="span5">
-                <div class="alert alert-block alert-error hide fade in" id="alert-renove-content">
+                <div class="alert alert-block alert-error fade in" id="alert-renove-content">
                     <h4 class="alert-heading">Eliminar Contenido</h4>
                     <p>¿Está seguro que desea eliminar <strong><span id="content-to-remove"></span></strong>?</p>
                     <p><a class="btn btn-danger" id="alert-remove-content-confirm">Eliminar</a> <a class="btn" onclick="$('#alert-renove-content').fadeOut();" href="#">Cancelar</a></p>
@@ -373,7 +373,7 @@
                         </div>                        
                         <div class="control-group">                            
                             <div class="controls">
-                                <label class="checkbox"><input type="checkbox" id="edit-content-required" name="isrequired">indicar si el contenido se considera mínimo.</label>
+                                <label class="checkbox"><input type="checkbox" id="edit-content-required" name="isrequired">indicar si contenido se considera mínimo.</label>
                             </div>
                         </div>
                         <div class="control-group">
@@ -382,11 +382,12 @@
                                 <textarea id="edit-content-description" name="description" placeholder="Texto que da detalles del contenido..."></textarea>
                             </div>
                         </div>
-                        
-                        <input type="hidden" class="content-id" name="contentid"/>
+                        <div>
+                            <button type="submit" class="btn btn-primary" id="button-edit-content">Guardar cambios</button>
+                        </div>
+                                                
                         <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
-                        <input type="hidden" class="content-group-id" name="cgid"/>
-                    </fieldset>
+                    </fieldset>                    
                 </form>
             </div>
         </div>

@@ -24,9 +24,13 @@
             cgId = data.cgId,
             cg_div = $('#collapse' + cgId),
             content_info,
-            table_contents = $('#table-edit-content tbody');  
+            table_contents = $('#table-edit-content tbody'),
+            form_container = $('#edit-content-form'),
+            alert = $('#alert-renove-content');  
             
         table_contents.empty();
+        form_container.addClass('hide');
+        alert.hide();
         
         INGUANDES.editable_contents = []
         $.each(cg_div.find('a[data-content-id]'), function (index, a_content) {
@@ -84,12 +88,67 @@
         else {
             form.find('#edit-content-required').prop("checked", false);
         }
+        
+        $('#button-edit-content').on('click', {
+                                        content: content
+                                    }, confirmEditContent);
+    }
+    
+    function confirmEditContent (event) {
+        var form_container = $('#edit-content-form'),
+            form = form_container.find('form'),
+            content = event.data.content;
+            
+        event.preventDefault();
+            
+        $.ajax({
+            url: INGUANDES.api_url + 'edit_content/' + content.contentId + '/' + content.contentType,
+            type: 'POST',
+            data: form.serialize(),
+            success: function (data) {
+                INGUANDES.notify('success', 'Contenido editado correctamente');
+                content.contentName = data.content.name;
+                content.contentDescription = data.content.description;
+                if (data.content.is_required == 'on') {
+                    content.contentRequired = 'T';
+                }
+                else {
+                    content.contentRequired = 'F';
+                }
+                editContentReady(content);
+            }
+        });
+    }
+    
+    function editContentReady (content) {
+        var row_content = $('#tr-edit-' + content.contentType + '-' + content.contentId),
+            a_content = $('[data-content-id="' + content.contentId + '"][data-content-type="' + content.contentType + '"]');
+            
+        a_content.attr('data-content-name', content.contentName);
+        a_content.attr('data-content-description', content.contentDescription);
+        a_content.attr('data-content-required', content.contentRequired);
+        a_content.html('<i class="icon-' + content.icon + '"></i> ' + content.contentName)
+        
+        if (content.contentDescription) {
+            a_content.append(' <i class="icon-info-sign" data-content="' + content.contentDescription + '" rel="popover" data-original-title="' + content.contentName + '"></i>');
+            a_content.find("[rel=popover]").popover();
+        }
+        
+        row_content.find('td[data-name]').html('<i class="icon-' + content.icon + '"></i> ' + content.contentName);
+        if (content.contentRequired == 'T') {
+            row_content.find('td[data-required]').html('<i class="icon-ok"></i>');
+        }
+        else {
+            row_content.find('td[data-required]').html('<i class="icon-remove"></i>');
+        }
     }
     
     function removeContentAlert (event) {
         var alert = $('#alert-renove-content'),
             content = event.data.content,
             confirm = $('#alert-remove-content-confirm');
+            
+        event.preventDefault();
         
         alert.find('#content-to-remove').text(content.contentName);
         
@@ -110,7 +169,7 @@
             type: 'POST',
             success: function (data) {
                 INGUANDES.notify('success', 'Contenido eliminado con éxito.');
-                removeContent(content);
+                removeContentReady(content);
             },
             error: function (data) {
                 INGUANDES.notify('error', 'No fue posible eliminar el contenido.');
@@ -120,13 +179,11 @@
         alert.alert('close');
     }
     
-    function removeContent (content) {
+    function removeContentReady (content) {
         var row_content = $('#tr-edit-' + content.contentType + '-' + content.contentId),
             a_content = $('[data-content-id="' + content.contentId + '"][data-content-type="' + content.contentType + '"]');
             
         a_content.closest('li').remove();
-        
-            
         row_content.remove();
     }
     
@@ -200,7 +257,6 @@
                 dataType: 'json',
                 data: new_quiz,
                 error: function (jqXHR, textStatus, errorThrown) {
-                    // TODO: Avisar que hubo un error de forma mas profesional
                     INGUANDES.notify('error', 'No fue possible crear el quiz.');
                 },
                 success: function (data, textStatus, jqXHR) {

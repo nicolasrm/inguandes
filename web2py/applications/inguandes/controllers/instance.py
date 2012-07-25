@@ -83,6 +83,35 @@ def remove_content():
         else:
             response.status = 400
             return response.json({'message': 'No fue posible eliminar el contenido ' + str(contentId)})
+    else:
+        response.headers['Content-Type'] = 'application/json'
+        response.status = 400
+        return response.json({'message': 'Faltan parametros'})
+            
+@auth.requires_login()
+def edit_content():
+    if len(request.args) > 1:
+        contentId = int(request.args[0])
+        cType = request.args[1]
+        obj = None
+        if cType == "file":
+            obj = db.content_file[contentId]
+        elif cType == "video":
+            obj = db.content_video[contentId]
+        elif cType == "link":
+            obj = db.content_link[contentId]
+            
+        response.headers['Content-Type'] = 'application/json'
+        if obj is not None:
+            obj.update_record(  name=request.vars.name,
+                                is_required=request.vars.isrequired,
+                                description=request.vars.description)
+            response.status = 200
+            return response.json({  'message': 'Contenido ' + str(contentId) + ' eliminado',
+                                    'content': obj.as_dict()})
+        else:
+            response.status = 400
+            return response.json({'message': 'No fue posible eliminar el contenido ' + str(contentId)})
     
 @auth.requires_login()
 def download_content_file():
