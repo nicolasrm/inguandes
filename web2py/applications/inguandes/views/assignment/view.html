@@ -6,34 +6,37 @@
     </div>
 </div>
 <div class="row">    
-    <div class="span4 well">
-        
-        <h3>Información del Trabajo</h3>
-        <dl class="dl-horizontal">
-            <dt>Nombre</dt>
-            <dd>{{=asgn_info['name']}}</dd>
-            <dt>Inicio</dt>
-            <dd>Se puede comenzar a subir desde las <span class="label">{{=asgn_info['starting'].strftime(datetime_format)}}</span></dd>
-            <dt>Fin</dt>
-            <dd>Se debe subir a más tardar el <span class="label label-important">{{=asgn_info['ending'].strftime(datetime_format)}}</span></dd>
-            <dt>Tipo de archivos</dt>
-            <dd>{{='Sin restricción' if not asgn_info['file_types'] else XML('Se permiten archivos con las extensiones <span class="label label-warning">' + asgn_info['file_types_text'] + '</span>')}}</dd>
-            <dt># Archivos</dt>
-            <dd>{{='Uno' if not asgn_info['multiple'] else 'Uno o más'}}</dd>
-            <dt>Tamaño máximo</dt>
-            <dd><span class="label label-info">{{=file_size_options[asgn_info['max_size']]}}</span> por archivo</dd>
-        </dl>
+    <div class="span4">
+        <div class="well">        
+            <h3>Información del Trabajo</h3>
+            <dl class="dl-horizontal">
+                <dt>Nombre</dt>
+                <dd>{{=asgn_info['name']}}</dd>
+                <dt>Inicio</dt>
+                <dd>Se puede comenzar a subir desde las <span class="label">{{=asgn_info['starting'].strftime(datetime_format)}}</span></dd>
+                <dt>Fin</dt>
+                <dd>Se debe subir a más tardar el <span class="label label-important">{{=asgn_info['ending'].strftime(datetime_format)}}</span></dd>
+                <dt>Tipo de archivos</dt>
+                <dd>{{='Sin restricción' if not asgn_info['file_types'] else XML('Se permiten archivos con las extensiones <span class="label label-warning">' + asgn_info['file_types_text'] + '</span>')}}</dd>
+                <dt># Archivos</dt>
+                <dd>{{='Uno' if not asgn_info['multiple'] else 'Uno o más'}}</dd>
+                <dt>Tamaño máximo</dt>
+                <dd><span class="label label-info">{{=file_size_options[asgn_info['max_size']]}}</span> por archivo</dd>
+            </dl>
+        </div>
     </div>    
-    <div class="span7 well">
-        <h3>Instrucciones</h3>
-        <p>Acá debes entregar tus archivos correspondientes al trabajo <i>{{=asgn_info['name']}}</i>. Ten en consideración las siguientes instrucciones:</p>
-        <ul>
-            <li>Revisa la información respecto del tipo de archivo y tamaño permitido. No podrás incorporar archivos que no cumplan con dichas restricciones.</li>
-            <li>Podrás subir archivos constantemente hasta la fecha de cierre.</li>
-            <li>Para agregar archivos hazlo a través del botón <strong>Agregar archivos...</strong> o puedes arrastrarlos y soltarlos sobre la página. Estos se mostrarán en la lista <strong>Nuevos Archivos</strong>, pero no serán parte de tu entrega hasta que presiones el botón <strong>Enviar archivos</strong>.</li>
-            <li>La entrega de tu trabajo será en base a la lista en <strong>Archivos Enviados</strong>. Cuida de descartar aquellos archivos que no necesites.</li>
-            <li>Si se envía un archivo con el mismo nombre que uno enviado previamente, el nuevo archivo reemplazará al anterior, quedando el anterior en los descartados.</li>
-        </ul>
+    <div class="span8">
+        <div class="well">
+            <h3>Instrucciones</h3>
+            <p>Acá debes entregar tus archivos correspondientes al trabajo <i>{{=asgn_info['name']}}</i>. Ten en consideración las siguientes instrucciones:</p>
+            <ul>
+                <li>Revisa la información respecto del tipo de archivo y tamaño permitido. No podrás incorporar archivos que no cumplan con dichas restricciones.</li>
+                <li>Podrás subir archivos constantemente hasta la fecha de cierre.</li>
+                <li>Para agregar archivos hazlo a través del botón <strong>Agregar archivos...</strong> o puedes arrastrarlos y soltarlos sobre la página. Estos se mostrarán en la lista <strong>Nuevos Archivos</strong>, pero no serán parte de tu entrega hasta que presiones el botón <strong>Enviar archivos</strong>.</li>
+                <li>La entrega de tu trabajo será en base a la lista en <strong>Archivos Enviados</strong>. Cuida de descartar aquellos archivos que no necesites.</li>
+                <li>Si se envía un archivo con el mismo nombre que uno enviado previamente, el nuevo archivo reemplazará al anterior, quedando el anterior en los descartados.</li>
+            </ul>
+        </div>
     </div>
 </div>
 <div class="row">

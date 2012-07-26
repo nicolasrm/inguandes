@@ -112,6 +112,17 @@ db.define_table('instance_link',
         Field('instance', type=db.instance),
         Field('description', type='text')
         )
+        
+db.define_table('group_list',
+        Field('name', type='string'),
+        Field('instance', type=db.instance)
+        )
+        
+db.define_table('student_group',
+        Field('student', type=db.auth_user),
+        Field('group_id', type='integer'),
+        Field('group_list', type=db.group_list)
+        )
 
 ########## Questions & Quizzes ##########
 db.define_table('question',

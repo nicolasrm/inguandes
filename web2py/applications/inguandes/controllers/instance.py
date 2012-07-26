@@ -306,7 +306,7 @@ def assignment():
         
     return locals()
 
-@auth.requires_login()    
+@auth.requires_login()
 def add_permanent_link():
     instanceId = int(request.vars.instanceid)
     if request.vars.icon is not None and request.vars.url is not None:
@@ -315,4 +315,23 @@ def add_permanent_link():
                                 instance=instanceId,
                                 description=request.vars.description)
     redirect(URL('view', args=[instanceId]))
+    
+@auth.requires_login()
+def groups():
+    if len(request.args) == 0:
+        redirect(URL('default', 'index'))
+    instanceId = int(request.args[0])
+    inst = db.instance[instanceId]
+    
+    gls = get_group_lists(db, instanceId)
+    
+    return dict(inst=inst, gls=gls)
+    
+@auth.requires_login()
+def add_grouplist():
+    instanceId = int(request.vars.instanceid)
+    if request.vars.name is not None:
+        db.group_list.insert(   name=request.vars.name,
+                                instance=instanceId)
+    redirect(URL('groups', args=[instanceId]))
     

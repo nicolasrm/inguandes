@@ -87,7 +87,7 @@ if not db(db.content_group).count():
                 ['Un video con un texto mas largo que los otros 4',True,'http://www.youtube.com/embed/zNf4lB_GIU0',cgs_id[0], 'Video 4 muy interesante, ver completo'],
                 ['Video 5',False,'http://www.youtube.com/embed/ue0iiJSx7d0',cgs_id[1], None],
                 ['Video 6',False,'http://www.youtube.com/embed/ndq6SVtW3TU',cgs_id[1], 'Video 1 muy interesante, ver completo'],
-                ['Video 7',True,'http://www.youtube.com/embed/R6zRWmRakSI',cgs_id[1]], None]
+                ['Video 7',True,'http://www.youtube.com/embed/R6zRWmRakSI',cgs_id[1], None]]
     for v in c_videos:
         db.content_video.insert(name=v[0],
                                 is_required=v[1],
@@ -108,8 +108,8 @@ if not db(db.content_group).count():
                                 
     # TODO: create quiz        
     quiz_id = db.quiz.insert(name='Quiz 1',
-                             starting='2012-07-17',
-                             ending='2012-07-24',
+                             starting='2012-07-17 10:00:00',
+                             ending='2012-07-26 20:00:00',
                              instance=instances_id[0])   
     quiz_cats = {'una categoria': 2, 
                  'categoria otra': 3, 

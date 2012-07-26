@@ -122,13 +122,17 @@ def add_relation():
     if request.vars.user_email is not None and request.vars.user_role is not None:
         sectionId = int(request.vars.sectionid)
         user = db(db.auth_user.email==request.vars.user_email).select().first()
-        if user is not None:
-            db.user_section.insert( section=sectionId,
-                                    the_user=user,
-                                    the_role=request.vars.user_role
-                                    )
-        else:
-            session.flash = "Usuario con email {0} no existe".format(request.vars.user_email)
+        if user is None:
+            email = request.vars.user_email
+            firstname = email[:email.find('@')]
+            user = db.auth_user.insert( first_name=firstname,
+                                        last_name='',
+                                        email=email
+                                        )
+        db.user_section.insert( section=sectionId,
+                                the_user=user,
+                                the_role=request.vars.user_role
+                                )
     redirect(URL('view_sections', args=[courseId]))
     
 ##############################################################################

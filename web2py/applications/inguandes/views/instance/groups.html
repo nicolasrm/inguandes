@@ -1,0 +1,90 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span6">
+        <h2>Administración de Grupos</h2>
+        <h4><a href="{{=URL('instance','view', args=[inst['id']])}}">{{=inst['title']}}</a></h4>
+    </div>
+</div>
+<div class="row">
+    <div class="span4">
+        <div class="well">
+            <h6>Listas de Grupos</h6>
+            <nav id="menu">
+                <ul>       
+                    <li><a data-toggle="modal" href="#modal-new-grouplist" rel="tooltip" title="Agregar una lista de grupos"><i class="icon-plus"></i></a></li>
+                </ul>
+            </nav>
+            <ul class="nav nav-list">
+                <li class="divider"></li>                
+                {{ for gl in gls: }}
+                <li><a href="{{=URL('groups', args=[inst['id'],gl['id']])}}">{{=gl['name']}}</a></li>
+                {{ pass }}
+                <li class="divider"></li>
+            </ul>            
+        </div>
+    </div>
+    <div class="span4">
+        <div class="well">
+            <h6>Grupos</h6>
+            <nav id="menu">
+                <ul>       
+                    <li><a data-toggle="modal" href="#modal-new-grouplist" rel="tooltip" title="Agregar una lista de grupos"><i class="icon-plus"></i></a></li>
+                </ul>
+            </nav>
+            <ul class="nav nav-list">
+                <li class="divider"></li>
+                <li class="divider"></li>
+            </ul>            
+            <h6>Alumnos no incluidos</h6>
+        </div>
+    </div>
+    <div class="span4">        
+        <div class="well">
+            <h6>Detalles Grupo</h6>
+            <nav id="menu">
+                <ul>       
+                    <li><a data-toggle="modal" href="#modal-new-grouplist" rel="tooltip" title="Agregar una lista de grupos"><i class="icon-plus"></i></a></li>
+                </ul>
+            </nav>
+            <ul class="nav nav-list">
+                <li class="divider"></li>
+                <li class="nav-header">Integrantes</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-grouplist">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar nueva Lista de Grupos</h3>
+    </div>
+    <div class="modal-body">        
+        <form id="assign-main-form" class="form-horizontal" action="{{=URL('add_grouplist')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="assignment-name">Nombre</label>
+                    <input type="text" class="input-large" id="assignment-name" name="name" placeholder="Nombre de la lista de grupos..."/>
+                </div>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script>
+$(document).ready( function () {
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
+});
+</script>
+{{end}}
+
+
+
