@@ -10,14 +10,14 @@ def get_assignments(db, instanceId, userId):
     asgn_dict['pending'] = []
     asgn_dict['actived'] = []
     asgn_dict['closed'] = []
-    today = datetime.date.today()
+    now = datetime.datetime.now()
     for a in asgns:
         # u_quiz = get_user_quiz(db, a.id, userId)
         a['type'] = 'assignment'
         a['icon'] = 'icon-upload'
-        if a.starting > today:
+        if a.starting > now:
             asgn_dict['pending'].append(a)
-        elif a.ending >= today:
+        elif a.ending >= now:
             asgn_dict['actived'].append(a)
         else:
             asgn_dict['closed'].append(a)
@@ -36,8 +36,10 @@ def get_assignment(db, asgnId):
     asgn_info['file_types_text'] = cAsgn.file_types
     asgn_info['multiple'] = cAsgn.multiple
     asgn_info['max_size'] = cAsgn.max_size
+    asgn_info['max_size_kb'] = file_size_options_kb[cAsgn.max_size]
     asgn_info['instance'] = cAsgn.instance.title
     asgn_info['instance_id'] = cAsgn.instance
+    asgn_info['is_available'] = cAsgn.ending >= datetime.datetime.now()
     
     return asgn_info
     

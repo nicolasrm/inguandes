@@ -12,7 +12,7 @@
                 {{ for t in u_tasks['pending']: }}
                     <li>
                         <i class="{{=t['icon']}}"></i>{{=t['name']}}
-                        <span class="label label-success pull-right" rel="tooltip" title="Fecha de inicio">{{=t['starting']}}</span>
+                        <span class="label label-success pull-right" rel="tooltip" title="Fecha de inicio">{{=t['starting'].strftime(datetime_format)}}</span>
                     </li> 
                 {{ pass }}   
                 <li class="divider"></li>                
@@ -21,14 +21,14 @@
                     <li>
                         <a href="{{=URL(t['type'], args=[t['id']])}}">
                             <i class="{{=t['icon']}}"></i>{{=t['name']}}
-                            <span class="label label-warning pull-right" rel="tooltip" title="Fecha de cierre">{{=t['ending']}}</span>
+                            <span class="label label-warning pull-right" rel="tooltip" title="Fecha de cierre">{{=t['ending'].strftime(datetime_format)}}</span>
                         </a>
                     </li> 
                 {{ pass }}
                 {{ for t in u_tasks['ready']: }}
                     <li>                        
                         <span rel="tooltip" title="Este quiz ya lo finalizaste."><i class="{{=t['icon']}}"></i>{{=t['name']}}</span>
-                        <span class="label label-info pull-right" rel="tooltip" title="Fecha de cierre para ver los resultados.">{{=t['ending']}}</span>
+                        <span class="label label-info pull-right" rel="tooltip" title="Fecha de cierre para ver los resultados.">{{=t['ending'].strftime(datetime_format)}}</span>
                     </li> 
                 {{ pass }}
                 <li class="divider"></li>
@@ -37,7 +37,7 @@
                     <li>
                         <a href="{{=URL(t['type'], 'result', args=[t.id])}}">
                             <i class="{{=t['icon']}}"></i>{{=t['name']}}
-                            <span class="label label-inverse pull-right" rel="tooltip" title="Fecha de cierre">{{=t['ending']}}</span>
+                            <span class="label label-inverse pull-right" rel="tooltip" title="Fecha de cierre">{{=t['ending'].strftime(datetime_format)}}</span>
                         </a>
                     </li> 
                 {{ pass }}                
@@ -427,10 +427,19 @@
     </div>
     <div class="modal-body">
         <div class="well">
-            <form id="quiz-main-form" class="form-inline" action="{{=URL('quiz')}}" method="POST">
-                <input type="text" id="quiz-name" name="name" placeholder="Nombre del quiz"/>
-                <input type="date" class="input-small" id="quiz-starting" name="starting" placeholder="Inicio"/>
-                <input type="date" class="input-small" id="quiz-ending" name="ending" placeholder="Fin"/>
+            <form id="quiz-main-form" class="form-horizontal" action="{{=URL('quiz')}}" method="POST">
+                <div class="control-group">
+                    <label class="control-label" for="assignment-name">Nombre</label>
+                    <input type="text" id="quiz-name" name="name" placeholder="Nombre del quiz"/>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="quiz-starting">Inicio</label>
+                    <input type="datetime" class="input-small" id="quiz-starting" name="starting" placeholder="Inicio"/>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="quiz-ending">Fin</label>
+                    <input type="datetime" class="input-small" id="quiz-ending" name="ending" placeholder="Fin"/>
+                </div>
                 <input type="hidden" class="instance-id" id="quiz-instanceid" value="{{=inst.id}}"/>
             </form>
         </div>
@@ -469,11 +478,20 @@
         <h3>Agregar nuevo Trabajo</h3>
     </div>
     <div class="modal-body">        
-            <form id="quiz-main-form" action="{{=URL('assignment')}}" method="POST">
+            <form id="assign-main-form" class="form-horizontal" action="{{=URL('assignment')}}" method="POST">
                 <div class="well">
-                    <input type="text" class="input-large" id="assignment-name" name="name" placeholder="Nombre del trabajo"/>
-                    <input type="date" class="input-small" id="assignment-starting" name="starting" placeholder="Inicio"/>
-                    <input type="date" class="input-small" id="assignment-ending" name="ending" placeholder="Fin"/>
+                    <div class="control-group">
+                        <label class="control-label" for="assignment-name">Nombre</label>
+                        <input type="text" class="input-large" id="assignment-name" name="name" placeholder="Nombre del trabajo"/>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="assignment-starting">Inicio</label>
+                        <input type="datetime" class="input" id="assignment-starting" name="starting" placeholder="Inicio"/>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="assignment-ending">Fin</label>
+                        <input type="datetime" class="input" id="assignment-ending" name="ending" placeholder="Fin"/>
+                    </div>
                     <input type="hidden" class="instance-id" id="assignment-instanceid" name="instance" value="{{=inst.id}}"/>
                 </div>
                 <div class="well form-inline">

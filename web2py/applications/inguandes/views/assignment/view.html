@@ -13,9 +13,9 @@
             <dt>Nombre</dt>
             <dd>{{=asgn_info['name']}}</dd>
             <dt>Inicio</dt>
-            <dd>Se puede comenzar a subir desde las 00:00 del <span class="label">{{=asgn_info['starting']}}</span></dd>
+            <dd>Se puede comenzar a subir desde las <span class="label">{{=asgn_info['starting'].strftime(datetime_format)}}</span></dd>
             <dt>Fin</dt>
-            <dd>Se debe subir a más tardar el <span class="label label-important">{{=asgn_info['ending']}}</span> a las 23:59</dd>
+            <dd>Se debe subir a más tardar el <span class="label label-important">{{=asgn_info['ending'].strftime(datetime_format)}}</span></dd>
             <dt>Tipo de archivos</dt>
             <dd>{{='Sin restricción' if not asgn_info['file_types'] else XML('Se permiten archivos con las extensiones <span class="label label-warning">' + asgn_info['file_types_text'] + '</span>')}}</dd>
             <dt># Archivos</dt>
@@ -38,7 +38,8 @@
 </div>
 <div class="row">
     </div class="span12">
-        <div class="well">            
+        <div class="well">  
+            {{ if asgn_info['is_available']: }}
             <div class="row">
                 <div class="span11">                    
                     <form id="form-file-upload" action="{{=URL('assignment_files', args=[asgn_info['id']])}}" method="POST" enctype="multipart/form-data">
@@ -63,7 +64,7 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </div>            
             <div class="row">
                 <div class="span7">
                     <h3>Nuevos Archivos <small>archivos aún no enviados</small></h3>                    
@@ -81,6 +82,7 @@
                     </table>
                 </div>
             </div>
+            {{ pass }}
             <div class="row">
                 <div class="span11">
                     <h3>Archivos Enviados <small>archivos que forman tu entrega</small></h3>
@@ -176,6 +178,7 @@ $(function () {
     
     INGUANDES.allowed_multiple = {{='false' if not asgn_info['multiple'] else 'true'}};
     INGUANDES.max_size = {{=file_size_options_kb[asgn_info['max_size']]}}
+    INGUANDES.is_available = {{='false' if not asgn_info['is_available'] else 'true'}};
 });
 </script>
 <script src="{{=URL('static','js/assignment/view.js')}}"></script>

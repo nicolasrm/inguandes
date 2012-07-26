@@ -12,9 +12,9 @@
             <dt>Nombre</dt>
             <dd>{{=quiz_info['name']}}</dd>
             <dt>Inicio</dt>
-            <dd>Se puede comenzar a responder desde las 00:00 del <span class="label">{{=quiz_info['starting']}}</span></dd>
+            <dd>Se puede comenzar a responder desde el <span class="label">{{=quiz_info['starting'].strftime(datetime_format)}}</span></dd>
             <dt>Fin</dt>
-            <dd>Se debe responder a más tardar el <span class="label label-important">{{=quiz_info['ending']}}</span> a las 23:59</dd>
+            <dd>Se debe responder a más tardar el <span class="label label-important">{{=quiz_info['ending'].strftime(datetime_format)}}</span></dd>
             <dt>Materia</dt>
             <dd>{{=quiz_info['categories_text']}}</dd>
             <dt># Preguntas</dt>

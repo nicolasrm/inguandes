@@ -128,8 +128,8 @@ db.define_table('question_alternative',
         
 db.define_table('quiz',
         Field('name', type='string'),
-        Field('starting', type='date'),
-        Field('ending', type='date'),
+        Field('starting', type='datetime'),
+        Field('ending', type='datetime'),
         Field('instance', type=db.instance)
         )
         
@@ -172,8 +172,8 @@ file_size_options_kb = {
 
 db.define_table('assignment',
         Field('name', type='string', requires=IS_NOT_EMPTY()),
-        Field('starting', type='date'),
-        Field('ending', type='date'),
+        Field('starting', type='datetime'),
+        Field('ending', type='datetime'),
         Field('instance', type=db.instance, notnull=True),
         Field('file_types', type='string'),
         Field('multiple', type='boolean', default=False),
@@ -237,3 +237,6 @@ db.define_table('message',
         Field('prev_status', type='integer', requires=IS_IN_SET(ticket_status)),
         Field('next_status', type='integer', requires=IS_IN_SET(ticket_status))
         )
+        
+####### Constants ############
+datetime_format = '%d-%m-%Y %H:%M'

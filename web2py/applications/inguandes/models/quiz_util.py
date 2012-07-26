@@ -10,14 +10,14 @@ def get_quizzes(db, instanceId, userId):
     qzs_dict['actived'] = []
     qzs_dict['ready'] = []
     qzs_dict['closed'] = []
-    today = datetime.date.today()
+    now = datetime.datetime.now()
     for q in qzs:
         u_quiz = get_user_quiz(db, q.id, userId)
         q['type'] = 'quiz'
         q['icon'] = 'icon-th-list'
-        if q.starting > today:
+        if q.starting > now:
             qzs_dict['pending'].append(q)
-        elif q.ending >= today:
+        elif q.ending >= now:
             if u_quiz is None or u_quiz['questions_pending'] > 0:
                 qzs_dict['actived'].append(q)
             else:
@@ -110,9 +110,8 @@ def next_question(db, user_quiz_id):
     next_q = available_qs.first()
     if next_q is None:
         return None, -1
-    else:
-        # TODO: activar esto para que no vuelva a aparecer una pregunta que ya se mostró
-        next_q.update_record(started_on=datetime.datetime.now)
+    else:        
+        next_q.update_record(started_on=datetime.datetime.now())
         q = get_question(db, next_q.question)
         q['uq_id'] = next_q.id
         return q, len(available_qs)

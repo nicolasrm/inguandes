@@ -82,29 +82,34 @@
             );
             
             jqXHR = $('#form-file-upload').fileupload('send', {files: INGUANDES.new_files})
-                .success(uploadSuccess)
+                .success(uploadEnd)
                 .error(uploadError);
         }
     }
 
-    function uploadSuccess(result, textStatus, jqXHR) {        
+    function uploadEnd(result, textStatus, jqXHR) {        
         var bar = $('#upload-progress'),
             table_new_files = $('#tb-new-files tbody');
         bar.fadeOut(800);
         
-        $.each(result, function (index, file) {    
-            INGUANDES.all_files.push(file);
-            addFile(file);
-        });
-        
-        INGUANDES.new_files = []
-        table_new_files.empty();
-        
-        INGUANDES.notify('success', 'Archivos enviados correctamente.');
+        if (result.hasOwnProperty("code")) {
+            INGUANDES.notify('error', result.message);
+        }
+        else {        
+            $.each(result, function (index, file) {    
+                INGUANDES.all_files.push(file);
+                addFile(file);
+            });
+            
+            INGUANDES.new_files = []
+            table_new_files.empty();
+            
+            INGUANDES.notify('success', 'Archivos enviados correctamente.');
+        }
     }
 
     function uploadError(jqXHR, textStatus, errorThrown) {
-        var bar = $('#upload-progress');
+        var bar = $('#upload-progress');        
         bar.fadeOut(200);
         INGUANDES.notify('error', 'Hubo un error al subir los archivos.');
     }
@@ -135,10 +140,15 @@
         row_file.find('td[data-size]').text(file.size + ' KB');
         row_file.find('td[data-uploaded]').text(file.uploaded);
         
-        row_file.find('[data-remove-file]')
-                .on('click', {
-                    fileid: file.id
-                }, removeFile);
+        if (INGUANDES.is_available) {        
+            row_file.find('[data-remove-file]')
+                    .on('click', {
+                        fileid: file.id
+                    }, removeFile);
+        }
+        else {
+            row_file.find('[data-remove-file]').addClass('hide');
+        }
                 
         row_file.find('[data-history-file]')
                 .on('click', {
