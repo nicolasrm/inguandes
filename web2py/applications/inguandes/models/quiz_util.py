@@ -8,6 +8,7 @@ def get_quizzes(db, instanceId, userId):
     qzs_dict = {}
     qzs_dict['pending'] = []
     qzs_dict['actived'] = []
+    qzs_dict['ready'] = []
     qzs_dict['closed'] = []
     today = datetime.date.today()
     for q in qzs:
@@ -16,8 +17,11 @@ def get_quizzes(db, instanceId, userId):
         q['icon'] = 'icon-th-list'
         if q.starting > today:
             qzs_dict['pending'].append(q)
-        elif q.ending >= today and (u_quiz is None or u_quiz['questions_pending'] > 0):
-            qzs_dict['actived'].append(q)
+        elif q.ending >= today:
+            if u_quiz is None or u_quiz['questions_pending'] > 0:
+                qzs_dict['actived'].append(q)
+            else:
+                qzs_dict['ready'].append(q)
         else:
             qzs_dict['closed'].append(q)
     

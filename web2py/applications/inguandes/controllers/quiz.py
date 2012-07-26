@@ -44,6 +44,9 @@ def result():
         redirect(URL('default', 'index'))
     quizId = int(request.args[0])
     quiz_info = get_quiz(db, quizId)
+    
+    if quiz_info['ending'] >= datetime.date.today():
+        redirect(URL('instance', 'view', args=[quiz_info['instance_id']]))
         
     user_quiz = get_user_quiz(db, quizId, auth.user.id)
     user_resullt = quiz_user_result(db, quiz_info, user_quiz)

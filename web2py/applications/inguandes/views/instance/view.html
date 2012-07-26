@@ -25,13 +25,19 @@
                         </a>
                     </li> 
                 {{ pass }}
+                {{ for t in u_tasks['ready']: }}
+                    <li>                        
+                        <span rel="tooltip" title="Este quiz ya lo finalizaste."><i class="{{=t['icon']}}"></i>{{=t['name']}}</span>
+                        <span class="label label-info pull-right" rel="tooltip" title="Fecha de cierre para ver los resultados.">{{=t['ending']}}</span>
+                    </li> 
+                {{ pass }}
                 <li class="divider"></li>
                 <li class="nav-header">Evaluaciones Cerradas</li>
                 {{ for t in u_tasks['closed']: }}
                     <li>
                         <a href="{{=URL(t['type'], 'result', args=[t.id])}}">
                             <i class="{{=t['icon']}}"></i>{{=t['name']}}
-                            <span class="label label-info pull-right" rel="tooltip" title="Fecha de cierre">{{=t['ending']}}</span>
+                            <span class="label label-inverse pull-right" rel="tooltip" title="Fecha de cierre">{{=t['ending']}}</span>
                         </a>
                     </li> 
                 {{ pass }}                
