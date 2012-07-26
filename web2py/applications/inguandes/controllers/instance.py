@@ -324,8 +324,12 @@ def groups():
     inst = db.instance[instanceId]
     
     gls = get_group_lists(db, instanceId)
+    gl_info = None
+    if len(request.args) > 1:
+        gl_id = int(request.args[1])
+        gl_info = get_grouplist_info(db, gl_id)     
     
-    return dict(inst=inst, gls=gls)
+    return dict(inst=inst, gls=gls, gl_info=gl_info)
     
 @auth.requires_login()
 def add_grouplist():

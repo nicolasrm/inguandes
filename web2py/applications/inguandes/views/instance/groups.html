@@ -28,7 +28,8 @@
             <h6>Grupos</h6>
             <nav id="menu">
                 <ul>       
-                    <li><a data-toggle="modal" href="#modal-new-grouplist" rel="tooltip" title="Agregar una lista de grupos"><i class="icon-plus"></i></a></li>
+                    <li><a data-toggle="modal" href="#modal-new-group" rel="tooltip" title="Agregar un grupo"><i class="icon-plus"></i></a></li>
+                    <li><a data-toggle="modal" href="#modal-new-random-groups" rel="tooltip" title="Crear grupos aleatorios"><i class="icon-random"></i></a></li>
                 </ul>
             </nav>
             <ul class="nav nav-list">
@@ -36,6 +37,13 @@
                 <li class="divider"></li>
             </ul>            
             <h6>Alumnos no incluidos</h6>
+            <ul class="nav nav-list">
+                <li class="divider"></li>
+                {{ for st in gl_info['miss_students']: }}
+                <li>{{=st['last_name'] + ', ' + st['first_name']}}</li>
+                {{ pass }}
+                <li class="divider"></li>
+            </ul>            
         </div>
     </div>
     <div class="span4">        
