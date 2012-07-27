@@ -17,12 +17,13 @@
             <ul class="nav nav-list">
                 <li class="divider"></li>                
                 {{ for gl in gls: }}
-                <li><a href="{{=URL('groups', args=[inst['id'],gl['id']])}}">{{=gl['name']}}</a></li>
+                <li class="{{='active' if gl_info is not None and gl_info['id'] == gl['id'] else ''}}"><a href="{{=URL('groups', args=[inst['id'],gl['id']])}}">{{=gl['name']}}</a></li>
                 {{ pass }}
                 <li class="divider"></li>
             </ul>            
         </div>
     </div>
+    {{ if gl_info is not None: }}
     <div class="span4">
         <div class="well">
             <h6>Grupos</h6>
@@ -31,44 +32,59 @@
                     <li><a data-toggle="modal" href="#modal-new-group" rel="tooltip" title="Agregar un grupo"><i class="icon-plus"></i></a></li>
                     <li><a data-toggle="modal" href="#modal-new-random-groups" rel="tooltip" title="Crear grupos aleatorios"><i class="icon-random"></i></a></li>
                 </ul>
-            </nav>
+            </nav>            
             <ul class="nav nav-list">
                 <li class="divider"></li>
+                {{ for g in gl_info['groups']: }}
+                <li class="{{='active' if g_info is not None and g_info['id'] == g[0] else ''}}"><a href="{{=URL('groups', args=[inst['id'],gl_info['id'], g[0]])}}">Grupo {{=g[0]}} ({{=g[1]}})</a></li>
+                {{ pass }}
                 <li class="divider"></li>
             </ul>            
+            {{ if gl_info['miss_students'] is not None and len(gl_info['miss_students']) > 0: }}
             <h6>Alumnos no incluidos</h6>
             <ul class="nav nav-list">
                 <li class="divider"></li>
                 {{ for st in gl_info['miss_students']: }}
-                <li>{{=st['last_name'] + ', ' + st['first_name']}}</li>
+                <li id="li-ms-{{=st['id']}}">{{=st['last_name'] + ', ' + st['first_name']}}</li>
                 {{ pass }}
                 <li class="divider"></li>
             </ul>            
+            {{ pass }}
         </div>
     </div>
+    {{ pass }}
+    {{ if g_info is not None: }}
     <div class="span4">        
         <div class="well">
-            <h6>Detalles Grupo</h6>
-            <nav id="menu">
-                <ul>       
-                    <li><a data-toggle="modal" href="#modal-new-grouplist" rel="tooltip" title="Agregar una lista de grupos"><i class="icon-plus"></i></a></li>
-                </ul>
-            </nav>
+            <h6>Integrantes</h6>
             <ul class="nav nav-list">
                 <li class="divider"></li>
-                <li class="nav-header">Integrantes</li>
-            </ul>
+                {{ for st in g_info['students']: }}
+                <li><a rel="tooltip" title="Eliminar alumno del grupo" href="{{=URL('del_group_student', args=[gl_info['id'], g_info['id'], st['id']])}}"><i class="icon-remove"></i> {{=st['last_name'] + ', ' + st['first_name']}} </a></li>
+                {{ pass }}
+            </ul>     
+            {{ if gl_info['miss_students'] is not None and len(gl_info['miss_students']) > 0: }}
+            <h6>Alumnos no incluidos</h6>
+            <ul class="nav nav-list">
+                <li class="divider"></li>
+                {{ for st in gl_info['miss_students']: }}
+                <li><a rel="tooltip" title="Agregar alumno al grupo" href="{{=URL('add_group_student', args=[gl_info['id'], g_info['id'], st['id']])}}"><i class="icon-plus"  data-student-id="{{=st['id']}}" data-group="{{=g_info['id']}}" data-grouplist="{{=gl_info['id']}}" style="cursor: pointer;"></i>  {{=st['last_name'] + ', ' + st['first_name']}}</a></li>
+                {{ pass }}
+                <li class="divider"></li>
+            </ul>            
+            {{ pass }}                
         </div>
     </div>
+    {{ pass }}
 </div>
 
 <div class="modal hide fade in" id="modal-new-grouplist">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">x</button>
-        <h3>Agregar nueva Lista de Grupos</h3>
+        <h3>Agregar nueva lista de grupos</h3>
     </div>
     <div class="modal-body">        
-        <form id="assign-main-form" class="form-horizontal" action="{{=URL('add_grouplist')}}" method="POST">
+        <form id="gl-new-form" class="form-horizontal" action="{{=URL('add_grouplist')}}" method="POST">
             <fieldset>
                 <div class="control-group">
                     <label class="control-label" for="assignment-name">Nombre</label>
@@ -84,13 +100,166 @@
     </div>
 </div>
 
+{{ if gl_info is not None: }}
+<div class="modal hide fade in" id="modal-new-group">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar nuevo grupo</h3>
+    </div>
+    <div class="modal-body">        
+        <div class="well">
+            <p>Seleccione los alumnos que serán parte del grupo:</p>
+            <form id="group-new-form" class="form-inline" action="{{=URL('add_group')}}" method="POST">
+                <select id="group-student" name="student">
+                    {{ for st in gl_info['miss_students']: }}
+                    <option value="{{=st['id']}}">{{=st['last_name'] + ', ' + st['first_name']}}</option>
+                    {{ pass }}
+                </select>
+                <a id="add-student-group" class="btn btn-success" href="#"><i class="icon-plus icon-white"></i></a>                
+                <input type="hidden" class="grouplist-id" name="grouplistid" value="{{=gl_info['id']}}"/>
+            </form>
+        </div>
+        <div class="well">
+            <table class="table table-bordered" id="new-group-stds-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Nombre</th>
+                        <th style="width: 40%;">Apellido</th>
+                        <th style="width: 20%;">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary" id="new-group-action">Crear</a>
+    </div>
+</div>
+{{ pass }}
+
+<div class="hide">
+    <table>
+        <tr id="tr-new-std-template">
+            <td data-fn></td>
+            <td data-ln></td>
+            <td data-remove>
+                <a class="btn btn-danger" rel="tooltip" title="Descartar alumno" href="#" data-remove-std><i class="icon-remove icon-white"></i></a>
+            </td>
+        </tr>
+    </table>
+</div>
+
 {{block pagescripts}}
 <script>
 $(document).ready( function () {
+    var student;
+    INGUANDES.miss_students = [];
+    INGUANDES.group_students = [];
+    
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+    
     $('.modal .modal-action').click( function () {
         $(this).closest('.modal').find('form').submit();
     });
+    
+    $('#add-student-group').click(addStudentToNewGroup);
+    $('#new-group-action').click(createGroup);
+    
+    {{ if gl_info is not None: }}
+        {{ for st in gl_info['miss_students']: }}
+        student = {};
+        student.id = {{=st['id']}};
+        student.first_name = '{{=st['first_name']}}';
+        student.last_name = '{{=st['last_name']}}';
+        
+        INGUANDES.miss_students.push(student);
+        {{ pass }}
+    {{ pass }}
 });
+
+function addStudentToNewGroup (event) {
+    var select = $('#group-student'),
+        table_group_stds = $('#new-group-stds-table'),
+        row_std,
+        std;
+        
+    std = findStudentById(select.val());
+    INGUANDES.group_students.push(std);
+    
+    row_std = $('#tr-new-std-template').clone();
+    row_std.attr('id', 'tr-new-std-' + std.id);
+    row_std.find('td[data-fn]').text(std.first_name);
+    row_std.find('td[data-ln]').text(std.last_name);
+    
+    row_std.find('[data-remove-std]')
+            .on('click', {
+                std: std
+            }, removeGroupStudent);
+
+    row_std.find('[rel="tooltip"]').tooltip();
+    
+    table_group_stds.append(row_std);
+}
+
+function removeGroupStudent (event) {
+    var std = event.data.std,
+        row_std = $('#tr-new-std-' + std.id),
+        stdindex = INGUANDES.group_students.indexOf(std);
+        
+    INGUANDES.group_students.splice(stdindex,1);
+        
+    event.preventDefault();
+    row_std.find('[rel="tooltip"]').tooltip('hide');    
+    row_std.remove();
+}
+
+function createGroup (event) {
+    var modal = $(this).closest('.modal'),
+        form_group = $('#group-new-form'),
+        new_group = {};
+    
+    new_group.grouplist = form_group.find('.grouplist-id').val();
+    new_group.students = [];
+    $.each(INGUANDES.group_students, function (i,s) {
+        new_group.students.push(s.id);
+    });
+    
+    console.log(INGUANDES.group_students);
+    console.log(new_group);
+    
+    $.ajax({
+            url: INGUANDES.api_url + 'add_group',
+            type: 'POST',
+            dataType: 'json',
+            data: new_group,
+            error: function (jqXHR, textStatus, errorThrown) {
+                INGUANDES.notify('error', 'No fue possible crear el grupo.');
+            },
+            success: createGroupSuccess
+        });
+    modal.modal('hide');
+}
+
+function createGroupSuccess (data, textStatus, jqXHR) {
+    var group_number = data.group_id;
+        
+    INGUANDES.notify('success', 'El grupo se creó correctamente: ' + group_number);
+    
+    $.each(INGUANDES.group_students, function (i,s) {
+        $('#li-ms-' + s.id).remove();
+    });
+}
+
+function findStudentById (stdid) {
+    var results = $.grep(INGUANDES.miss_students, function(s, i) {
+        return s.id == stdid;
+    });
+    
+    return results[0];
+}
 </script>
 {{end}}
 

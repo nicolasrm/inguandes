@@ -325,11 +325,16 @@ def groups():
     
     gls = get_group_lists(db, instanceId)
     gl_info = None
+    g_info = None
     if len(request.args) > 1:
         gl_id = int(request.args[1])
         gl_info = get_grouplist_info(db, gl_id)     
+        if len(request.args) > 2:
+            g_id = int(request.args[2])
+            g_info = get_group_info(db, gl_id, g_id)     
+            print g_info
     
-    return dict(inst=inst, gls=gls, gl_info=gl_info)
+    return dict(inst=inst, gls=gls, gl_info=gl_info, g_info=g_info)
     
 @auth.requires_login()
 def add_grouplist():
@@ -339,3 +344,47 @@ def add_grouplist():
                                 instance=instanceId)
     redirect(URL('groups', args=[instanceId]))
     
+@auth.requires_login()
+def add_group():    
+    stds = request.vars['students[]']
+    response.headers['Content-Type'] = 'application/json'        
+    if stds is not None and len(stds) > 0:
+        number = max_group_number(db, request.vars.grouplist) + 1
+        for std in stds:
+            db.student_group.insert(student=std,
+                                    group_id=number,
+                                    group_list=request.vars.grouplist)
+        
+        return response.json({  'message': 'Nuevo grupo '.format(str(number)),
+                                'group_id': number})
+    else:
+        return response.json({'message': 'No hay alumnos que agregar.'})
+
+@auth.requires_login()
+def del_group_student():
+    if len(request.args) > 2:
+        gl_id = int(request.args[0])
+        gl_info = get_grouplist_info(db, gl_id)     
+        g_id = int(request.args[1])
+        std_id = int(request.args[2])
+        
+        db((db.student_group.student == std_id) & (db.student_group.group_id == g_id) & (db.student_group.group_list == gl_id)).delete()        
+        redirect(URL('groups', args=[gl_info['instance'], gl_info['id'], g_id]))
+    else:
+        redirect(URL('default', 'index'))
+        
+@auth.requires_login()
+def add_group_student():
+    if len(request.args) > 2:
+        gl_id = int(request.args[0])
+        gl_info = get_grouplist_info(db, gl_id)     
+        g_id = int(request.args[1])
+        std_id = int(request.args[2])
+        
+        db.student_group.insert(student=std_id,
+                                group_id=g_id,
+                                group_list=gl_id)
+        
+        redirect(URL('groups', args=[gl_info['instance'], gl_info['id'], g_id]))
+    else:
+        redirect(URL('default', 'index'))
