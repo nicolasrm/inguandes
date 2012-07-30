@@ -25,7 +25,7 @@ def get_instance_content(db, instanceId):
     add_organized_content(files, ['id', 'name', 'description'], 'file', 'file', 'file', {'_target':'_blank'}, contents, URL('instance', 'download_content_file'))
     add_organized_content(videos, ['id', 'name', 'url', 'description'], 'video', 'facetime-video', None, None, contents)
     add_organized_content(links, ['id', 'name', 'url', 'description'], 'link', 'bookmark', 'url', {'_target':'_blank'}, contents)
-            
+                
     return contents
     
 def add_organized_content(list, cols, type, icon, col_href, a_attrs, contents, preHref=None):

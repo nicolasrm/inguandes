@@ -55,14 +55,18 @@
     </div>
     <div class="span8">    
         <div class="accordion" id="accordion_cgs">
-        {{ for cg in c_groups: 
-            accordion_group_id = 'collapse' + str(cg['id'])
+        {{ 
+        last_cg = ''
+        for cg in c_groups: 
+            if user_roles[user_role] == 'Profesor' or cg['id'] in contents: 
+                accordion_group_id = 'collapse' + str(cg['id'])
+                last_cg = accordion_group_id
         }}
             <div class="accordion-group">
                 <div class="accordion-heading">
                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion_cgs" href="#{{=accordion_group_id}}"><i class="icon-book"></i> {{=cg['title']}}</a>
                 </div>
-                <div id="{{=accordion_group_id}}" class="accordion-body in collapse" style="height: auto; ">
+                <div id="{{=accordion_group_id}}" class="accordion-body in collapse" style="height: 0px; ">
                     <div class="accordion-inner">
                         <div class="row">
                             <div class="span3">
@@ -128,7 +132,9 @@
                     </div>
                 </div>
             </div>            
-        {{ pass }}
+        {{  pass 
+          pass
+        }}
         </div>
     </div>
 </div>
@@ -162,6 +168,7 @@
                     <li><a rel="tooltip" title="Agregar link de instancia" data-toggle="modal" href="#modal-new-permanent-link"><i class="icon-plus icon-white"></i><i class="icon-bookmark icon-white"></i></a></li>
                     <li><a href="{{=URL('groups', args=[inst.id])}}" rel="tooltip" title="Administrar grupos"><i class="icon-random icon-white"></i></a></li>
                     <li><a href="{{=URL('ticket_categories', args=[inst.id])}}" rel="tooltip" title="Administrar tickets"><i class="icon-user icon-white"></i><i class="icon-tags icon-white"></i></a></li>
+                    <li><a href="{{=URL('view', args=[inst.id])}}" rel="tooltip" title="Ver como estudiante"><i class="icon-eye-open icon-white"></i></a></li>
                 </ul>
             </div>
             {{ pass }}
@@ -593,10 +600,12 @@
 {{ pass }}
 
 {{block pagescripts}}
-<script src="{{=URL('static', 'js/instance/view.js')}}"></script>
 <script>
-
+$(document).ready( function () {
+    INGUANDES.last_cg = '{{=last_cg}}';
+});
 </script>
+<script src="{{=URL('static', 'js/instance/view.js')}}"></script>
 {{end}}
 
 
