@@ -3,12 +3,12 @@
 
 ##############################################################################
 ### CRUD term
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def view_terms():
     terms = db().select(db.term.ALL, orderby=db.term.starting)
     return dict(terms=terms)
 
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def add_term():
     if request.vars.name is not None and request.vars.starting is not None and request.vars.ending is not None:
         db.term.insert( name=request.vars.name,
@@ -16,7 +16,7 @@ def add_term():
                             ending=request.vars.ending)
     redirect(URL('view_terms'))
     
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def edit_term():
     if request.vars.termid is not None and request.vars.name is not None and request.vars.starting is not None and request.vars.ending is not None:
         termId = int(request.vars.termid)        
@@ -25,7 +25,7 @@ def edit_term():
                                             ending=request.vars.ending)
     redirect(URL('view_terms'))
     
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def delete_term():
     if request.vars.termid is not None:
         termId = int(request.vars.termid)    
@@ -36,20 +36,20 @@ def delete_term():
 
 ##############################################################################
 ### CRUD courses 
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def view_courses():
     #courses = courses_util.get_courses()
     courses = get_courses(db)
     return dict(courses=courses)
     
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def add_course():
     if request.vars.code is not None and request.vars.name is not None:
         db.course.insert(   name=request.vars.name,
                             code=request.vars.code)
     redirect(URL('view_courses'))
     
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def edit_course():
     if request.vars.courseid is not None and request.vars.name is not None and request.vars.code:
         courseId = int(request.vars.courseid)    
@@ -57,7 +57,7 @@ def edit_course():
                                             code=request.vars.code)
     redirect(URL('view_courses'))
     
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def delete_course():
     if request.vars.courseid is not None:
         courseId = int(request.vars.courseid)
@@ -69,7 +69,7 @@ def delete_course():
 ##############################################################################
 ### CRUD sections
 
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def view_sections(): 
     if len(request.args) == 0:
         redirect(URL('view_courses'))
@@ -84,7 +84,7 @@ def view_sections():
     
     return dict(course=course, courseTitle=courseTitle, sections=sections, terms=terms)
 
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def add_section():
     courseId = int(request.vars.courseid)
     if request.vars.nrc is not None and request.vars.term is not None:
@@ -94,7 +94,7 @@ def add_section():
                             )
     redirect(URL('view_sections', args=[courseId]))
     
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def edit_section():
     courseId = int(request.vars.courseid)
     if request.vars.nrc is not None and request.vars.term is not None:
@@ -103,7 +103,7 @@ def edit_section():
                                             term=request.vars.term)
     redirect(URL('view_sections', args=[courseId]))
     
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def delete_section():
     courseId = int(request.vars.courseid)
     if request.vars.courseid is not None:
@@ -116,7 +116,7 @@ def delete_section():
 ##############################################################################
 ### CRUD user_section
 
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def add_relation():
     courseId = int(request.vars.courseid)
     if request.vars.user_email is not None and request.vars.user_role is not None:
@@ -140,26 +140,26 @@ def add_relation():
 ##############################################################################
 ### CRUD instances
 
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def view_instances():    
     instances = get_instances(db)
     sections = get_sections(db)
     return dict(instances=instances, sections=sections)
     
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def add_instance():
     if request.vars.title is not None:
         db.instance.insert( title=request.vars.title)
     redirect(URL('view_instances'))
     
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def delete_instance():
     if request.vars.instanceid is not None:
         instanceidId = int(request.vars.instanceid)
         del db.instance[instanceidId]
     redirect(URL('view_instances'))
     
-@auth.requires_login()
+@auth.requires_membership(role='admin')
 def add_instance_relation():    
     if request.vars.section is not None:
         instanceId = int(request.vars.instanceid)

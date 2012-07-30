@@ -5,6 +5,10 @@ from gluon.contrib.populate import populate
 from gluon.utils import hmac_hash
 import random
 
+# Create groups
+if not db(db.auth_group).count():
+    auth.add_group('admin')
+
 # Create courses
 courses_id = {}
 if not db(db.course).count():
