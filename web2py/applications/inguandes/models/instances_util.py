@@ -58,10 +58,26 @@ def add_organized_content(list, cols, type, icon, col_href, a_attrs, contents, p
             contents[c_cg]['required'].append(obj)
         else:
             contents[c_cg]['optional'].append(obj)
+
+def get_instance_professors(db, instanceId):
+    pfs = db((db.section.instance == instanceId) & (db.user_section.section == db.section.id) & (db.auth_user.id == db.user_section.the_user) & (db.user_section.the_role == 3)).select(db.auth_user.id, db.auth_user.first_name, db.auth_user.last_name)
+    return pfs
             
+def get_instance_info(db, instanceId):
+    inst = db.instance[instanceId]
+    pfs = get_instance_professors(db, instanceId)
+    
+    inst_info = {}
+    inst_info['id'] = inst.id
+    inst_info['title'] = inst.title
+    inst_info['professors'] = pfs
+    
+    return inst_info
+    
 def get_user_instances(db, userId):
     u_insts = db((db.user_section.the_user == userId) & (db.user_section.section == db.section.id) & (db.section.instance == db.instance.id)).select(db.instance.ALL)
-    return u_insts
+    u_insts_info = [get_instance_info(db, inst.id) for inst in u_insts]
+    return u_insts_info
     
 def get_user_role(db, instanceId, userId):
     u_role = db((db.user_section.the_user == userId) & (db.user_section.section == db.section.id) & (db.section.instance == instanceId)).select(db.user_section.the_role).first()

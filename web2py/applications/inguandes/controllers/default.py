@@ -9,13 +9,10 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
+@auth.requires_login()
 def index():
-    """
-    example action using the internationalization operator T and flash
-    rendered by views/default/index.html or views/generic.html
-    """
-    response.flash = "Welcome to web2py!"
-    return dict(message=T('Hello World'))
+    u_insts = get_user_instances(db, auth.user.id)
+    return dict(u_insts=u_insts)
 
 def user():
     """
