@@ -113,6 +113,9 @@ def get_user_student_instances(db, user_id, only_active=True):
     return db.executesql('SELECT DISTINCT i.* FROM instance i, section s, user_section us, term t WHERE us.the_user='+str(user_id)+
     ' AND us.the_role=0 AND us.section=s.id AND s.instance=i.id' + ' AND s.term=t.id AND t.starting <= NOW() AND t.ending>= NOW();' if only_active else ';', as_dict=True)
 
+def get_instance_news(db, instanceId):
+    return db(db.instance_new.instance == instanceId).select(orderby=~db.instance_new.created_on)
+    
 def get_instance_moderators(db, instanceId):
     return db.executesql('SELECT DISTINCT au.id, au.email FROM section s, user_section us, auth_user au WHERE s.instance='+str(instanceId)+
     ' AND s.id=us.section AND us.the_role > 1 AND us.the_user=au.id ORDER BY 2;', as_dict=True)

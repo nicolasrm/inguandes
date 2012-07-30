@@ -29,8 +29,10 @@ def view():
         user_role = int(request.args[1])
         
     inst_links = db(db.instance_link.instance == instanceId).select()
+    
+    news = get_instance_news(db, instanceId)
             
-    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links)
+    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links, news=news)
     
 @auth.requires_login()
 def add_contentgroup():
@@ -408,4 +410,7 @@ def add_new():
                                 content=request.vars.content,
                                 instance=instanceId,
                                 creator=auth.user.id)
+        session.flash = 'Noticia agregada correctamente'
+    else:
+        session.flash = 'No fue posible agregar la noticia'
     redirect(URL('view', args=[instanceId]))

@@ -4345,7 +4345,7 @@ input[type="submit"].btn.btn-mini {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1010;
+  z-index: 5010;
   display: none;
   padding: 5px;
 }

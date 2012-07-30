@@ -150,7 +150,17 @@
             
             <div class="nav-collapse">
                 <ul class="nav">
-                    <li><a href="#" rel="tooltip" title="Noticias"><i class="icon-bullhorn icon-white"></i></a></li>
+                    <li class="dropup">                        
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Noticias"><i class="icon-bullhorn icon-white"></i> <b class="caret"></b></a>
+                        <ul class="dropdown-menu">   
+                            {{ for n in news: }}
+                            <li>
+                                <div class="label label-inverse">{{=n['created_on'].strftime(datetime_format)}}</div>
+                                <a href="#" rel="popover" data-original-title="{{=n['title']}}" data-content="{{=n['content']}}">{{=n['title']}}</a>
+                            </li>
+                            {{ pass }}
+                        </ul>
+                    </li>
                     <li><a href="#" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
                     <li><a href="{{=URL('submit_ticket', args=[inst.id])}}" rel="tooltip" title="Emitir ticket"><i class="icon-plus icon-white"></i><i class="icon-tag icon-white"></i></a></li>
                     <li class="divider-vertical"></li>
