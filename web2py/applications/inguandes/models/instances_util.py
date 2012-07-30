@@ -96,6 +96,11 @@ def get_user_tasks(db, instanceId, userId):
             
     return u_tasks
     
+def log_user_content(db, user, content_type, content_id):
+    db.content_log.insert(  the_user=user,
+                            content_type=content_type,
+                            content_id=content_id)
+    
 def get_instance_ticket_categories(instanceId):
     categories = db(db.ticket_category_index.instance==instanceId).select(db.ticket_category_index.id, db.ticket_category_index.name).as_list()
     cats = [c['name'] for c in categories]

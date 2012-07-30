@@ -267,6 +267,16 @@
         
         modal.modal('hide');
     }
+    
+    function logContent (event) {
+        var data;
+        data = $(event.currentTarget).data();
+        
+        $.ajax({
+                url: INGUANDES.api_url + 'call/json/log_content/' + data.contentType + '/' + data.contentId,
+                dataType: 'json'
+        });
+    }
             
     $(document).ready( function () {
         INGUANDES.startDateFields();
@@ -298,5 +308,7 @@
             icon.removeClass();
             icon.addClass('icon-' + select.val());            
         });
+        
+        $('[data-content-type]').click(logContent);    
     });
 }(this));

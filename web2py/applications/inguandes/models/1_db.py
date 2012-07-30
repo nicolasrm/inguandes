@@ -123,6 +123,14 @@ db.define_table('student_group',
         Field('group_id', type='integer'),
         Field('group_list', type=db.group_list)
         )
+        
+db.define_table('content_log',
+        Field('the_user', type=db.auth_user),
+        Field('content_type', type='string'),
+        Field('content_id', type='integer'),
+        Field('created_on', type='datetime', default=request.now),
+        Field('request_ip', type='string', default=request.env["remote_addr"])
+        )
 
 ########## Questions & Quizzes ##########
 db.define_table('question',

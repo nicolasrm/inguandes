@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
 @auth.requires_login()
-def view():
+def call():
+    return service()
+
+@auth.requires_login()
+def view():        
     if len(request.args) == 0:
         redirect(URL('default', 'index'))
     instanceId = int(request.args[0])
@@ -121,6 +125,10 @@ def edit_content():
 @auth.requires_login()
 def download_content_file():
     return response.download(request, db)
+    
+@service.json
+def log_content(content_type, content_id):
+    log_user_content(db, auth.user.id, content_type, content_id)
 
 @auth.requires_login()
 def ticket_categories():
