@@ -399,3 +399,13 @@ def add_group_student():
         redirect(URL('groups', args=[gl_info['instance'], gl_info['id'], g_id]))
     else:
         redirect(URL('default', 'index'))
+
+@auth.requires_login()        
+def add_new():
+    instanceId = int(request.vars.instanceid)
+    if request.vars.title is not None and request.vars.content is not None:
+        db.instance_new.insert( title=request.vars.title,
+                                content=request.vars.content,
+                                instance=instanceId,
+                                creator=auth.user.id)
+    redirect(URL('view', args=[instanceId]))

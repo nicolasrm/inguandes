@@ -166,6 +166,7 @@
                     <li class="divider-vertical"></li>
                     <li><a rel="tooltip" title="Agregar grupo de contenido" data-toggle="modal" href="#modal-new-contentgroup"><i class="icon-plus icon-white"></i><i class="icon-book icon-white"></i></a></li>
                     <li><a rel="tooltip" title="Agregar link de instancia" data-toggle="modal" href="#modal-new-permanent-link"><i class="icon-plus icon-white"></i><i class="icon-bookmark icon-white"></i></a></li>
+                    <li><a rel="tooltip" title="Agregar noticia" data-toggle="modal" href="#modal-news"><i class="icon-plus icon-white"></i><i class="icon-bullhorn icon-white"></i></a></li>
                     <li><a href="{{=URL('groups', args=[inst.id])}}" rel="tooltip" title="Administrar grupos"><i class="icon-random icon-white"></i></a></li>
                     <li><a href="{{=URL('ticket_categories', args=[inst.id])}}" rel="tooltip" title="Administrar tickets"><i class="icon-user icon-white"></i><i class="icon-tags icon-white"></i></a></li>
                     <li><a href="{{=URL('view', args=[inst.id, 0])}}" target='_blank' rel="tooltip" title="Ver como estudiante"><i class="icon-eye-open icon-white"></i></a></li>
@@ -595,6 +596,39 @@
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
         <a href="#" class="btn btn-primary modal-action">Agregar</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-news">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar noticia</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_new')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="news-title">Título</label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge" id="news-title" name="title"/>
+                        <p class="help-block">Título de la noticia.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="news-content">Contenido</label>
+                    <div class="controls">
+                        <textarea class="input-xlarge" id="news-content" name="content"></textarea>
+                        <p class="help-block">Contenido de la noticia.</p>
+                    </div>
+                </div>
+                
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
     </div>
 </div>
 {{ pass }}

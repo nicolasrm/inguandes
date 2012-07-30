@@ -131,6 +131,14 @@ db.define_table('content_log',
         Field('created_on', type='datetime', default=request.now),
         Field('request_ip', type='string', default=request.env["remote_addr"])
         )
+        
+db.define_table('instance_new',
+        Field('title', type='string'),
+        Field('content', type='text'),
+        Field('creator', type=db.auth_user),
+        Field('created_on', type='datetime', default=request.now),
+        Field('instance', type=db.instance)
+        )
 
 ########## Questions & Quizzes ##########
 db.define_table('question',
