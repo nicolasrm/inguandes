@@ -21,6 +21,9 @@ def view():
         session.flash = 'No tienes permisos para acceder a la instancia <strong>' + inst.title + '</strong>'
         redirect(URL('default', 'index'))
         
+    if user_role == 3 and len(request.args) > 1:
+        user_role = int(request.args[1])
+        
     inst_links = db(db.instance_link.instance == instanceId).select()
             
     return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links)
