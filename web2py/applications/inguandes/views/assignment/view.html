@@ -17,7 +17,7 @@
                 <dt>Fin</dt>
                 <dd>Se debe subir a más tardar el <span class="label label-important">{{=asgn_info['ending'].strftime(datetime_format)}}</span></dd>
                 <dt>Tipo de archivos</dt>
-                <dd>{{='Sin restricción' if not asgn_info['file_types'] else XML('Se permiten archivos con las extensiones <span class="label label-warning">' + asgn_info['file_types_text'] + '</span>')}}</dd>
+                <dd>{{='Sin restricción' if not asgn_info['file_types'] or len(asgn_info['file_types']) == 0 else XML('Se permiten archivos con las extensiones <span class="label label-warning">' + asgn_info['file_types_text'] + '</span>')}}</dd>
                 <dt># Archivos</dt>
                 <dd>{{='Uno' if not asgn_info['multiple'] else 'Uno o más'}}</dd>
                 <dt>Tamaño máximo</dt>
@@ -166,6 +166,7 @@ $(function () {
     file.size = '{{=uf['size']}}';
     file.uploaded = '{{=uf['uploaded']}}';
     file.available = {{='false' if not uf['available'] else 'true'}};
+    file.href_arg = '{{=uf['file']}}'
     file.history = []
     {{ for h in uf['history']: }}
     file.history.push({{=h}});
@@ -175,9 +176,15 @@ $(function () {
     {{  pass }}
     
     {{ pass }}
-    {{ for ft in asgn_info['file_types']: }}
+    {{ 
+    if asgn_info['file_types'] is not None:
+        for ft in asgn_info['file_types']: 
+    }}
     INGUANDES.allowed_ext.push('{{=ft}}');
-    {{ pass }}    
+    {{ 
+        pass 
+    pass
+    }}    
     
     INGUANDES.allowed_multiple = {{='false' if not asgn_info['multiple'] else 'true'}};
     INGUANDES.max_size = {{=file_size_options_kb[asgn_info['max_size']]}}

@@ -32,7 +32,7 @@ def get_assignment(db, asgnId):
     asgn_info['name'] = cAsgn.name
     asgn_info['starting'] = cAsgn.starting
     asgn_info['ending'] = cAsgn.ending
-    asgn_info['file_types'] = cAsgn.file_types.split(';')
+    asgn_info['file_types'] = cAsgn.file_types.split(';') if cAsgn.file_types is not None and len(cAsgn.file_types.strip()) > 0 else None
     asgn_info['file_types_text'] = cAsgn.file_types
     asgn_info['multiple'] = cAsgn.multiple
     asgn_info['max_size'] = cAsgn.max_size
@@ -55,6 +55,7 @@ def get_assignment_file_info(db, file_id):
             'type': file_extension,
             'uploaded': up_file.created_on,
             'available': up_file.available,
+            'file': up_file.file,
             'history': [sf.id for sf in same_name_files]
             }
 
@@ -64,4 +65,10 @@ def get_user_files(db, asgnId, userId):
     for uf in u_files:
         files_info.append(get_assignment_file_info(db, uf.id))
         
-    return files_info        
+    return files_info       
+
+def log_download(db, userId, file):
+    u_file = db(db.user_assignment_file.file == file).select().first()
+    if u_file is not None:
+        db.download_file_log.insert(the_user=userId,
+                                    assignment_file=u_file.id)

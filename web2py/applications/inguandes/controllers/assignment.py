@@ -36,7 +36,7 @@ def assignment_files():
                     file_size = f.file.tell()/1024
                     f.file.seek(0, os.SEEK_SET)
                     
-                    if (len(asgn_info['file_types']) == 0 or o_ext[1:] in asgn_info['file_types']) and file_size <= asgn_info['max_size_kb']:            
+                    if (asgn_info['file_types'] is None or len(asgn_info['file_types']) == 0 or o_ext[1:] in asgn_info['file_types']) and file_size <= asgn_info['max_size_kb']:            
                         # Discard previous file with the same name if this exists
                         old_file = db((db.user_assignment_file.original_filename == f.filename) & (db.user_assignment_file.available == True)).select().first()
                         if old_file is not None:
@@ -87,3 +87,8 @@ def assignment_files():
             return response.json({'mensaje': 'No esta permitido borrar archivos'})
     
     return locals()
+    
+@auth.requires_login()
+def download_assignment_file():
+    log_download(db, auth.user.id, request.args[0])
+    return response.download(request, db)

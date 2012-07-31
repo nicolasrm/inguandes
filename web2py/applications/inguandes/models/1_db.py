@@ -179,7 +179,8 @@ db.define_table('user_quiz_question',
         Field('question', type=db.question),
         Field('alternative', type=db.question_alternative),
         Field('started_on', type='datetime'),
-        Field('answer_on', type='datetime')
+        Field('answer_on', type='datetime'),
+        Field('request_ip', type='string', default=request.env["remote_addr"])
         )
 
 ########## Assignments ##########
@@ -216,6 +217,14 @@ db.define_table('user_assignment_file',
         Field('original_filename', type='string'),
         Field('file', type='upload'),
         Field('available', type='boolean', default=True),
+        Field('request_ip', type='string', default=request.env["remote_addr"])
+        )
+        
+db.define_table('download_file_log',
+        Field('the_user', type=db.auth_user),
+        Field('assignment_file', type=db.user_assignment_file),
+        Field('created_on', type='datetime', default=request.now),
+        Field('request_ip', type='string', default=request.env["remote_addr"])
         )
         
 ########## Tickets ##########

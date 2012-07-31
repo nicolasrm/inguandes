@@ -309,8 +309,9 @@ def assignment():
                                                 starting=fields['starting'],
                                                 ending=fields['ending'],
                                                 instance=fields['instance'],
-                                                file_types=fields['file_types'],
-                                                multiple=fields['multiple'])   
+                                                file_types=fields['file_types'] if len(fields['file_types'].strip()) > 0 else None,
+                                                multiple=fields['multiple'],
+                                                max_size=fields['max_size'])
             
             session.flash = "Trabajo agregado con éxito"
             redirect(URL('view', args=[fields['instance']]))

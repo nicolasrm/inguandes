@@ -135,7 +135,7 @@
         row_file = $('#tr-file-template').clone();
         row_file.attr('id', 'tr-file-' + file.id);
         
-        row_file.find('td[data-name]').text(file.filename);
+        row_file.find('td[data-name]').html('<a rel="tooltip" title="Descargar archivo" href="' + INGUANDES.api_url + 'download_assignment_file/' + file.href_arg + '" tagret="_blank">' + file.filename + '</a>');
         row_file.find('td[data-extension]').text(file.type);
         row_file.find('td[data-size]').text(file.size + ' KB');
         row_file.find('td[data-uploaded]').text(file.uploaded);
