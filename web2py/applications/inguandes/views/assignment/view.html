@@ -23,6 +23,14 @@
                 <dt>Tamaño máximo</dt>
                 <dd><span class="label label-info">{{=file_size_options[asgn_info['max_size']]}}</span> por archivo</dd>
             </dl>
+            {{ if asgn_info['files'] is not None and len(asgn_info['files']) > 0: }}
+            <h6>Archivos</h6>
+            <ul class="nav">
+                {{ for fl in asgn_info['files']: }}
+                <li><a href="{{=URL('download_assignment_file', args=[fl['file']])}}" target="_blank">{{=fl['original_filename']}}</a></li>
+                {{ pass }}
+            </ul>
+            {{ pass }}
         </div>
     </div>    
     <div class="span8">

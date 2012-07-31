@@ -26,6 +26,7 @@ def get_assignments(db, instanceId, userId):
     
 def get_assignment(db, asgnId):
     cAsgn = db.assignment[asgnId]
+    asgn_files = db(db.assignment_file.assignment == asgnId).select()
     
     asgn_info = {}
     asgn_info['id'] = cAsgn.id
@@ -40,6 +41,7 @@ def get_assignment(db, asgnId):
     asgn_info['instance'] = cAsgn.instance.title
     asgn_info['instance_id'] = cAsgn.instance
     asgn_info['is_available'] = cAsgn.ending >= datetime.datetime.now()
+    asgn_info['files'] = asgn_files
     
     return asgn_info
     

@@ -208,7 +208,14 @@ db.define_table('assignment',
         Field('file_types', type='string'),
         Field('multiple', type='boolean', default=False),
         Field('max_size', type='integer', requires=IS_IN_SET(file_size_options)),
-        )   
+        )  
+
+db.define_table('assignment_file',
+        Field('assignment', type=db.assignment),
+        Field('created_on', type='datetime', default=request.now),
+        Field('original_filename', type='string'),
+        Field('file', type='upload')
+        )        
         
 db.define_table('user_assignment_file',
         Field('the_user', type=db.auth_user),

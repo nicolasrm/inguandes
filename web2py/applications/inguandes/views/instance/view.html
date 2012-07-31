@@ -458,7 +458,7 @@
                 <div class="control-group">
                     <label class="control-label" for="quiz-ending">Fin</label>
                     <input type="datetime" class="input-small" id="quiz-ending" name="ending" placeholder="Fin"/>
-                </div>
+                </div>                
                 <input type="hidden" class="instance-id" id="quiz-instanceid" value="{{=inst.id}}"/>
             </form>
         </div>
@@ -497,7 +497,7 @@
         <h3>Agregar nuevo Trabajo</h3>
     </div>
     <div class="modal-body">        
-            <form id="assign-main-form" class="form-horizontal" action="{{=URL('assignment')}}" method="POST">
+            <form id="assign-main-form" class="form-horizontal" action="{{=URL('assignment')}}" method="POST" enctype="multipart/form-data">
                 <div class="well">
                     <div class="control-group">
                         <label class="control-label" for="assignment-name">Nombre</label>
@@ -510,6 +510,12 @@
                     <div class="control-group">
                         <label class="control-label" for="assignment-ending">Fin</label>
                         <input type="datetime" class="input" id="assignment-ending" name="ending" placeholder="Fin"/>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="assignment-file">Enunciado</label>
+                        <div class="controls">
+                            <input type="file" id="assignment-file" name="file"/>
+                        </div>
                     </div>
                     <input type="hidden" class="instance-id" id="assignment-instanceid" name="instance" value="{{=inst.id}}"/>
                 </div>

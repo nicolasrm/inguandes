@@ -89,6 +89,10 @@ def assignment_files():
     return locals()
     
 @auth.requires_login()
-def download_assignment_file():
+def download_user_assignment_file():
     log_download(db, auth.user.id, request.args[0])
+    return response.download(request, db)
+    
+@auth.requires_login()
+def download_assignment_file():
     return response.download(request, db)

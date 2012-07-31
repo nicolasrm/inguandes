@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
 @auth.requires_login()
 def call():
@@ -312,6 +313,13 @@ def assignment():
                                                 file_types=fields['file_types'] if len(fields['file_types'].strip()) > 0 else None,
                                                 multiple=fields['multiple'],
                                                 max_size=fields['max_size'])
+                                                
+            if fields['file'] is not None:
+                o_filename, o_ext = os.path.splitext(fields['file'].filename)
+                n_filename = fields['file'].filename if len(o_filename) < 30 else o_filename[:30] + o_ext
+                db.assignment_file.insert(  assignment=assignmentId,
+                                            original_filename=fields['file'].filename,
+                                            file=db.assignment_file.file.store(fields['file'].file, n_filename))
             
             session.flash = "Trabajo agregado con éxito"
             redirect(URL('view', args=[fields['instance']]))
