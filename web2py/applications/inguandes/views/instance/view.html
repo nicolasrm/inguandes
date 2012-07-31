@@ -161,8 +161,8 @@
                             {{ pass }}
                         </ul>
                     </li>
-                    <li><a href="#" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
-                    <li><a href="{{=URL('submit_ticket', args=[inst.id])}}" rel="tooltip" title="Emitir ticket"><i class="icon-plus icon-white"></i><i class="icon-tag icon-white"></i></a></li>
+                    <!-- <li><a href="#" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
+                    <li><a href="{{=URL('submit_ticket', args=[inst.id])}}" rel="tooltip" title="Emitir ticket"><i class="icon-plus icon-white"></i><i class="icon-tag icon-white"></i></a></li>-->
                     <li class="divider-vertical"></li>
                     {{ for il in inst_links: }}
                     <li><a href="{{=il['url']}}" target="_blank" rel="tooltip" title="{{=il['description']}}"><i class="icon-{{=il['icon']}} icon-white"></i></a></li>
