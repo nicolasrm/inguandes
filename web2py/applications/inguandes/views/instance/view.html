@@ -43,7 +43,7 @@
                 {{ pass }}                
                 <li class="divider"></li>
             </ul>
-            {{ if user_roles[user_role] == 'Profesor': }}
+            {{ if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe': }}
             <nav id="menu">
                 <ul>                                       
                     <li><a data-btn-type="new-quiz" data-toggle="modal" href="#modal-new-quiz" rel="tooltip" title="Agregar un quiz"><i class="icon-plus"></i><i class="icon-th-list"></i></a></li>
@@ -58,7 +58,7 @@
         {{ 
         last_cg = ''
         for cg in c_groups: 
-            if user_roles[user_role] == 'Profesor' or cg['id'] in contents: 
+            if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe' or cg['id'] in contents: 
                 accordion_group_id = 'collapse' + str(cg['id'])
                 last_cg = accordion_group_id
         }}
@@ -112,7 +112,7 @@
                                 </ul>
                             </div>
                         </div>
-                        {{ if user_roles[user_role] == 'Profesor': }}
+                        {{ if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe': }}
                         <div class="row accordion-admin-row">
                             <div class="span4">
                                 <nav id="menu">
@@ -198,7 +198,7 @@
     </div>
 </div>
 
-{{ if user_roles[user_role] == 'Profesor': }}
+{{ if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe': }}
 <!-- Instance admin modals -->
 <div class="modal hide fade in" id="modal-new-contentgroup">
     <div class="modal-header">
