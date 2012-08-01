@@ -208,6 +208,8 @@ db.define_table('assignment',
         Field('file_types', type='string'),
         Field('multiple', type='boolean', default=False),
         Field('max_size', type='integer', requires=IS_IN_SET(file_size_options)),
+        Field('in_groups', type='boolean', default=False),
+        Field('group_list', type=db.group_list)
         )  
 
 db.define_table('assignment_file',

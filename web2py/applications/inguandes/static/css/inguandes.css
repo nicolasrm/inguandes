@@ -24,3 +24,11 @@ nav#menu ul li {
   margin-right: 9px;
   list-style: none;
 }
+
+.dl-horizontal-small dt {
+  width: 80px;
+}
+
+.dl-horizontal-small dd {
+  margin-left: 85px;
+}

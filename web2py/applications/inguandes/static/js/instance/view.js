@@ -310,5 +310,17 @@
         });
         
         $('[data-content-type]').click(logContent);    
+        
+        $('#assignment-in_groups').change( function () {
+            var group_list = $('#assignment-group_list');
+            if($(this).is(':checked')) {
+                group_list.removeClass('disabled');
+                group_list.removeAttr("disabled");
+            } 
+            else {
+                group_list.addClass('disabled');
+                group_list.attr("disabled", "disabled");
+            }
+        });
     });
 }(this));

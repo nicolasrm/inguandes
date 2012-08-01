@@ -42,6 +42,8 @@ def get_assignment(db, asgnId):
     asgn_info['instance_id'] = cAsgn.instance
     asgn_info['is_available'] = cAsgn.ending >= datetime.datetime.now()
     asgn_info['files'] = asgn_files
+    asgn_info['in_groups'] = cAsgn.in_groups
+    asgn_info['group_list'] = cAsgn.group_list
     
     return asgn_info
     
@@ -74,3 +76,9 @@ def log_download(db, userId, file):
     if u_file is not None:
         db.download_file_log.insert(the_user=userId,
                                     assignment_file=u_file.id)
+                                    
+def get_user_assignment_group(db, asgn_info, userId):
+    if not asgn_info['in_groups']:
+        return None
+    else:
+        return get_user_group(db, asgn_info['group_list'], userId)

@@ -516,9 +516,8 @@
                         <div class="controls">
                             <input type="file" id="assignment-file" name="file"/>
                         </div>
-                    </div>
-                    <input type="hidden" class="instance-id" id="assignment-instanceid" name="instance" value="{{=inst.id}}"/>
-                </div>
+                    </div>                    
+                </div>                
                 <div class="well form-inline">
                     <input type="text" class="input-large" id="assignment-file_types" name="file_types" placeholder="Tipo de archivos (ej: java;pdf)"/>
                     <select name="max_size">
@@ -531,6 +530,18 @@
                         <input type="checkbox" name="multiple"> Más de un archivo
                     </label>
                 </div>
+                <div class="well form-inline">
+                    <label class="checkbox" id="label-assignment-in_groups">
+                        <input type="checkbox" name="in_groups" id="assignment-in_groups"> En grupos
+                    </label>
+                    <select class="disabled" name="group_list" id="assignment-group_list" disabled>
+                        <option value="" disabled="disabled" selected="selected">Lista de grupos...</option>
+                    {{ for gl in group_lists: }}
+                        <option value="{{=gl['id']}}">{{=gl['name']}}</option>
+                    {{ pass }}
+                    </select>
+                </div>
+                <input type="hidden" class="instance-id" id="assignment-instanceid" name="instance" value="{{=inst.id}}"/>
             </form>
     </div>
     <div class="modal-footer">

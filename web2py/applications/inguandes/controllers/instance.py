@@ -32,8 +32,10 @@ def view():
     inst_links = db(db.instance_link.instance == instanceId).select()
     
     news = get_instance_news(db, instanceId)
+    
+    group_lists = get_group_lists(db, instanceId)
             
-    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links, news=news)
+    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links, news=news, group_lists=group_lists)
     
 @auth.requires_login()
 def add_contentgroup():
@@ -312,7 +314,9 @@ def assignment():
                                                 instance=fields['instance'],
                                                 file_types=fields['file_types'] if len(fields['file_types'].strip()) > 0 else None,
                                                 multiple=fields['multiple'],
-                                                max_size=fields['max_size'])
+                                                max_size=fields['max_size'],
+                                                in_groups=fields['in_groups'],
+                                                group_list=fields['group_list'] if 'group_list' in fields and len(fields['group_list'].strip()) > 0 else None)
                                                 
             if fields['file'] is not None:
                 o_filename, o_ext = os.path.splitext(fields['file'].filename)

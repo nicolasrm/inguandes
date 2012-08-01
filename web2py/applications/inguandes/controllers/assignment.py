@@ -13,8 +13,10 @@ def view():
     assignmentId = int(request.args[0])
     asgn_info = get_assignment(db, assignmentId)
     asgn_files = get_user_files(db, assignmentId, auth.user.id)
+    
+    user_group = get_user_assignment_group(db, asgn_info, auth.user.id)
             
-    return dict(asgn_info=asgn_info, asgn_files=asgn_files)
+    return dict(asgn_info=asgn_info, asgn_files=asgn_files, user_group=user_group)
     
 @request.restful()
 def assignment_files():
