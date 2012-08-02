@@ -9,7 +9,7 @@ def get_group_lists(db, instance_id):
 def get_grouplist_info(db, gl_id):
     gl = db.group_list[gl_id]
     cg = db.student_group.group_id.count()
-    groups = db(db.student_group.group_list == gl_id).select(db.student_group.group_id, cg, groupby=(db.student_group.group_id), distinct=True)
+    groups = db(db.student_group.group_list == gl_id).select(db.student_group.group_id, cg, groupby=(db.student_group.group_id), distinct=True, orderby=db.student_group.group_id)
     
     miss_stds = db.executesql('SELECT a.id, a.first_name, a.last_name FROM section s, user_section us, auth_user a WHERE s.instance = ' + str(gl.instance) + ' and us.section = s.id and a.id = us.the_user and us.the_role = 0 and a.id NOT IN (SELECT sg.student FROM student_group sg WHERE sg.group_list = ' + str(gl_id) + ');', as_dict=True)
     
