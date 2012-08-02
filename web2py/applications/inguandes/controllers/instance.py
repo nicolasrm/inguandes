@@ -415,6 +415,14 @@ def add_group_student():
     else:
         redirect(URL('default', 'index'))
 
+@auth.requires_login()
+def random_groups():
+    gl_id = int(request.vars.grouplistid)
+    gl_info = get_grouplist_info(db, gl_id)
+    generate_random_groups(db, gl_info, int(request.vars.size), request.vars.adjust_option)
+    
+    redirect(URL('groups', args=[gl_info['instance'], gl_info['id']]))
+        
 @auth.requires_login()        
 def add_new():
     instanceId = int(request.vars.instanceid)

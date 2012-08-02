@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import random
+import math
 
 def get_group_lists(db, instance_id):
     return db(db.group_list.instance == instance_id).select()
@@ -39,3 +40,45 @@ def get_group_info(db, gl_id, g_id):
 def get_user_group(db, gl_id, user_id):
     gr = db((db.student_group.student == user_id) & (db.student_group.group_list == gl_id)).select(db.student_group.group_id).first()    
     return get_group_info(db, gl_id, gr.group_id) if gr is not None else None
+    
+def generate_random_groups(db, gl_info, size, adjust_option):
+    # remove previos groups
+    db(db.student_group.group_list == gl_info['id']).delete()
+    
+    stds = get_instance_users_by_role(db, gl_info['instance'], 0)
+    stds_ids = [s.id for s in stds]
+    print stds_ids
+    rdm_stds = []
+    while len(stds_ids) > 0:
+        rdm = random.randint(0, len(stds_ids) - 1)
+        rdm_stds.append(stds_ids[rdm])
+        del stds_ids[rdm]
+        
+    # create groups
+    g_count = int(math.floor(len(rdm_stds)/size))
+    o_count = 0
+    stds_remaining = len(rdm_stds) - g_count*size
+    
+    if adjust_option == 'smaller' and stds_remaining > 0:
+        r = (size - 1) - stds_remaining
+        g_count = g_count - r
+        o_count = 1 + r
+        
+    for i in range(1, g_count + 1):
+        for a in range(size):
+            db.student_group.insert(student=rdm_stds.pop(),
+                                    group_id=i,
+                                    group_list=gl_info['id'])
+                                    
+    if adjust_option == 'smaller' and stds_remaining > 0:
+        for i in range(g_count + 1, g_count + 1 + o_count):
+            for a in range(size - 1):
+                db.student_group.insert(student=rdm_stds.pop(),
+                                        group_id=i,
+                                        group_list=gl_info['id'])
+    elif adjust_option == 'bigger' and stds_remaining > 0:
+        for i in range(1, stds_remaining + 1):
+            db.student_group.insert(student=rdm_stds.pop(),
+                                    group_id=i,
+                                    group_list=gl_info['id'])
+    

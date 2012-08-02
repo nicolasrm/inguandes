@@ -138,6 +138,45 @@
         <a href="#" class="btn btn-primary" id="new-group-action">Crear</a>
     </div>
 </div>
+
+<div class="modal hide fade in" id="modal-new-random-groups">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Generar grupos aleatorios</h3>
+    </div>
+    <div class="modal-body">        
+        <form id="gl-new-form" class="form-horizontal" action="{{=URL('random_groups')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="random-size">Alumnos por grupo</label>
+                    <div class="controls">
+                        <input type="text" class="input-small" id="random-size" name="size"/>
+                        <p class="help-block">Cantidad de alumnos que se deben asignar a cada grupo.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="random-size">Ajuste</label>
+                    <div class="controls">
+                        <label class="radio">
+                            <input type="radio" name="adjust_option" id="adjust-option-1" value="bigger" checked="">
+                            Crear grupos con un alumno más.
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="adjust_option" id="adjust-option-2" value="smaller">
+                            Crear grupos con un alumno menos.
+                        </label>
+                        <p class="help-block">Sistema en que se deben ajustar los alumnos en los grupos, en caso de no ser exactos.</p>
+                    </div>                    
+                </div>
+                <input type="hidden" class="grouplist-id" name="grouplistid" value="{{=gl_info['id']}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Generar</a>
+    </div>
+</div>
 {{ pass }}
 
 <div class="hide">
