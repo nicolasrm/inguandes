@@ -58,18 +58,30 @@ def get_assignment_file_info(db, file_id):
             'size': round(os.fstat(file_stream.fileno()).st_size/1024, 1),
             'type': file_extension,
             'uploaded': up_file.created_on,
+            'user': up_file.the_user.first_name + ' ' + up_file.the_user.last_name,
             'available': up_file.available,
             'file': up_file.file,
             'history': [sf.id for sf in same_name_files]
             }
 
-def get_user_files(db, asgnId, userId):
-    u_files = db((db.user_assignment_file.the_user == userId) & (db.user_assignment_file.assignment == asgnId)).select(orderby =~ db.user_assignment_file.created_on)
+def get_group_files(db, asgn_info, userId):
+    user_group = get_user_assignment_group(db, asgn_info, userId)
+    files_info = []
+    if user_group is None:
+        files_info = get_user_files(db, asgn_info, userId)
+    if user_group is not None:
+        for std in user_group['students']:
+            files_info = files_info + get_user_files(db, asgn_info, std['id'])
+        
+    return files_info       
+    
+def get_user_files(db, asgn_info, userId):
+    u_files = db((db.user_assignment_file.the_user == userId) & (db.user_assignment_file.assignment == asgn_info['id'])).select(orderby =~ db.user_assignment_file.created_on)
     files_info = []
     for uf in u_files:
         files_info.append(get_assignment_file_info(db, uf.id))
-        
-    return files_info       
+    
+    return files_info   
 
 def log_download(db, userId, file):
     u_file = db(db.user_assignment_file.file == file).select().first()

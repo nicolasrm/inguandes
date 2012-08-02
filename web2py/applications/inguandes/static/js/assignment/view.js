@@ -139,6 +139,7 @@
         row_file.find('td[data-extension]').text(file.type);
         row_file.find('td[data-size]').text(file.size + ' KB');
         row_file.find('td[data-uploaded]').text(file.uploaded);
+        row_file.find('td[data-user]').text(file.user);
         
         if (INGUANDES.is_available) {        
             row_file.find('[data-remove-file]')

@@ -122,6 +122,7 @@
                                 <th>Tipo</th>
                                 <th>Tamaño</th>
                                 <th>Enviado</th>
+                                <th>Usuario</th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -155,6 +156,7 @@
             <td data-extension></td>
             <td data-size></td>
             <td data-uploaded></td>
+            <td data-user></td>
             <td data-remove>
                 <a class="btn" rel="tooltip" title="Descartar archivo" href="#" data-remove-file><i class="icon-remove"></i></a>
             </td>
@@ -187,6 +189,7 @@ $(function () {
     file.type = '{{=uf['type']}}';
     file.size = '{{=uf['size']}}';
     file.uploaded = '{{=uf['uploaded']}}';
+    file.user = '{{=uf['user']}}';
     file.available = {{='false' if not uf['available'] else 'true'}};
     file.href_arg = '{{=uf['file']}}'
     file.history = []
