@@ -16,6 +16,9 @@ def get_instances(db):
         instances_a.append(inst)
     return instances_a
     
+def get_instance_content_group(db, instanceId):
+    return db(db.content_group.instance==instanceId).select(orderby=db.content_group.id)
+    
 def get_instance_content(db, instanceId):
     files = db((db.content_file.content_group == db.content_group.id) & (db.content_group.instance == instanceId)).select(db.content_file.ALL, orderby=db.content_file.id)
     videos = db((db.content_video.content_group == db.content_group.id) & (db.content_group.instance == instanceId)).select(db.content_video.ALL, orderby=db.content_video.id)

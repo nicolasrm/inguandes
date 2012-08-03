@@ -12,7 +12,7 @@ def view():
     instanceId = int(request.args[0])
     inst = db.instance[instanceId]
            
-    c_groups = db(db.content_group.instance==instanceId).select()
+    c_groups = get_instance_content_group(db, instanceId)
     contents = get_instance_content(db, instanceId)
 
     courseId = db(db.section.instance == instanceId).select().first().course
