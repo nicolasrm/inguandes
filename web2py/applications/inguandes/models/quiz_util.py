@@ -90,7 +90,7 @@ def create_quiz(db, quizId, user_id):
         if total <= len(course_questions[cat]):
             while count < total:
                 q_idx = random.randint(0, len(course_questions[cat])-1)
-                if course_questions[cat][q_idx].id not in quiz_questions:
+                if course_questions[cat][q_idx] not in quiz_questions:
                     quiz_questions.append(course_questions[cat][q_idx])
                     count = count + 1
         else:
