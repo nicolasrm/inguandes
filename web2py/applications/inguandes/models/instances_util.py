@@ -17,9 +17,9 @@ def get_instances(db):
     return instances_a
     
 def get_instance_content(db, instanceId):
-    files = db((db.content_file.content_group == db.content_group.id) & (db.content_group.instance == instanceId)).select(db.content_file.ALL)
-    videos = db((db.content_video.content_group == db.content_group.id) & (db.content_group.instance == instanceId)).select(db.content_video.ALL)
-    links = db((db.content_link.content_group == db.content_group.id) & (db.content_group.instance == instanceId)).select(db.content_link.ALL)    
+    files = db((db.content_file.content_group == db.content_group.id) & (db.content_group.instance == instanceId)).select(db.content_file.ALL, orderby=db.content_file.id)
+    videos = db((db.content_video.content_group == db.content_group.id) & (db.content_group.instance == instanceId)).select(db.content_video.ALL, orderby=db.content_video.id)
+    links = db((db.content_link.content_group == db.content_group.id) & (db.content_group.instance == instanceId)).select(db.content_link.ALL, orderby=db.content_link.id)    
     
     contents = {}
     add_organized_content(files, ['id', 'name', 'description'], 'file', 'file', 'file', {'_target':'_blank'}, contents, URL('instance', 'download_content_file'))

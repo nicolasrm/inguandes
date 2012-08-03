@@ -24,9 +24,10 @@ def add_question():
     courseId = int(request.vars.courseid)
     q_id = None
     href_vars = {'category':request.vars.category} if request.vars.category is not None else {}
-    if request.vars.text is not None and len(request.vars.text.strip()) > 0:
+    if request.vars.text is not None and len(request.vars.text.strip()) > 0:        
         q_id = db.question.insert(  text=request.vars.text,
                                     category=request.vars.category,
+                                    time = int(request.vars.time) if request.vars.time is not None and len(request.vars.time.strip()) > 0 else 60,
                                     course=courseId)
     if q_id is None:
         redirect(URL('view', args=[courseId], vars=href_vars))

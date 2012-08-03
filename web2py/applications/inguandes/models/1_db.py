@@ -146,12 +146,13 @@ db.define_table('instance_new',
 db.define_table('question',
         Field('text', type='text'),
         Field('category', type='string'),
+        Field('time', type='integer'),
         Field('course', type=db.course)
         )
         
 db.define_table('question_alternative',
         Field('text', type='text'),
-        Field('is_correct', type='boolean'),
+        Field('is_correct', type='boolean'),        
         Field('question', type=db.question)
         )
         

@@ -82,12 +82,19 @@ pass
                     </div>
                 </div>
                 <div class="control-group">
+                    <label class="control-label" for="question-time">Tiempo</label>
+                    <div class="controls">
+                        <input type="text" class="input-small" id="question-time" name="time">
+                        <p class="help-block">Tiempo para la pregunta en segundos.</p>
+                    </div>
+                </div>
+                <div class="control-group">
                     <label class="control-label" for="question-category">Categoría</label>
                     <div class="controls">
                         <input type="text" class="span3" id="question-category" name="category" style="margin: 0 auto;" data-provide="typeahead" data-source="{{=XML(XML(cats).replace("'", "&quot;"))}}">
                         <p class="help-block">Indique la categoría para la pregunta.</p>
                     </div>
-                </div>
+                </div>                
                 
                 <input type="hidden" name="courseid" value="{{=co.id}}"/>
             </fieldset>

@@ -49,7 +49,7 @@
 $(document).ready( function () {  
     $('#countdown').countdown({        
         format: 'sss',
-        startTime: '60',
+        startTime: "{{=c_question['time']}}",
         digitWidth: 28,
         digitHeight: 40,
         timerEnd: function() { timeEnd(); },

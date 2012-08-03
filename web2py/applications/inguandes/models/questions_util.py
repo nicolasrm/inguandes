@@ -31,6 +31,7 @@ def get_question(db, qId):
     q_obj['id'] = q.id
     q_obj['text'] = q.text
     q_obj['category'] = q.id
+    q_obj['time'] = q.time
     q_obj['alternatives'] = alts_dict
     
     return q_obj

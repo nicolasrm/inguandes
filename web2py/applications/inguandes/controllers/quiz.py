@@ -32,11 +32,17 @@ def answer():
 @service.json
 def receive_answer(uq_id, alt_id):
     user_qq = db.user_quiz_question[uq_id]
-    user_qq.update_record(  alternative=alt_id,
-                            answer_on=datetime.datetime.now)
-                            
+    answer_on = datetime.datetime.now()
+    diff = answer_on - user_qq.started_on
+    
     response.headers['Content-Type'] = 'application/json'
-    return response.json({'message': 'Respuesta guardada'})
+    if diff.seconds <= user_qq.question.time + 5:    
+        user_qq.update_record(  alternative=alt_id,
+                                answer_on=answer_on)                                
+        
+        return response.json({'message': 'Respuesta guardada'})
+    else:
+        return response.json({'message': 'Respuesta no guardada, tiempo excedido.'})
 
 @auth.requires_login()
 def result():
@@ -45,7 +51,7 @@ def result():
     quizId = int(request.args[0])
     quiz_info = get_quiz(db, quizId)
     
-    if quiz_info['ending'] >= datetime.date.today():
+    if quiz_info['ending'] >= datetime.datetime.now():
         redirect(URL('instance', 'view', args=[quiz_info['instance_id']]))
         
     user_quiz = get_user_quiz(db, quizId, auth.user.id)
