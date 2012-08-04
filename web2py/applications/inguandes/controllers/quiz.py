@@ -55,6 +55,18 @@ def result():
         redirect(URL('instance', 'view', args=[quiz_info['instance_id']]))
         
     user_quiz = get_user_quiz(db, quizId, auth.user.id)
-    user_resullt = quiz_user_result(db, quiz_info, user_quiz)
+    user_resullt = quiz_user_result(db, user_quiz)
     
     return dict(quiz_info=quiz_info, user_quiz=user_quiz, user_resullt=user_resullt)
+    
+@auth.requires_login()
+def all_result():
+    if len(request.args) == 0:
+        redirect(URL('default', 'index'))
+        
+    quizId = int(request.args[0])
+    quiz_info = get_quiz(db, quizId)
+    
+    q_results = quiz_result(db, quiz_info)
+    
+    return dict(quiz_info=quiz_info, q_results=q_results)

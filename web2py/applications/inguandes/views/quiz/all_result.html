@@ -1,0 +1,68 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span12">
+        <h2>{{=quiz_info['name']}}</h2>
+        <h4><a href="{{=URL('instance','view', args=[quiz_info['instance_id']])}}">{{=quiz_info['instance']}}</a></h4>
+    </div>
+</div>
+<div class="row">    
+    <div class="span12">
+        <div class="well">
+            <h3>Información del Quiz</h3>
+            <dl class="dl-horizontal">
+                <dt>Nombre</dt>
+                <dd>{{=quiz_info['name']}}</dd>
+                <dt>Inicio</dt>
+                <dd>Se puede comenzar a responder desde las 00:00 del <span class="label">{{=quiz_info['starting']}}</span></dd>
+                <dt>Fin</dt>
+                <dd>Se debe responder a más tardar el <span class="label label-important">{{=quiz_info['ending']}}</span> a las 23:59</dd>
+                <dt>Materia</dt>
+                <dd>{{=quiz_info['categories_text']}}</dd>
+                <dt># Preguntas</dt>
+                <dd>{{=quiz_info['q_count']}}</dd>
+            </dl>
+        </div>
+    </div>   
+</div>
+<div class="row">
+    <div class="span12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Comienzo</th>
+                    <th>Fin</th>
+                    <th>Avance</th>
+                    <th>Correctas</th>
+                    <th>Omitidas</th>
+                    <th>Incorrectas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ for qr in q_results: }}
+                <tr>
+                    <td>{{=qr['name']}}</td>
+                    <td>{{=qr['started_on']}}</td>
+                    <td>{{=qr['finished']}}</td>
+                    <td>{{=qr['questions_ready'] + '/' + qr['questions_pending']}}</td>                    
+                    <td>{{=qr['correct']}}</td>
+                    <td>{{=qr['incorrect']}}</td>
+                    <td>{{=qr['omitted']}}</td>                    
+                </tr>
+                {{ pass }}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{{block pagescripts}}
+<script>
+$(document).ready(function() {
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+});
+</script>
+{{end}}
+
+
+

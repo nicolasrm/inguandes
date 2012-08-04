@@ -65,6 +65,7 @@ def get_user_quiz(db, quizId, user_id):
         available_qs = available_questions(db, u_quiz.id)
         uq_info = {}
         uq_info['id'] = u_quiz.id
+        uq_info['user_id'] = user_id
         uq_info['started_on'] = u_quiz.started_on
         uq_info['questions_ready'] = quiz['q_count'] - len(available_qs)
         uq_info['questions_pending'] = len(available_qs)
@@ -131,3 +132,44 @@ def quiz_user_result(db, quiz_info, uq_info):
             q_results.append(qr)
         
         return q_results
+        
+def quiz_user_result_resume(db, uq_info):
+    if uq_info is None:
+        return None
+    else:
+        user = db.auth_user[uq_info['user_id']]
+        q_results = {}
+        q_results['name'] = user.last_name + ', ' + user.first_name
+        q_results['started_on'] = uq_info['started_on']
+        q_results['finished'] = None
+        q_results['questions_ready'] = uq_info['questions_ready']
+        q_results['questions_pending'] = uq_info['questions_pending']
+        q_results['correct'] = 0
+        q_results['incorrect'] = 0
+        q_results['omitted'] = 0
+        for uq in uq_info['questions_list']:
+            is_correct = quiz_is_correct(db, uq)
+            if is_correct:
+                q_results['correct'] = q_results['correct'] + 1
+            elif is_correct == False:
+                q_results['incorrect'] = q_results['correct'] + 1
+            elif uq.started_on is not None:
+                q_results['omitted'] = q_results['correct'] + 1
+        
+        return q_results
+        
+def quiz_is_correct(db, uqq):
+    if uqq.alternative is None:
+        return None
+    return db(db.question_alternative.id == uqq.alternative).select().first().is_correct
+    
+        
+def quiz_result(db, quiz_info):    
+    stds = get_instance_users_by_role(db, quiz_info['instance_id'], 3)
+    q_results = []
+    for s in stds:
+        ur = quiz_user_result_resume(db, get_user_quiz(db, quiz_info['id'], s.id))
+        if ur is not None:
+            q_results.append(ur)
+    
+    return q_results

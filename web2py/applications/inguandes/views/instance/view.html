@@ -16,7 +16,7 @@
                     </li> 
                 {{ pass }}   
                 <li class="divider"></li>                
-                <li class="nav-header">Evaluaciones Activas</li>                       
+                <li class="nav-header">Evaluaciones Activas</li>
                 {{ for t in u_tasks['actived']: }}
                     <li>
                         <a href="{{=URL(t['type'], args=[t['id']])}}">
@@ -26,9 +26,16 @@
                     </li> 
                 {{ pass }}
                 {{ for t in u_tasks['ready']: }}
-                    <li>                        
+                    <li>
+                        {{ if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe': }}
+                        <a href="{{=URL(t['type'], args=[t['id']])}}">
+                            <i class="{{=t['icon']}}"></i>{{=t['name']}}
+                            <span class="label label-info pull-right" rel="tooltip" title="Fecha de cierre para ver los resultados.">{{=t['ending'].strftime(datetime_format)}}</span>
+                        </a>
+                        {{ else: }}
                         <span rel="tooltip" title="Este quiz ya lo finalizaste."><i class="{{=t['icon']}}"></i>{{=t['name']}}</span>
                         <span class="label label-info pull-right" rel="tooltip" title="Fecha de cierre para ver los resultados.">{{=t['ending'].strftime(datetime_format)}}</span>
+                        {{ pass }}
                     </li> 
                 {{ pass }}
                 <li class="divider"></li>

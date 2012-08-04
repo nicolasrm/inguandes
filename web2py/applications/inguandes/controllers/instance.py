@@ -272,7 +272,12 @@ def submit_ticket():
 def quiz():
     @auth.requires_login()
     def GET(quizId):
-        redirect(URL('quiz', 'start', args=[quizId]))
+        quiz = get_quiz(db, quizId)
+        user_role = get_user_role(db, quiz['instance_id'], auth.user.id)
+        if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
+            redirect(URL('quiz', 'all_result', args=[quizId]))
+        else:
+            redirect(URL('quiz', 'start', args=[quizId]))
     
     @auth.requires_login()
     def POST(**fields):  
