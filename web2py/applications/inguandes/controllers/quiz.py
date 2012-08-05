@@ -51,11 +51,15 @@ def result():
     quizId = int(request.args[0])
     quiz_info = get_quiz(db, quizId)
     
+    user_role = get_user_role(db, quiz_info['instance_id'], auth.user.id)
+    if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
+        redirect(URL('quiz', 'all_result', args=[quizId]))
+    
     if quiz_info['ending'] >= datetime.datetime.now():
         redirect(URL('instance', 'view', args=[quiz_info['instance_id']]))
         
     user_quiz = get_user_quiz(db, quizId, auth.user.id)
-    user_resullt = quiz_user_result(db, user_quiz)
+    user_resullt = quiz_user_result(db, quiz_info, user_quiz)
     
     return dict(quiz_info=quiz_info, user_quiz=user_quiz, user_resullt=user_resullt)
     
