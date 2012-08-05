@@ -68,6 +68,10 @@ def get_instance_professors(db, instanceId):
 def get_instance_users_by_role(db, instanceId, role_id):
     users = db((db.section.instance == instanceId) & (db.user_section.section == db.section.id) & (db.auth_user.id == db.user_section.the_user) & (db.user_section.the_role == role_id)).select(db.auth_user.id, db.auth_user.first_name, db.auth_user.last_name)
     return users
+    
+def get_instance_users_by_role_count(db, instanceId, role_id):
+    users_count = db((db.section.instance == instanceId) & (db.user_section.section == db.section.id) & (db.auth_user.id == db.user_section.the_user) & (db.user_section.the_role == role_id)).count()
+    return users_count
             
 def get_instance_info(db, instanceId):
     inst = db.instance[instanceId]
@@ -81,7 +85,7 @@ def get_instance_info(db, instanceId):
     return inst_info
     
 def get_user_instances(db, userId):
-    u_insts = db((db.user_section.the_user == userId) & (db.user_section.section == db.section.id) & (db.section.instance == db.instance.id)).select(db.instance.ALL)
+    u_insts = db((db.user_section.the_user == userId) & (db.user_section.section == db.section.id) & (db.section.instance == db.instance.id)).select(db.instance.ALL, distinct=True)
     u_insts_info = [get_instance_info(db, inst.id) for inst in u_insts]
     return u_insts_info
     

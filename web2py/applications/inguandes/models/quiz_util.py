@@ -63,9 +63,11 @@ def get_user_quiz(db, quizId, user_id):
     else:
         quiz = get_quiz(db, quizId)
         available_qs = available_questions(db, u_quiz.id)
+        user = db.auth_user[user_id]        
         uq_info = {}
         uq_info['id'] = u_quiz.id
         uq_info['user_id'] = user_id
+        uq_info['user_name'] = user.last_name + ', ' + user.first_name
         uq_info['started_on'] = u_quiz.started_on
         uq_info['questions_ready'] = quiz['q_count'] - len(available_qs)
         uq_info['questions_pending'] = len(available_qs)
@@ -128,6 +130,7 @@ def quiz_user_result(db, quiz_info, uq_info):
             qr['alternative'] = db(db.question_alternative.id == uq.alternative).select().first() if uq.alternative is not None else None
             qr['correct'] = db((db.question_alternative.question == uq.question) & (db.question_alternative.is_correct == True)).select().first()
             qr['is_correct'] = qr['alternative'].id == qr['correct'].id if qr['alternative'] is not None else None
+            qr['question_resume'] = quiz_question_resume(db, quiz_info, uq.question)
             
             q_results.append(qr)
         
@@ -139,9 +142,10 @@ def quiz_user_result_resume(db, uq_info):
     else:
         user = db.auth_user[uq_info['user_id']]
         q_results = {}
+        q_results['user_id'] = user.id
         q_results['name'] = user.last_name + ', ' + user.first_name
         q_results['started_on'] = uq_info['started_on']
-        q_results['finished'] = None
+        q_results['last'] = None
         q_results['questions_ready'] = uq_info['questions_ready']
         q_results['questions_pending'] = uq_info['questions_pending']
         q_results['correct'] = 0
@@ -155,6 +159,8 @@ def quiz_user_result_resume(db, uq_info):
                 q_results['incorrect'] = q_results['correct'] + 1
             elif uq.started_on is not None:
                 q_results['omitted'] = q_results['correct'] + 1
+            if uq.started_on is not None and (q_results['last'] is None or q_results['last'] < uq.started_on):
+                q_results['last'] = uq.started_on
         
         return q_results
         
@@ -162,9 +168,8 @@ def quiz_is_correct(db, uqq):
     if uqq.alternative is None:
         return None
     return db(db.question_alternative.id == uqq.alternative).select().first().is_correct
-    
         
-def quiz_result(db, quiz_info):    
+def quiz_results(db, quiz_info):
     stds = get_instance_users_by_role(db, quiz_info['instance_id'], 3)
     q_results = []
     for s in stds:
@@ -173,3 +178,32 @@ def quiz_result(db, quiz_info):
             q_results.append(ur)
     
     return q_results
+    
+def quiz_result_resume(db, quiz_info, q_results):
+    q_resume = {}
+    q_resume['syudents_ready'] = len(q_results)
+    q_resume['students_count'] = get_instance_users_by_role_count(db, quiz_info['instance_id'], 0)
+    q_resume['average'] = 0
+    q_resume['max'] = -1
+    q_resume['min'] = -1
+    
+    for ur in q_results:
+        q_resume['average'] = q_resume['average'] + ur['correct']
+        if ur['correct'] > q_resume['max']:
+            q_resume['max'] = ur['correct']
+        if q_resume['min'] == -1 or ur['correct'] < q_resume['min']:
+            q_resume['min'] = ur['correct']
+            
+    q_resume['average'] = q_resume['average']/q_resume['syudents_ready']
+    
+    return q_resume
+    
+def quiz_question_resume(db, quiz_info, q_id):
+    question_info = {}
+    question_info['total'] = db(db.user_quiz_question.question == q_id).count()
+    question_info['correct'] = db((db.user_quiz_question.question == q_id) & (db.user_quiz_question.alternative == db.question_alternative.id) & (db.question_alternative.is_correct == True)).count()
+    question_info['omitted'] = db((db.user_quiz_question.question == q_id) & (db.user_quiz_question.alternative == None)).count()
+    question_info['wrong'] = question_info['total'] - (question_info['correct'] + question_info['omitted'])
+    
+    
+    return question_info

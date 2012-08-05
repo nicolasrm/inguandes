@@ -1,41 +1,48 @@
 {{extend 'layout.html'}}
 <div class="row">
     <div class="span12">
-        <h2>{{=quiz_info['name']}}</h2>
+        <h2>{{=quiz_info['name']}} <small>{{=user_quiz['user_name']}}</small></h2>
         <h4><a href="{{=URL('instance','view', args=[quiz_info['instance_id']])}}">{{=quiz_info['instance']}}</a></h4>
     </div>
 </div>
 <div class="row">    
-    <div class="span4 well">
-        <h3>Información del Quiz</h3>
-        <dl class="dl-horizontal">
-            <dt>Nombre</dt>
-            <dd>{{=quiz_info['name']}}</dd>
-            <dt>Inicio</dt>
-            <dd>Se puede comenzar a responder desde las 00:00 del <span class="label">{{=quiz_info['starting']}}</span></dd>
-            <dt>Fin</dt>
-            <dd>Se debe responder a más tardar el <span class="label label-important">{{=quiz_info['ending']}}</span> a las 23:59</dd>
-            <dt>Materia</dt>
-            <dd>{{=quiz_info['categories_text']}}</dd>
-            <dt># Preguntas</dt>
-            <dd>{{=quiz_info['q_count']}}</dd>
-        </dl>
-    </div>        
-    <div class="span7">
-        <div class="row">  
-            <div class="span7 well">
-                <div class="">
-                    <h3>Resultados Generales</h3>
-                </div>
-            </div>
-        </div>         
+    <div class="span4">
+        <div class="well well-small">
+            <h3>Información del Quiz</h3>
+            <dl class="dl-horizontal dl-horizontal-small">
+                <dt>Inicio</dt>
+                <dd><span class="label">{{=quiz_info['starting'].strftime(datetime_format)}}</span></dd>
+                <dt>Fin</dt>
+                <dd><span class="label label-important">{{=quiz_info['ending'].strftime(datetime_format)}}</span></dd>
+                <dt>Materia</dt>
+                <dd>{{=quiz_info['categories_text']}}</dd>
+                <dt># Preguntas</dt>
+                <dd>{{=quiz_info['q_count']}}</dd>
+            </dl>
+        </div>
     </div>    
+    <div class="span8">
+        <div class="well well-small">
+            <h3>Resultados Generales</h3>
+            <dl class="dl-horizontal dl-horizontal-small">
+                <dt>Respuestas</dt>
+                <dd>{{=str(q_resume['syudents_ready']) + '/' + str(q_resume['students_count'])}}</dd>
+                <dt>Promedio</dt>
+                <dd>{{=str(q_resume['average']) + '/' + str(quiz_info['q_count'])}} respuestas correctas.</dd>
+                <dt>Máximo</dt>
+                <dd>{{=str(q_resume['max']) + '/' + str(quiz_info['q_count'])}} respuestas correctas.</dd>
+                <dt>Mínimo</dt>
+                <dd>{{=str(q_resume['min']) + '/' + str(quiz_info['q_count'])}} respuestas correctas.</dd>
+            </dl>
+            <span class="label label-info">Mis Correctas: {{=u_resume['correct']}}</span>
+        </div>
+    </div>
 </div>
-<h3>Mis Resultados</h3>
+<h3>Mis Respuestas</h3>
 {{ if user_quiz is None: }}
     <span class="label label-important">No respondiste este quiz.</span>
 {{ else: }}
-    {{ for qr in user_resullt: }}
+    {{ for qr in user_result: }}
     <div class="row">
         <div class="span9">
             <div class="alert {{='' if qr['is_correct'] is None else ('alert-error' if not qr['is_correct'] else 'alert-success')}}">
@@ -53,8 +60,18 @@
             </div>
         </div>
         <div class="span3">
-            <div class="well">
+            <div class="well well-small">
                 <h5>Estadísticas</h5>
+                <dl class="dl-horizontal dl-horizontal-small">
+                    <dt>Respuestas</dt>
+                    <dd>{{=qr['question_resume']['total']}}</dd>
+                    <dt>Correctas</dt>
+                    <dd>{{=qr['question_resume']['correct']}}</dd>
+                    <dt>Incorrectas</dt>
+                    <dd>{{=qr['question_resume']['wrong']}}</dd>
+                    <dt>Omitidas</dt>
+                    <dd>{{=qr['question_resume']['omitted']}}</dd>
+                </dl>
             </div>
         </div>
     </div>

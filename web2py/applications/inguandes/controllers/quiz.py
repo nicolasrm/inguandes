@@ -52,16 +52,23 @@ def result():
     quiz_info = get_quiz(db, quizId)
     
     user_role = get_user_role(db, quiz_info['instance_id'], auth.user.id)
-    if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
+    if len(request.args) == 1 and user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
         redirect(URL('quiz', 'all_result', args=[quizId]))
     
     if quiz_info['ending'] >= datetime.datetime.now():
         redirect(URL('instance', 'view', args=[quiz_info['instance_id']]))
         
-    user_quiz = get_user_quiz(db, quizId, auth.user.id)
-    user_resullt = quiz_user_result(db, quiz_info, user_quiz)
+    user_id = auth.user.id
+    if len(request.args) == 2 and user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
+        user_id = int(request.args[1])
+        
+    user_quiz = get_user_quiz(db, quizId, user_id)
+    user_result = quiz_user_result(db, quiz_info, user_quiz)
+        
+    q_resume = quiz_result_resume(db, quiz_info, quiz_results(db, quiz_info))
+    u_resume = quiz_user_result_resume(db, user_quiz)
     
-    return dict(quiz_info=quiz_info, user_quiz=user_quiz, user_resullt=user_resullt)
+    return dict(quiz_info=quiz_info, user_quiz=user_quiz, user_result=user_result, q_resume=q_resume, u_resume=u_resume)
     
 @auth.requires_login()
 def all_result():
@@ -71,6 +78,7 @@ def all_result():
     quizId = int(request.args[0])
     quiz_info = get_quiz(db, quizId)
     
-    q_results = quiz_result(db, quiz_info)
+    q_results = quiz_results(db, quiz_info)
+    q_resume = quiz_result_resume(db, quiz_info, q_results)
     
-    return dict(quiz_info=quiz_info, q_results=q_results)
+    return dict(quiz_info=quiz_info, q_results=q_results, q_resume=q_resume)
