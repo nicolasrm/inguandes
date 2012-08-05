@@ -55,7 +55,7 @@ def result():
     if len(request.args) == 1 and user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
         redirect(URL('quiz', 'all_result', args=[quizId]))
     
-    if quiz_info['ending'] >= datetime.datetime.now():
+    if quiz_info['ending'] >= datetime.datetime.now() and user_roles[user_role] == 'Estudiante':
         redirect(URL('instance', 'view', args=[quiz_info['instance_id']]))
         
     user_id = auth.user.id
