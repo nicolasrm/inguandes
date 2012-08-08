@@ -318,7 +318,7 @@ def assignment():
                                                 ending=fields['ending'],
                                                 instance=fields['instance'],
                                                 file_types=fields['file_types'] if len(fields['file_types'].strip()) > 0 else None,
-                                                multiple=fields['multiple'],
+                                                multiple=fields['multiple'] if 'multiple' in fields else False,,
                                                 max_size=fields['max_size'],
                                                 in_groups=fields['in_groups'] if 'in_groups' in fields else False,
                                                 group_list=fields['group_list'] if 'group_list' in fields and len(fields['group_list'].strip()) > 0 else None)
