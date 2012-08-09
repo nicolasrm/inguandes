@@ -94,3 +94,33 @@ def get_user_assignment_group(db, asgn_info, userId):
         return None
     else:
         return get_user_group(db, asgn_info['group_list'], userId)
+        
+def get_last(file_info):
+    return file_info
+    
+        
+def assignment_group_result(db, asgn_info, userId, user_group):
+    gr_files = get_group_files(db, asgn_info, userId)
+    user = db.auth_user[userId]
+    
+    gr_result = {}
+    gr_result['user_id'] = userId
+    gr_result['name'] = 'Grupo ' + str(user_group['id']) if user_group is not None else user.last_name + ', ' + user.first_name
+    gr_result['last_modification'] = max([f['uploaded'] for f in gr_files]) if len(gr_files) > 0 else '-'
+    gr_result['files_count'] = len([f for f in gr_files if f['available']])
+    gr_result['modifications_count'] = sum([len(f['history']) for f in gr_files]) if len(gr_files) > 0 else '-'
+    
+    return gr_result
+        
+def assignment_results(db, asgn_info):
+    stds = get_instance_users_by_role(db, asgn_info['instance_id'], 0)
+    a_results = {}
+    for s in stds:
+        user_group = get_user_assignment_group(db, asgn_info, s.id)
+        if user_group is None or user_group['id'] not in a_results:
+            gr = assignment_group_result(db, asgn_info, s.id, user_group)
+            key = user_group['id'] if user_group is not None else s.id
+            if gr is not None:
+                a_results[key] = gr
+    
+    return a_results

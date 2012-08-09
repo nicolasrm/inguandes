@@ -1,0 +1,70 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span10">
+        <h2>{{=asgn_info['name']}}</h2>
+        <h4><a href="{{=URL('instance','view', args=[asgn_info['instance_id']])}}">{{=asgn_info['instance']}}</a></h4>
+    </div>
+</div>
+<div class="row">    
+    <div class="span4">
+        <div class="well well-small">
+            <h3>Información del Trabajo</h3>
+            <dl class="dl-horizontal dl-horizontal-small">                
+                <dt>Inicio</dt>
+                <dd><span class="label">{{=asgn_info['starting'].strftime(datetime_format)}}</span></dd>
+                <dt>Fin</dt>
+                <dd><span class="label label-important">{{=asgn_info['ending'].strftime(datetime_format)}}</span></dd>
+                <dt>Formato</dt>
+                <dd>{{='Sin restricción' if not asgn_info['file_types'] or len(asgn_info['file_types']) == 0 else XML('Se permiten archivos con las extensiones <span class="label label-warning">' + asgn_info['file_types_text'] + '</span>')}}</dd>
+                <dt># Archivos</dt>
+                <dd>{{='Uno' if not asgn_info['multiple'] else 'Uno o más'}}</dd>
+                <dt>Tamaño</dt>
+                <dd><span class="label label-info">{{=file_size_options[asgn_info['max_size']]}}</span> por archivo</dd>
+            </dl>
+        </div>
+    </div>    
+    <div class="span8">
+        <div class="well well-small">
+            <h3>Resultados Generales</h3>
+            <dl class="dl-horizontal dl-horizontal-small">
+                
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="span12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Alumno/Grupo</th>                    
+                    <th>Última</th>
+                    <th># Archivos</th>
+                    <th># Cambios</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ for (k, gr) in a_results.iteritems(): }}
+                <tr>
+                    <td><a href="{{=URL('result', args=[asgn_info['id'], gr['user_id']])}}" rel="tooltip" title="Trabajo del grupo o alumno">{{=gr['name']}}</a></td>
+                    <td>{{=gr['last_modification'].strftime(datetime_format) if len(gr['last_modification']) > 4 else gr['last_modification'] }}</td>
+                    <td>{{=gr['files_count']}}</td>
+                    <td>{{=gr['modifications_count']}}</td>        
+                </tr>
+                {{ pass }}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{{block pagescripts}}
+<script>
+$(document).ready(function() {
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+});
+</script>
+{{end}}
+
+
+

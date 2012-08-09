@@ -325,6 +325,10 @@ def quiz():
 def assignment():
     @auth.requires_login()
     def GET(assignmentId):
+        asgn_info = get_assignment(db, assignmentId)
+        user_role = get_user_role(db, asgn_info['instance_id'], auth.user.id)
+        if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
+            redirect(URL('assignment', 'all_result', args=[assignmentId]))
         redirect(URL('assignment', 'view', args=[assignmentId]))
     
     @auth.requires_login()
@@ -335,12 +339,12 @@ def assignment():
                                                 ending=fields['ending'],
                                                 instance=fields['instance'],
                                                 file_types=fields['file_types'] if len(fields['file_types'].strip()) > 0 else None,
-                                                multiple=fields['multiple'] if 'multiple' in fields else False,,
+                                                multiple=fields['multiple'] if 'multiple' in fields else False,
                                                 max_size=fields['max_size'],
                                                 in_groups=fields['in_groups'] if 'in_groups' in fields else False,
                                                 group_list=fields['group_list'] if 'group_list' in fields and len(fields['group_list'].strip()) > 0 else None)
                                                 
-            if fields['file'] is not None:
+            if fields['file'] is not None and len(fields['file'].strip()) > 0:
                 o_filename, o_ext = os.path.splitext(fields['file'].filename)
                 n_filename = fields['file'].filename if len(o_filename) < 30 else o_filename[:30] + o_ext
                 db.assignment_file.insert(  assignment=assignmentId,

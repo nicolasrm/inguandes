@@ -102,3 +102,16 @@ def download_user_assignment_file():
 @auth.requires_login()
 def download_assignment_file():
     return response.download(request, db)
+    
+@auth.requires_login()
+def all_result():
+    if len(request.args) == 0:
+        redirect(URL('default', 'index'))
+        
+    assignmentId = int(request.args[0])
+    asgn_info = get_assignment(db, assignmentId)
+    a_results = assignment_results(db, asgn_info)
+    
+    print a_results
+    
+    return dict(asgn_info=asgn_info, a_results=a_results)
