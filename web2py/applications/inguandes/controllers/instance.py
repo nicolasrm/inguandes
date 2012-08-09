@@ -44,6 +44,23 @@ def add_contentgroup():
         db.content_group.insert(title=request.vars.title,
                                 instance=instanceId)
     redirect(URL('view', args=[instanceId]))
+
+@auth.requires_login()    
+def edit_contentgroup():
+    instanceId = int(request.vars.instanceid)
+    if request.vars.title is not None:
+        cgId = int(request.vars.contentgroupid)
+        
+        db.content_group[cgId].update_record(title=request.vars.title)
+    redirect(URL('view', args=[instanceId]))
+    
+@auth.requires_login()    
+def remove_contentgroup():
+    instanceId = int(request.vars.instanceid)
+    if request.vars.contentgroupid is not None:
+        cgId = int(request.vars.contentgroupid)        
+        del db.content_group[cgId]
+    redirect(URL('view', args=[instanceId]))
     
 @auth.requires_login()
 def add_content():

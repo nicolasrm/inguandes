@@ -187,6 +187,32 @@
         row_content.remove();
     }
     
+    function showEditContentGroupModal (event) {
+        var modal = $('#modal-edit-contentgroup'),            
+            data = $(event.currentTarget).data(),
+            cgId = data.cgId,
+            cgTitle = data.cgTitle,
+            form_container = $('#form-edit-contentgroup');  
+                        
+        modal.find('.contentgroup-id').val(cgId);
+        modal.find('#edit-cg-title').val(cgTitle);
+        
+        modal.modal('show');
+    }
+    
+    function showRemoveContentGroupModal (event) {
+        var modal = $('#modal-remove-contentgroup'),            
+            data = $(event.currentTarget).data(),
+            cgId = data.cgId,
+            cgTitle = data.cgTitle,
+            form_container = $('#form-remove-contentgroup');  
+                        
+        modal.find('.contentgroup-id').val(cgId);
+        modal.find('#delete-cg-title').text(cgTitle);
+        
+        modal.modal('show');
+    }
+    
     function showVideo (event) {
         var modal, videoName, videoUrl, data;
         
@@ -292,6 +318,9 @@
         
         $('[data-btn-type="new-content"]').click(showNewContentModal);
         $('[data-btn-type="edit-content"]').click(showEditContentModal);
+        
+        $('[data-btn-type="edit-content-group"]').click(showEditContentGroupModal);
+        $('[data-btn-type="remove-content-group"]').click(showRemoveContentGroupModal);
         
         $('[data-content-type="video"]').click(showVideo);    
         $('#modal-show-video').on('hidden', function () {

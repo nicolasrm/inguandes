@@ -11,11 +11,11 @@ body {
     border-top: 1px solid #eeeeee;
 }
 
-nav#menu {
+.nav-menu {
     min-height: 20px;
 }
 
-nav#menu ul li {
+.nav-menu ul li {
   float: left;
   display: inline;
   position: relative;

@@ -51,7 +51,7 @@
                 <li class="divider"></li>
             </ul>
             {{ if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe': }}
-            <nav id="menu">
+            <nav class="nav-menu">
                 <ul>                                       
                     <li><a data-btn-type="new-quiz" data-toggle="modal" href="#modal-new-quiz" rel="tooltip" title="Agregar un quiz"><i class="icon-plus"></i><i class="icon-th-list"></i></a></li>
                     <li><a data-btn-type="new-task" data-toggle="modal" href="#modal-new-assignment" rel="tooltip" title="Agregar una entrega de trabajo"><i class="icon-plus"></i><i class="icon-upload"></i></a></li>
@@ -121,18 +121,23 @@
                         </div>
                         {{ if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe': }}
                         <div class="row accordion-admin-row">
-                            <div class="span4">
-                                <nav id="menu">
+                            <div class="span3">
+                                <nav class="nav-menu">
                                     <ul>                                
                                         <li><a data-btn-type="new-content" data-new-content-type="file" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un archivo"><i class="icon-plus"></i><i class="icon-file"></i></a></li>
                                         <li><a data-btn-type="new-content" data-new-content-type="video" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un video"><i class="icon-plus"></i><i class="icon-facetime-video"></i></a></li>
                                         <li><a data-btn-type="new-content" data-new-content-type="link" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un link"><i class="icon-plus"></i><i class="icon-bookmark"></i></a></li>
                                         <li><a data-btn-type="edit-content" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Editar contenidos del grupo"><i class="icon-edit"></i></a></li>
                                     </ul>
-                                </nav>
+                                </nav>                                
                             </div>
-                            <div class="span4">
-                                
+                            <div class="span3 offset1">
+                                <nav class="nav-menu">
+                                    <ul class="pull-right">
+                                        <li><a data-btn-type="edit-content-group" data-cg-id="{{=cg['id']}}" data-cg-title="{{=cg['title']}}" href="#" rel="tooltip" title="Editar nombre grupo de contenidos"><i class="icon-edit"></i><i class="icon-book"></i></a></li>
+                                        <li><a data-btn-type="remove-content-group" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Eliminar grupo de contenidos"><i class="icon-remove"></i><i class="icon-book"></i></a></li>
+                                    </ul>
+                                </nav> 
                             </div>
                         </div>
                         {{ pass }}
@@ -230,6 +235,52 @@
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
         <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-edit-contentgroup">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Editar grupo de contenidos</h3>
+    </div>
+    <div class="modal-body">
+        <form id="form-edit-contentgroup" class="form-horizontal" action="{{=URL('edit_contentgroup')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="title">Título</label>
+                    <div class="controls">
+                        <input type="text" id="edit-cg-title" name="title"/>
+                        <p class="help-block">Título que se desplegará para identificar el grupo de contenidos.</p>
+                    </div>
+                </div>
+                <input type="hidden" class="contentgroup-id" name="contentgroupid" />
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Editar</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-remove-contentgroup">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Eliminar grupo de contenidos</h3>
+    </div>
+    <div class="modal-body">
+        <p>¿Está seguro que desea eliminar el grupo de contenidos <span id="delete-cg-title"></span>?
+        <form id="form-remove-contentgroup" class="form-horizontal" action="{{=URL('remove_contentgroup')}}" method="POST">
+            <fieldset>
+                <input type="hidden" class="contentgroup-id" name="contentgroupid" />
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-danger modal-action">Eliminar</a>
     </div>
 </div>
 
