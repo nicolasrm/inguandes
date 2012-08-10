@@ -104,6 +104,19 @@ def download_user_assignment_file():
 @auth.requires_login()
 def download_assignment_file():
     return response.download(request, db)
+
+@auth.requires_login()
+def result():
+    if len(request.args) == 0:
+        redirect(URL('default', 'index'))
+    assignmentId = int(request.args[0])
+    asgn_info = get_assignment(db, assignmentId)
+    
+    user_role = get_user_role(db, asgn_info['instance_id'], auth.user.id)
+    if len(request.args) == 1 and user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
+        redirect(URL('all_result', args=[assignmentId]))
+    else:
+        redirect(URL('view', args=[assignmentId]))
     
 @auth.requires_login()
 def all_result():
@@ -112,8 +125,11 @@ def all_result():
         
     assignmentId = int(request.args[0])
     asgn_info = get_assignment(db, assignmentId)
-    a_results = assignment_results(db, asgn_info)
     
-    print a_results
+    user_role = get_user_role(db, asgn_info['instance_id'], auth.user.id)
+    if user_roles[user_role] != 'Profesor' and user_roles[user_role] != 'Ayudante Jefe':
+        redirect(URL('view', args=[assignmentId]))
+    
+    a_results = assignment_results(db, asgn_info)
     
     return dict(asgn_info=asgn_info, a_results=a_results)

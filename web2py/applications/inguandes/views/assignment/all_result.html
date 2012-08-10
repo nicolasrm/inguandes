@@ -46,7 +46,7 @@
             <tbody>
                 {{ for (k, gr) in a_results.iteritems(): }}
                 <tr>
-                    <td><a href="{{=URL('result', args=[asgn_info['id'], gr['user_id']])}}" rel="tooltip" title="Trabajo del grupo o alumno">{{=gr['name']}}</a></td>
+                    <td><a href="{{=URL('view', args=[asgn_info['id'], gr['user_id']])}}" rel="tooltip" title="Trabajo del grupo o alumno">{{=gr['name']}}</a></td>
                     <td>{{=gr['last_modification'].strftime(datetime_format) if isinstance(gr['last_modification'], datetime.datetime) else gr['last_modification'] }}</td>
                     <td>{{=gr['files_count']}}</td>
                     <td>{{=gr['modifications_count']}}</td>        
