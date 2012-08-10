@@ -205,7 +205,7 @@ $(function () {
     if asgn_info['file_types'] is not None:
         for ft in asgn_info['file_types']: 
     }}
-    INGUANDES.allowed_ext.push('{{=ft}}');
+    INGUANDES.allowed_ext.push('{{=ft.strip()}}');
     {{ 
         pass 
     pass
