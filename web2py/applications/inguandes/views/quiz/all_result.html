@@ -61,9 +61,9 @@
                     <td>{{=qr['started_on'].strftime(datetime_format)}}</td>
                     <td>{{=qr['last'].strftime(datetime_format)}}</td>
                     <td>{{=str(qr['questions_ready']) + '/' + str(quiz_info['q_count'])}}</td>                    
-                    <td>{{=qr['correct']}}</td>
-                    <td>{{=qr['incorrect']}}</td>
-                    <td>{{=qr['omitted']}}</td>                    
+                    <td>{{=qr['correct']}}</td>                    
+                    <td>{{=qr['omitted']}}</td>
+                    <td>{{=qr['incorrect']}}</td>                    
                 </tr>
                 {{ pass }}
             </tbody>

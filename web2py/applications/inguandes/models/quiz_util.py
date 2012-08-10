@@ -153,7 +153,7 @@ def quiz_user_result_resume(db, uq_info):
         q_results['omitted'] = 0
         for uq in uq_info['questions_list']:
             is_correct = quiz_is_correct(db, uq)
-            if is_correct:
+            if is_correct == True:
                 q_results['correct'] = q_results['correct'] + 1
             elif is_correct == False:
                 q_results['incorrect'] = q_results['incorrect'] + 1
@@ -167,7 +167,8 @@ def quiz_user_result_resume(db, uq_info):
 def quiz_is_correct(db, uqq):
     if uqq.alternative is None:
         return None
-    return db(db.question_alternative.id == uqq.alternative).select().first().is_correct
+    is_correct = db(db.question_alternative.id == uqq.alternative).select().first().is_correct
+    return is_correct if is_correct is not None else False
         
 def quiz_results(db, quiz_info):
     stds = get_instance_users_by_role(db, quiz_info['instance_id'], 0)
