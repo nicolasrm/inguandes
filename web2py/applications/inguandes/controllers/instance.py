@@ -12,7 +12,7 @@ def view():
     instanceId = int(request.args[0])
     inst = db.instance[instanceId]
     if inst is None:
-        redirect(=URL('default', 'index'))
+        redirect(URL('default', 'index'))
            
     c_groups = get_instance_content_group(db, instanceId)
     contents = get_instance_content(db, instanceId)
