@@ -193,8 +193,8 @@ def quiz_result_resume(db, quiz_info, q_results):
             q_resume['max'] = ur['correct']
         if q_resume['min'] == -1 or ur['correct'] < q_resume['min']:
             q_resume['min'] = ur['correct']
-            
-    q_resume['average'] = q_resume['average']/q_resume['syudents_ready']
+    
+    q_resume['average'] = q_resume['average']/q_resume['syudents_ready'] if q_resume['syudents_ready'] > 0 else '-'
     
     return q_resume
     
