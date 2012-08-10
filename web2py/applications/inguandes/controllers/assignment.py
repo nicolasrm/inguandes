@@ -25,6 +25,7 @@ def view():
 @request.restful()
 def assignment_files():
 
+    @auth.requires_login()
     def POST(assignment_id, **fields):        
         asgn_info = get_assignment(db, assignment_id)
         uploaded_files = []
@@ -80,6 +81,7 @@ def assignment_files():
                     'message': error_msg
                     })        
     
+    @auth.requires_login()
     def DELETE(file_id):
         u_file = db.user_assignment_file[file_id]
         asgn_info = get_assignment(db, u_file.assignment)

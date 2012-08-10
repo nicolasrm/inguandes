@@ -11,13 +11,15 @@ def view():
         redirect(URL('default', 'index'))
     instanceId = int(request.args[0])
     inst = db.instance[instanceId]
+    if inst is None:
+        redirect(=URL('default', 'index'))
            
     c_groups = get_instance_content_group(db, instanceId)
     contents = get_instance_content(db, instanceId)
 
     courseId = db(db.section.instance == instanceId).select().first().course
     
-    questions, cats = get_questions(db, courseId)
+    cats = get_categories(db, courseId)
         
     u_tasks = get_user_tasks(db, instanceId, auth.user.id)
     

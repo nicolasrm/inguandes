@@ -45,8 +45,12 @@
                     <span class="icon-bar"></span>
                 </a>
                 
-                
-                <a class="brand" href="{{=URL('default', 'index')}}">IngUandes</a>
+                <div>
+                    <a class="brand" href="{{=URL('default', 'index')}}">IngUandes</a>
+                    <div class="ribbon-wrapper">
+                        <div class="ribbon ribbon-green">beta</div>
+                    </div>
+                </div>
                 {{ if auth.user is not None: }}
                 <ul class="nav">
                     {{
