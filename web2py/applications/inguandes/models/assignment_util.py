@@ -150,7 +150,7 @@ def zip_assignment(db, asgn_info):
     for s in stds:
         user_group = get_user_assignment_group(db, asgn_info, s.id)
         if user_group is None or user_group['id'] not in groups_ready:            
-            groups_ready.append(user_group['id'])
+            groups_ready.append(user_group['id'] if user_group is not None else s.id)
             gr = assignment_group_result(db, asgn_info, s.id, user_group)
             group_base_path = os.path.join(asgn_folder_path, gr['name'])
             if not os.path.exists(group_base_path):
