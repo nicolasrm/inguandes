@@ -346,7 +346,7 @@ def assignment():
                                                 in_groups=fields['in_groups'] if 'in_groups' in fields else False,
                                                 group_list=fields['group_list'] if 'group_list' in fields and len(fields['group_list'].strip()) > 0 else None)
                                                 
-            if fields['file'] is not None and len(fields['file'].strip()) > 0:
+            if fields['file'] is not None:
                 o_filename, o_ext = os.path.splitext(fields['file'].filename)
                 n_filename = fields['file'].filename if len(o_filename) < 30 else o_filename[:30] + o_ext
                 db.assignment_file.insert(  assignment=assignmentId,
