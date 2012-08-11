@@ -2,6 +2,7 @@
 import datetime
 import random
 import os
+import shutil
 
 def get_assignments(db, instanceId, userId):
     asgns = db(db.assignment.instance==instanceId).select(db.assignment.ALL)
@@ -54,6 +55,7 @@ def get_assignment_file_info(db, file_id):
     same_name_files = db(db.user_assignment_file.original_filename == up_file.original_filename).select(db.user_assignment_file.id, orderby=~db.user_assignment_file.created_on)
     
     return {'filename': only_name,
+            'original_filename': up_file.original_filename,
             'id': up_file.id,
             'size': round(os.fstat(file_stream.fileno()).st_size/1024, 1),
             'type': file_extension,
@@ -97,14 +99,14 @@ def get_user_assignment_group(db, asgn_info, userId):
         
 def get_last(file_info):
     return file_info
-    
-        
+            
 def assignment_group_result(db, asgn_info, userId, user_group):
     gr_files = get_group_files(db, asgn_info, userId)
     user = db.auth_user[userId]
     
     gr_result = {}
     gr_result['user_id'] = userId
+    gr_result['files'] = gr_files
     gr_result['name'] = 'Grupo ' + str(user_group['id']) if user_group is not None else user.last_name + ', ' + user.first_name
     gr_result['last_modification'] = max([f['uploaded'] for f in gr_files]) if len(gr_files) > 0 else '-'
     gr_result['files_count'] = len([f for f in gr_files if f['available']])
@@ -124,3 +126,39 @@ def assignment_results(db, asgn_info):
                 a_results[key] = gr
     
     return a_results
+    
+def zip_assignment(db, asgn_info):
+    stds = get_instance_users_by_role(db, asgn_info['instance_id'], 0)
+    
+    asgn_name = asgn_info['name'].replace(':', '-')
+    
+    zip_filename = asgn_name
+    temp_path = os.path.join(request.folder, 'uploads', 'temp')
+    
+    if not os.path.exists(temp_path):
+        os.makedirs(temp_path)
+        
+    new_temp_path = os.path.join(temp_path, 'temp')
+    zip_file_path = os.path.join(temp_path, zip_filename)        
+    
+    if os.path.exists(new_temp_path):
+        shutil.rmtree(new_temp_path)
+    os.makedirs(new_temp_path)    
+    asgn_folder_path = os.path.join(new_temp_path, asgn_name)        
+    
+    for s in stds:
+        user_group = get_user_assignment_group(db, asgn_info, s.id)
+        if user_group is None or user_group['id'] not in a_results:            
+            gr = assignment_group_result(db, asgn_info, s.id, user_group)
+            group_base_path = os.path.join(asgn_folder_path, gr['name'])
+            if not os.path.exists(group_base_path):
+                os.makedirs(group_base_path)
+            
+            for file in [f for f in gr['files'] if f['available']]:
+                file_dest = os.path.join(group_base_path, file['original_filename'])
+                file_src = os.path.join(request.folder, 'uploads', file['file'])                                
+                shutil.copyfile(file_src, file_dest)
+    
+    shutil.make_archive(zip_file_path, 'zip', new_temp_path)
+    
+    return zip_file_path + '.zip'

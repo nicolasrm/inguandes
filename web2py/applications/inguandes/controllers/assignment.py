@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
+import contenttype
 
 @auth.requires_login()
 def call():
@@ -133,3 +134,18 @@ def all_result():
     a_results = assignment_results(db, asgn_info)
     
     return dict(asgn_info=asgn_info, a_results=a_results)
+    
+@auth.requires_login()
+def download_all():
+    if len(request.args) == 0:
+        redirect(URL('default', 'index'))
+        
+    assignmentId = int(request.args[0])
+    asgn_info = get_assignment(db, assignmentId)
+    
+    tmpfilepath = zip_assignment(db, asgn_info)
+    
+    response.headers['Content-Type'] = contenttype.contenttype(tmpfilepath)
+    response.headers['Content-Disposition'] = 'attachment; filename={0}.zip'.format(asgn_info['name'])
+        
+    return response.stream(open(tmpfilepath,'rb'),chunk_size=4096)

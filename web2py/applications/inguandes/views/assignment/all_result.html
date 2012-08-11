@@ -6,7 +6,7 @@
     </div>
 </div>
 <div class="row">    
-    <div class="span4">
+    <div class="span8">
         <div class="well well-small">
             <h3>Información del Trabajo</h3>
             <dl class="dl-horizontal dl-horizontal-small">                
@@ -23,13 +23,8 @@
             </dl>
         </div>
     </div>    
-    <div class="span8">
-        <div class="well well-small">
-            <h3>Resultados Generales</h3>
-            <dl class="dl-horizontal dl-horizontal-small">
-                
-            </dl>
-        </div>
+    <div class="span4">
+        <a class="btn btn-info" href="{{=URL('assignment', 'download_all', args=[asgn_info['id']])}}"><i class="icon-download icon-white"></i> Descargar todo</a>
     </div>
 </div>
 <div class="row">
