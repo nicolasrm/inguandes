@@ -34,8 +34,8 @@ auth.settings.reset_password_requires_verification = True
 
 # Use miuandes as authentification
 from gluon.contrib.login_methods.email_auth import email_auth
-auth.settings.actions_disabled = ['register','change_password','request_reset_password']
-auth.settings.login_methods = [email_auth("smtp.gmail.com:587", "@miuandes.cl")]
+auth.settings.actions_disabled = ['change_password','request_reset_password']
+auth.settings.login_methods.append(email_auth("smtp.gmail.com:587", "@miuandes.cl"))
 
 auth.settings.extra_fields[auth.settings.table_user_name] = [Field('rut', type='string')]
 

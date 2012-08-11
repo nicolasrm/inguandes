@@ -1,7 +1,7 @@
 {{extend 'layout.html'}}
 <div class="row">
     <div class="span12">
-        <h2>{{=quiz_info['name']}} <small>{{=user_quiz['user_name']}}</small></h2>
+        <h2>{{=quiz_info['name']}} <small>{{=user_quiz['user_name'] if user_quiz is not None else ''}}</small></h2>
         <h4><a href="{{=URL('instance','view', args=[quiz_info['instance_id']])}}">{{=quiz_info['instance']}}</a></h4>
     </div>
 </div>
@@ -34,7 +34,9 @@
                 <dt>Mínimo</dt>
                 <dd>{{=str(q_resume['min']) + '/' + str(quiz_info['q_count'])}} respuestas correctas.</dd>
             </dl>
+            {{ if user_quiz is not None: }}
             <span class="label label-info">Mis Correctas: {{=u_resume['correct']}}</span>
+            {{ pass }}
         </div>
     </div>
 </div>
