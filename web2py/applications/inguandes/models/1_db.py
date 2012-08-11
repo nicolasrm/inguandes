@@ -66,8 +66,9 @@ db.define_table('instance',
         
 db.define_table('section',
         Field('nrc', type='integer'),
+        Field('email', type='string'),
         Field('course', type=db.course),
-        Field('term', type=db.term),
+        Field('term', type=db.term),        
         Field('instance', type=db.instance),
         )
         

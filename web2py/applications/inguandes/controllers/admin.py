@@ -81,15 +81,16 @@ def view_sections():
     sections = get_sections(db, courseId)
     
     terms = db().select(db.term.ALL)
-    
-    return dict(course=course, courseTitle=courseTitle, sections=sections, terms=terms)
+        
+    return dict(the_course=course, courseTitle=courseTitle, sections=sections, terms=terms)
 
 @auth.requires_membership(role='admin')
 def add_section():
     courseId = int(request.vars.courseid)
     if request.vars.nrc is not None and request.vars.term is not None:
         db.section.insert(  nrc=int(request.vars.nrc),
-                            term=request.vars.term,
+                            email=request.vars.email if request.vars.email is not None and len(request.vars.email.strip()) > 4 else None,
+                            term=request.vars.term,                            
                             course=courseId
                             )
     redirect(URL('view_sections', args=[courseId]))

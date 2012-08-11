@@ -64,6 +64,13 @@
                     </div>
                 </div>
                 <div class="control-group">
+                    <label class="control-label" for="nrc">Email</label>
+                    <div class="controls">
+                        <input type="text" id="email" name="email"/>
+                        <p class="help-block">Correo electrónico del curso.</p>
+                    </div>
+                </div>
+                <div class="control-group">
                     <label class="control-label" for="term">Semestre</label>
                     <div class="controls">
                         <select id="term" name="term">
@@ -73,8 +80,8 @@
                         </select>
                         <p class="help-block">Semestre al cual pertenece la sección.</p>
                     </div>
-                </div>
-                <input type="hidden" class="course-id" name="courseid" value="{{=course.id}}" />
+                </div>                
+                <input type="hidden" class="course-id" name="courseid" value="{{=the_course.id}}" />
             </fieldset>
         </form>
     </div>
@@ -111,7 +118,7 @@
                         <p class="help-block">Semestre al cual pertenece la sección.</p>
                     </div>
                 </div>                
-                <input type="hidden" class="course-id" name="courseid" value="{{=course.id}}" />
+                <input type="hidden" class="course-id" name="courseid" value="{{=the_course.id}}" />
                 <input type="hidden" class="section-id" name="sectionid" />
             </fieldset>
         </form>
@@ -131,7 +138,7 @@
     <div class="modal-body">
         <p>¿Está seguro que desea borrar la sección <b><span id="delete-section-name"></span></b>?</p>
         <form action="{{=URL('delete_section')}}" method="POST">
-            <input type="hidden" class="course-id" name="courseid" value="{{=course.id}}" />
+            <input type="hidden" class="course-id" name="courseid" value="{{=the_course.id}}" />
             <input type="hidden" class="section-id" name="sectionid" />            
         </form>
     </div>
@@ -168,7 +175,7 @@
                         <p class="help-block">Rol que tendrá el usuario en esta sección.</p>
                     </div>
                 </div>
-                <input type="hidden" class="course-id" name="courseid" value="{{=course.id}}" />
+                <input type="hidden" class="course-id" name="courseid" value="{{=the_course.id}}" />
                 <input type="hidden" class="section-id" name="sectionid" />
             </fieldset>
         </form>
