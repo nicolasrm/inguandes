@@ -17,5 +17,5 @@ settings.login_method = 'local'
 settings.login_config = ''
 settings.plugins = []
 settings.email_server = 'smtp.gmail.com:587'
-settings.email_sender = 'uandes.ing1310@gmail.com'
-settings.email_login = 'uandes.ing1310@gmail.com:hola.123'
+settings.email_sender = 'ing.computacion@miuandes.cl'
+settings.email_login = 'ing.computacion@miuandes.cl:ingcomputacion'

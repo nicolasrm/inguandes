@@ -66,7 +66,7 @@ def get_instance_professors(db, instanceId):
     return get_instance_users_by_role(db, instanceId, 3)
     
 def get_instance_users_by_role(db, instanceId, role_id):
-    users = db((db.section.instance == instanceId) & (db.user_section.section == db.section.id) & (db.auth_user.id == db.user_section.the_user) & (db.user_section.the_role == role_id)).select(db.auth_user.id, db.auth_user.first_name, db.auth_user.last_name)
+    users = db((db.section.instance == instanceId) & (db.user_section.section == db.section.id) & (db.auth_user.id == db.user_section.the_user) & (db.user_section.the_role == role_id)).select(db.auth_user.id, db.auth_user.first_name, db.auth_user.last_name, db.auth_user.email)
     return users
     
 def get_instance_users_by_role_count(db, instanceId, role_id):
@@ -129,3 +129,26 @@ def get_instance_news(db, instanceId):
 def get_instance_moderators(db, instanceId):
     return db.executesql('SELECT DISTINCT au.id, au.email FROM section s, user_section us, auth_user au WHERE s.instance='+str(instanceId)+
     ' AND s.id=us.section AND us.the_role > 1 AND us.the_user=au.id ORDER BY 2;', as_dict=True)
+    
+def send_new_by_email(db, instanceId, newId):
+    new = db.instance_new[newId]
+    sections = get_instance_sections(db, instanceId)
+    inst_info = get_instance_info(db, instanceId)
+    bccs = [s.email for s in sections if s.email is not None]
+    if len(bccs) > 0:
+        tos = []
+        tos.append(new.creator.email)
+        
+        ccs = [u.email for u in inst_info['professors']]
+        
+        message = new.content
+        message = message + '\r\n\r\n--\r\n{0}\r\n{1}'.format(new.creator.first_name + ' ' + new.creator.last_name, inst_info['title'])
+        subject = '[IngUandes] ' + new.title
+        
+        mail.send(  to=tos,
+                    bcc=bccs,
+                    cc=ccs,
+                    subject=subject,                    
+                    reply_to=new.creator.email,
+                    message=message)
+    

@@ -455,10 +455,13 @@ def random_groups():
 def add_new():
     instanceId = int(request.vars.instanceid)
     if request.vars.title is not None and request.vars.content is not None:
-        db.instance_new.insert( title=request.vars.title,
-                                content=request.vars.content,
-                                instance=instanceId,
-                                creator=auth.user.id)
+        newId = db.instance_new.insert( title=request.vars.title,
+                                        content=request.vars.content,
+                                        instance=instanceId,
+                                        creator=auth.user.id)
+        if 'email' in request.vars and request.vars.email is not None and request.vars.email:
+            send_new_by_email(db, instanceId, newId)
+        
         session.flash = 'Noticia agregada correctamente'
     else:
         session.flash = 'No fue posible agregar la noticia'
