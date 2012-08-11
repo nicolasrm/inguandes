@@ -110,7 +110,7 @@
 'Registration identifier': 'Registration identifier',
 'Registration key': 'Contraseña de Registro',
 'Registration successful': 'Registration successful',
-'Remember me (for 30 days)': 'Remember me (for 30 days)',
+'Remember me (for 30 days)': 'No cerrar sesión',
 'Request reset password': 'Request reset password',
 'Reset Password key': 'Reset Password key',
 'Resolve Conflict file': 'archivo Resolución de Conflicto',
