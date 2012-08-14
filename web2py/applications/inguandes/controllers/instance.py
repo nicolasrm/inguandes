@@ -19,7 +19,7 @@ def view():
         session.flash = 'No tienes permisos para acceder al curso <strong>{0}</strong>'.format(inst_info['title'])
         redirect(URL('default', 'index'))
            
-    if user_role == 3 and len(request.args) > 1:
+    if user_role >= 2 and len(request.args) > 1:
         user_role = int(request.args[1])
         
     c_groups = get_instance_content_group(db, instanceId)
