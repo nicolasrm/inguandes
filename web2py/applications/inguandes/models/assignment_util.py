@@ -16,24 +16,20 @@ def get_assignments(db, instanceId, userId, section_info=None, user_role=None):
         a_info = get_assignment(db, a.id, section_info)
         ais = []
         
-        if user_role is not None and user_role >= 2 and a_info['section_dates'] is not None:
+        if user_role is not None and user_role >= 2 and a_info['section_dates'] is not None and len(a_info['section_dates']) > 0:
             inst_sections = get_instance_sections(db, instanceId)
-            print a_info['section_dates']
             for s in inst_sections:
-                print s['id']
                 ai = a_info.copy()
                 ai['name'] = '{0} ({1})'.format(ai['name'], s['nrc'])                
                 if s['id'] in ai['section_dates']:
                     ai['starting'] = ai['section_dates'][s['id']]['starting']
                     ai['ending'] = ai['section_dates'][s['id']]['ending']          
-                    
-                print ai['name'], ai['starting'], ai['ending']
+                
                 ais.append(ai)
         else:        
             ais.append(a_info)
             
         for ai in ais:
-            print ai['name'], ai['starting'], ai['ending']
             if ai['starting'] > now:
                 asgn_dict['pending'].append(ai)
             elif ai['ending'] >= now:
