@@ -52,7 +52,8 @@
         </div>
     </div>    
     <div class="span4">
-        <a class="btn btn-info" href="{{=URL('assignment', 'download_all', args=[asgn_info['id']])}}"><i class="icon-download icon-white"></i> Descargar todo</a>
+        <a class="btn btn-info" href="{{=URL('assignment', 'download_all', args=[asgn_info['id']])}}"><i class="icon-download icon-white"></i> Descargar todo</a><br/><br/>
+        <a class="btn btn-inverse" href="#modal-group-evaluation" ><i class="icon-list-alt icon-white"></i> Habilitar intra-evaluación</a>
     </div>
 </div>
 <div class="row">
@@ -77,6 +78,44 @@
                 {{ pass }}
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-group-evaluation">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Habilitar evaluación intra-grupos</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_new')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="group-evaluation-ending">Fin</label>
+                    <div class="controls">
+                        <input type="datetime" id="group-evaluation-ending" name="ending"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="news-content">Contenido</label>
+                    <div class="controls">
+                        <textarea class="input-xlarge" id="news-content" name="content"></textarea>
+                        <p class="help-block">Contenido de la noticia.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkbox" id="news-email">
+                            <input type="checkbox" name="email" checked="checked"> Enviar por correo electrónio
+                        </label>
+                    </div>
+                </div>                
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
     </div>
 </div>
 

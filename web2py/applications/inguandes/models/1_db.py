@@ -202,6 +202,14 @@ file_size_options_kb = {
     4: '51200'
 }
 
+db.define_table('group_evaluation',
+        Field('ending', type='datetime'),
+        Field('include_myself', type='boolean'),
+        Field('distribute_all', type='boolean'),
+        Field('total_points', type='integer'),
+        Field('max_individual_points', type='integer'),
+        )
+
 db.define_table('assignment',
         Field('name', type='string', requires=IS_NOT_EMPTY()),
         Field('starting', type='datetime'),
@@ -211,7 +219,8 @@ db.define_table('assignment',
         Field('multiple', type='boolean', default=False),
         Field('max_size', type='integer', requires=IS_IN_SET(file_size_options)),
         Field('in_groups', type='boolean', default=False),
-        Field('group_list', type=db.group_list)
+        Field('group_list', type=db.group_list),
+        Field('group_evaluation', type=db.group_evaluation),
         )
 
 db.define_table('assignment_section',
