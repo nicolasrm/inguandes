@@ -48,8 +48,8 @@ def get_assignment(db, asgnId, section_info=None):
     asgn_info = {}
     asgn_info['id'] = cAsgn.id
     asgn_info['name'] = cAsgn.name
-    asgn_info['starting'] = cAsgn.starting if section_info == None or section_info['id'] not in section_dates else section_dates[section_info['id']]['starting']
-    asgn_info['ending'] = cAsgn.ending if section_info == None or section_info['id'] not in section_dates else section_dates[section_info['id']]['ending']
+    asgn_info['starting'] = cAsgn.starting if section_info is None or section_info['id'] not in section_dates else section_dates[section_info['id']]['starting']
+    asgn_info['ending'] = cAsgn.ending if section_info is None or section_info['id'] not in section_dates else section_dates[section_info['id']]['ending']
     asgn_info['file_types'] = cAsgn.file_types.split(';') if cAsgn.file_types is not None and len(cAsgn.file_types.strip()) > 0 else None
     asgn_info['file_types_text'] = cAsgn.file_types
     asgn_info['multiple'] = cAsgn.multiple

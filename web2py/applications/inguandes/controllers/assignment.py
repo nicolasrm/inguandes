@@ -13,13 +13,13 @@ def view():
         redirect(URL('default', 'index'))
     assignmentId = int(request.args[0])
     
-    asgn_info = get_assignment(db, assignmentId)
-    section_info = get_user_section(db, asgn_info['instance_id'], auth.user.id)
-    asgn_info = get_assignment(db, assignmentId, section_info)
-    
     user_id = auth.user.id
     if len(request.args) > 1 and auth.has_membership(role='admin'):
         user_id = int(request.args[1])
+    
+    asgn_info = get_assignment(db, assignmentId)
+    section_info = get_user_section(db, asgn_info['instance_id'], user_id)
+    asgn_info = get_assignment(db, assignmentId, section_info)    
         
     user_group = get_user_assignment_group(db, asgn_info, user_id)
     asgn_files = get_group_files(db, asgn_info, user_id)

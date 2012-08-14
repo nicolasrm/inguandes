@@ -95,7 +95,7 @@ def get_user_role(db, instanceId, userId):
     return u_role.the_role if u_role is not None else None
     
 def get_user_section(db, instanceId, userId):
-    us = db((db.section.instance == instanceId) & (db.user_section.section == db.section.id)).select(db.section.ALL).first()
+    us = db((db.section.instance == instanceId) & (db.user_section.section == db.section.id) & (db.user_section.the_user == userId)).select(db.section.ALL).first()
         
     return get_section_info(db, us.id)
 
