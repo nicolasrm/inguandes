@@ -2,7 +2,7 @@
 import datetime
 import random
 
-def get_quizzes(db, instanceId, userId):
+def get_quizzes(db, instanceId, userId, section_info=None, user_role=None):
     qzs = db(db.quiz.instance==instanceId).select(db.quiz.ALL)
     
     qzs_dict = {}

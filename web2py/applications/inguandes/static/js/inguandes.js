@@ -58,6 +58,7 @@
                         $(campo).replaceWith(function () {
                             var date_field = $(this).clone(true);
                             date_field.attr('type', 'text');
+                            date_field.addClass('input-small');
                             date_field.datepicker(datepicker_options);
                             return date_field;
                         });
@@ -94,7 +95,7 @@
                         if (!original_value[0]) {
                             aux_date = new Date();
                             future_date = new Date(aux_date.getUTCFullYear(),
-                                aux_date.getUTCMonth() + 2,
+                                aux_date.getUTCMonth(),
                                 aux_date.getUTCDate());
                             original_value[0] = future_date.toISOString().split('T')[0];
                             original_value[1] = deafult_hour;
@@ -115,8 +116,8 @@
                         $(field).replaceWith(function () {
                             var datetime_field = $(this),
                                 container = $('<div></div>'),
-                                date_field = $('<input class="span2" type="text" />'),
-                                hour_field = $('<input class="span2" type="text" />'),
+                                date_field = $('<input class="input-small" type="text" />'),
+                                hour_field = $('<input class="input-mini" type="text" />'),
                                 hidden_field = $('<input type="hidden" />');
 
                             hidden_field.val(original_value[0] + ' ' + original_value[1]);
@@ -127,6 +128,7 @@
                             date_field.attr('name', datetime_field.attr('name') + '_fecha');
                             date_field.attr('data-eliminar', 'true');
                             date_field.css('border-radius', '3px 0 0 3px');
+                            date_field.addClass('input-mini');
                             date_field.on('change', function () {
                                 var vals = hidden_field.val().split(' '),
                                     new_value = date_field.val() + ' ' + vals[1];

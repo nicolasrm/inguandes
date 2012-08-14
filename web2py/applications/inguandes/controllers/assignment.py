@@ -12,7 +12,10 @@ def view():
     if len(request.args) == 0:
         redirect(URL('default', 'index'))
     assignmentId = int(request.args[0])
+    
     asgn_info = get_assignment(db, assignmentId)
+    section_info = get_user_section(db, asgn_info['instance_id'], auth.user.id)
+    asgn_info = get_assignment(db, assignmentId, section_info)
     
     user_id = auth.user.id
     if len(request.args) > 1 and auth.has_membership(role='admin'):
@@ -112,6 +115,8 @@ def result():
         redirect(URL('default', 'index'))
     assignmentId = int(request.args[0])
     asgn_info = get_assignment(db, assignmentId)
+    section_info = get_user_section(db, asgn_info['instance_id'], auth.user.id)
+    asgn_info = get_assignment(db, assignmentId, section_info)
     
     user_role = get_user_role(db, asgn_info['instance_id'], auth.user.id)
     if len(request.args) == 1 and user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':

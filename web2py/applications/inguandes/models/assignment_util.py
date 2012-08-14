@@ -4,7 +4,7 @@ import random
 import os
 import shutil
 
-def get_assignments(db, instanceId, userId):
+def get_assignments(db, instanceId, userId, section_info=None, user_role=None):
     asgns = db(db.assignment.instance==instanceId).select(db.assignment.ALL)
     
     asgn_dict = {}
@@ -13,27 +13,47 @@ def get_assignments(db, instanceId, userId):
     asgn_dict['closed'] = []
     now = datetime.datetime.now()
     for a in asgns:
-        # u_quiz = get_user_quiz(db, a.id, userId)
-        a['type'] = 'assignment'
-        a['icon'] = 'icon-upload'
-        if a.starting > now:
-            asgn_dict['pending'].append(a)
-        elif a.ending >= now:
-            asgn_dict['actived'].append(a)
-        else:
-            asgn_dict['closed'].append(a)
+        a_info = get_assignment(db, a.id, section_info)
+        ais = []
+        
+        if user_role is not None and user_role >= 2 and a_info['section_dates'] is not None:
+            inst_sections = get_instance_sections(db, instanceId)
+            print a_info['section_dates']
+            for s in inst_sections:
+                print s['id']
+                ai = a_info.copy()
+                ai['name'] = '{0} ({1})'.format(ai['name'], s['nrc'])                
+                if s['id'] in ai['section_dates']:
+                    ai['starting'] = ai['section_dates'][s['id']]['starting']
+                    ai['ending'] = ai['section_dates'][s['id']]['ending']          
+                    
+                print ai['name'], ai['starting'], ai['ending']
+                ais.append(ai)
+        else:        
+            ais.append(a_info)
+            
+        for ai in ais:
+            print ai['name'], ai['starting'], ai['ending']
+            if ai['starting'] > now:
+                asgn_dict['pending'].append(ai)
+            elif ai['ending'] >= now:
+                asgn_dict['actived'].append(ai)
+            else:
+                asgn_dict['closed'].append(ai)
     
     return asgn_dict
     
-def get_assignment(db, asgnId):
+def get_assignment(db, asgnId, section_info=None):
     cAsgn = db.assignment[asgnId]
     asgn_files = db(db.assignment_file.assignment == asgnId).select()
+    
+    section_dates = get_assignment_section_dates(db, asgnId)
     
     asgn_info = {}
     asgn_info['id'] = cAsgn.id
     asgn_info['name'] = cAsgn.name
-    asgn_info['starting'] = cAsgn.starting
-    asgn_info['ending'] = cAsgn.ending
+    asgn_info['starting'] = cAsgn.starting if section_info == None or section_info['id'] not in section_dates else section_dates[section_info['id']]['starting']
+    asgn_info['ending'] = cAsgn.ending if section_info == None or section_info['id'] not in section_dates else section_dates[section_info['id']]['ending']
     asgn_info['file_types'] = cAsgn.file_types.split(';') if cAsgn.file_types is not None and len(cAsgn.file_types.strip()) > 0 else None
     asgn_info['file_types_text'] = cAsgn.file_types
     asgn_info['multiple'] = cAsgn.multiple
@@ -45,8 +65,23 @@ def get_assignment(db, asgnId):
     asgn_info['files'] = asgn_files
     asgn_info['in_groups'] = cAsgn.in_groups
     asgn_info['group_list'] = cAsgn.group_list
+    asgn_info['section_dates'] = section_dates
+    asgn_info['type'] = 'assignment'
+    asgn_info['icon'] = 'icon-upload'
     
     return asgn_info
+    
+def get_assignment_section_dates(db, asgnId):
+    asections = db(db.assignment_section.assignment == asgnId).select()
+    section_dates = {}
+    for s in asections:
+        as_info = {}
+        as_info['starting'] = s['starting']
+        as_info['ending'] = s['ending']
+        as_info['nrc'] = s.section.nrc
+        section_dates[s['section']] = as_info
+    
+    return section_dates
     
 def get_assignment_file_info(db, file_id):
     up_file = db.user_assignment_file[file_id]

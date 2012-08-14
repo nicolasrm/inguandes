@@ -1,7 +1,7 @@
 {{extend 'layout.html'}}
 <div class="row">
     <div class="span12">
-        <h2>{{=inst.title}}</h2>
+        <h2>{{=inst['title']}}</h2>
     </div>
 </div>
 <div class="row">
@@ -42,7 +42,7 @@
                 <li class="nav-header">Evaluaciones Cerradas</li>
                 {{ for t in u_tasks['closed']: }}
                     <li>
-                        <a href="{{=URL(t['type'], 'result', args=[t.id])}}">
+                        <a href="{{=URL(t['type'], 'result', args=[t['id']])}}">
                             <i class="{{=t['icon']}}"></i>{{=t['name']}}
                             <span class="label label-inverse pull-right" rel="tooltip" title="Fecha de cierre">{{=t['ending'].strftime(datetime_format)}}</span>
                         </a>
@@ -174,7 +174,7 @@
                         </ul>
                     </li>
                     <!-- <li><a href="#" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
-                    <li><a href="{{=URL('submit_ticket', args=[inst.id])}}" rel="tooltip" title="Emitir ticket"><i class="icon-plus icon-white"></i><i class="icon-tag icon-white"></i></a></li>-->
+                    <li><a href="{{=URL('submit_ticket', args=[inst['id']])}}" rel="tooltip" title="Emitir ticket"><i class="icon-plus icon-white"></i><i class="icon-tag icon-white"></i></a></li>-->
                     <li class="divider-vertical"></li>
                     {{ for il in inst_links: }}
                     <li><a href="{{=il['url']}}" target="_blank" rel="tooltip" title="{{=il['description']}}"><i class="icon-{{=il['icon']}} icon-white"></i></a></li>
@@ -189,9 +189,9 @@
                     <li><a rel="tooltip" title="Agregar grupo de contenido" data-toggle="modal" href="#modal-new-contentgroup"><i class="icon-plus icon-white"></i><i class="icon-book icon-white"></i></a></li>
                     <li><a rel="tooltip" title="Agregar link de instancia" data-toggle="modal" href="#modal-new-permanent-link"><i class="icon-plus icon-white"></i><i class="icon-bookmark icon-white"></i></a></li>
                     <li><a rel="tooltip" title="Agregar noticia" data-toggle="modal" href="#modal-news"><i class="icon-plus icon-white"></i><i class="icon-bullhorn icon-white"></i></a></li>
-                    <li><a href="{{=URL('groups', args=[inst.id])}}" rel="tooltip" title="Administrar grupos"><i class="icon-random icon-white"></i></a></li>
-                    <li><a href="{{=URL('ticket_categories', args=[inst.id])}}" rel="tooltip" title="Administrar tickets"><i class="icon-user icon-white"></i><i class="icon-tags icon-white"></i></a></li>
-                    <li><a href="{{=URL('view', args=[inst.id, 0])}}" target='_blank' rel="tooltip" title="Ver como estudiante"><i class="icon-eye-open icon-white"></i></a></li>
+                    <li><a href="{{=URL('groups', args=[inst['id']])}}" rel="tooltip" title="Administrar grupos"><i class="icon-random icon-white"></i></a></li>
+                    <li><a href="{{=URL('ticket_categories', args=[inst['id']])}}" rel="tooltip" title="Administrar tickets"><i class="icon-user icon-white"></i><i class="icon-tags icon-white"></i></a></li>
+                    <li><a href="{{=URL('view', args=[inst['id'], 0])}}" target='_blank' rel="tooltip" title="Ver como estudiante"><i class="icon-eye-open icon-white"></i></a></li>
                 </ul>
             </div>
             {{ pass }}
@@ -228,7 +228,7 @@
                     </div>
                 </div>
                 
-                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
             </fieldset>
         </form>
     </div>
@@ -254,7 +254,7 @@
                     </div>
                 </div>
                 <input type="hidden" class="contentgroup-id" name="contentgroupid" />
-                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
             </fieldset>
         </form>
     </div>
@@ -274,7 +274,7 @@
         <form id="form-remove-contentgroup" class="form-horizontal" action="{{=URL('remove_contentgroup')}}" method="POST">
             <fieldset>
                 <input type="hidden" class="contentgroup-id" name="contentgroupid" />
-                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
             </fieldset>
         </form>
     </div>
@@ -319,7 +319,7 @@
                 </div>
                 
                 <input type="hidden" class="content-type" name="contenttype" value="file"/>
-                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
                 <input type="hidden" class="content-group-id" name="cgid"/>
             </fieldset>
         </form>
@@ -366,7 +366,7 @@
                 </div>
                 
                 <input type="hidden" class="content-type" name="contenttype" value="video"/>
-                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
                 <input type="hidden" class="content-group-id" name="cgid"/>
             </fieldset>
         </form>
@@ -413,7 +413,7 @@
                 </div>
                 
                 <input type="hidden" class="content-type" name="contenttype" value="link"/>
-                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
                 <input type="hidden" class="content-group-id" name="cgid"/>                
             </fieldset>
         </form>
@@ -474,7 +474,7 @@
                             <button type="submit" class="btn btn-primary" id="button-edit-content">Guardar cambios</button>
                         </div>
                                                 
-                        <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                        <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
                     </fieldset>                    
                 </form>
             </div>
@@ -517,7 +517,7 @@
                     <label class="control-label" for="quiz-ending">Fin</label>
                     <input type="datetime" class="input-small" id="quiz-ending" name="ending" placeholder="Fin"/>
                 </div>                
-                <input type="hidden" class="instance-id" id="quiz-instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="instance-id" id="quiz-instanceid" value="{{=inst['id']}}"/>
             </form>
         </div>
         <div class="well">
@@ -549,58 +549,63 @@
     </div>
 </div>
 
-<div class="modal hide fade in" id="modal-new-assignment">
+<div class="modal hide fade in" id="modal-new-assignment" style="width: 750px; margin: -300px 0 0 -375px; display: none;">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">x</button>
         <h3>Agregar nuevo Trabajo</h3>
     </div>
     <div class="modal-body">        
-            <form id="assign-main-form" class="form-horizontal" action="{{=URL('assignment')}}" method="POST" enctype="multipart/form-data">
-                <div class="well">
-                    <div class="control-group">
-                        <label class="control-label" for="assignment-name">Nombre</label>
-                        <input type="text" class="input-large" id="assignment-name" name="name" placeholder="Nombre del trabajo"/>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="assignment-starting">Inicio</label>
-                        <input type="datetime" class="input" id="assignment-starting" name="starting" placeholder="Inicio"/>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="assignment-ending">Fin</label>
-                        <input type="datetime" class="input" id="assignment-ending" name="ending" placeholder="Fin"/>
-                    </div>
-                    <div class="control-group">
+        <form id="assign-main-form" action="{{=URL('assignment')}}" method="POST" enctype="multipart/form-data">                
+            <div class="row">
+                <div class="span4">                            
+                    <div class="well well-small">
+                        <label class="control-label" for="assignment-name">Nombre del trabajo</label>
+                        <input type="text" class="input-large" id="assignment-name" name="name" placeholder="Nombre del trabajo..."/>
                         <label class="control-label" for="assignment-file">Enunciado</label>
-                        <div class="controls">
-                            <input type="file" id="assignment-file" name="file"/>
+                        <input type="file" id="assignment-file" name="file"/>
+                    </div>
+                    <div class="well well-small">
+                        <label class="control-label" for="assignment-file_types">Tipos de archivo permitidos</label>
+                        <input type="text" class="input-large" id="assignment-file_types" name="file_types" placeholder="(ej: java;pdf)"/>
+                        <label class="control-label" for="assignment-max_size">Tamaño máximo</label>
+                        <select id="assignment-max_size" name="max_size">
+                            <option value="" disabled="disabled" selected="selected">Tamaño máximo...</option>
+                        {{ for (k,v) in file_size_options.iteritems(): }}
+                            <option value='{{=k}}'>{{=v}}</option>
+                        {{ pass }}
+                        </select>
+                        <label class="checkbox" id="assignment-multiple">
+                            <input type="checkbox" name="multiple"> Permitir más de un archivo
+                        </label>
+                    </div>
+                    <div class="well well-small">
+                        <label class="checkbox" id="label-assignment-in_groups">
+                            <input type="checkbox" name="in_groups" id="assignment-in_groups"> En grupos
+                        </label>
+                        <select class="disabled" name="group_list" id="assignment-group_list" disabled>
+                            <option value="" disabled="disabled" selected="selected">Escoger lista de grupos...</option>
+                        {{ for gl in group_lists: }}
+                            <option value="{{=gl['id']}}">{{=gl['name']}}</option>
+                        {{ pass }}
+                        </select>
+                    </div>
+                </div>
+                <div class="span5">  
+                    <div class="well well-small">
+                        {{ for s in inst['sections']: }}
+                        <span class="label label-info">Sección {{=s['nrc']}}</span>
+                        <div class="form-horizontal">
+                            <label class="control-label" for="assignment-starting_{{=s['id']}}">Inicio</label>
+                            <input type="datetime" id="assignment-starting_{{=s['id']}}" name="starting_{{=s['id']}}"/>                            
+                            <label class="control-label" for="assignment-ending_{{=s['id']}}">Fin</label>
+                            <input type="datetime" id="assignment-ending_{{=s['id']}}" name="ending_{{=s['id']}}"/>
                         </div>
+                        {{ pass }}
                     </div>                    
-                </div>                
-                <div class="well form-inline">
-                    <input type="text" class="input-large" id="assignment-file_types" name="file_types" placeholder="Tipo de archivos (ej: java;pdf)"/>
-                    <select name="max_size">
-                        <option value="" disabled="disabled" selected="selected">Tamaño máximo...</option>
-                    {{ for (k,v) in file_size_options.iteritems(): }}
-                        <option value='{{=k}}'>{{=v}}</option>
-                    {{ pass }}
-                    </select>
-                    <label class="checkbox" id="assignment-multiple">
-                        <input type="checkbox" name="multiple"> Más de un archivo
-                    </label>
-                </div>
-                <div class="well form-inline">
-                    <label class="checkbox" id="label-assignment-in_groups">
-                        <input type="checkbox" name="in_groups" id="assignment-in_groups"> En grupos
-                    </label>
-                    <select class="disabled" name="group_list" id="assignment-group_list" disabled>
-                        <option value="" disabled="disabled" selected="selected">Lista de grupos...</option>
-                    {{ for gl in group_lists: }}
-                        <option value="{{=gl['id']}}">{{=gl['name']}}</option>
-                    {{ pass }}
-                    </select>
-                </div>
-                <input type="hidden" class="instance-id" id="assignment-instanceid" name="instance" value="{{=inst.id}}"/>
-            </form>
+                </div>                                    
+            </div>        
+            <input type="hidden" class="instance-id" id="assignment-instanceid" name="instance" value="{{=inst['id']}}"/>            
+        </form>
     </div>
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
@@ -674,7 +679,7 @@
                     </div>
                 </div>
                                 
-                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
             </fieldset>
         </form>
     </div>
@@ -713,7 +718,7 @@
                         </label>
                     </div>
                 </div>                
-                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst.id}}"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
             </fieldset>
         </form>
     </div>

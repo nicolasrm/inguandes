@@ -10,10 +10,18 @@ def view():
     if len(request.args) == 0:
         redirect(URL('default', 'index'))
     instanceId = int(request.args[0])
-    inst = db.instance[instanceId]
-    if inst is None:
+    inst_info = get_instance_info(db, instanceId)
+    if inst_info is None:
         redirect(URL('default', 'index'))
            
+    user_role = get_user_role(db, instanceId, auth.user.id)
+    if user_role is None:
+        session.flash = 'No tienes permisos para acceder al curso <strong>{0}</strong>'.format(inst_info['title'])
+        redirect(URL('default', 'index'))
+           
+    if user_role == 3 and len(request.args) > 1:
+        user_role = int(request.args[1])
+        
     c_groups = get_instance_content_group(db, instanceId)
     contents = get_instance_content(db, instanceId)
 
@@ -21,15 +29,8 @@ def view():
     
     cats = get_categories(db, courseId)
         
-    u_tasks = get_user_tasks(db, instanceId, auth.user.id)
-    
-    user_role = get_user_role(db, instanceId, auth.user.id)
-    if user_role is None:
-        session.flash = 'No tienes permisos para acceder a la instancia <strong>' + inst.title + '</strong>'
-        redirect(URL('default', 'index'))
-        
-    if user_role == 3 and len(request.args) > 1:
-        user_role = int(request.args[1])
+    section_info = get_user_section(db, instanceId, auth.user.id)
+    u_tasks = get_user_tasks(db, instanceId, auth.user.id, section_info, user_role)
         
     inst_links = db(db.instance_link.instance == instanceId).select()
     
@@ -37,7 +38,7 @@ def view():
     
     group_lists = get_group_lists(db, instanceId)
             
-    return dict(inst=inst, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links, news=news, group_lists=group_lists)
+    return dict(inst=inst_info, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links, news=news, group_lists=group_lists)
     
 @auth.requires_login()
 def add_contentgroup():
@@ -195,8 +196,7 @@ def add_ticket_subcategory():
     isToAll = request.vars.is_to_all == '1'
     instanceId = int(request.vars.instanceid)
     categoryId = int(request.vars.categoryid)
-    print request.vars
-    print isToAll
+    
     if isToAll:
         if request.vars.subcategory:
             try:
@@ -327,7 +327,7 @@ def quiz():
 def assignment():
     @auth.requires_login()
     def GET(assignmentId):
-        asgn_info = get_assignment(db, assignmentId)
+        asgn_info = get_assignment(db, assignmentId)        
         user_role = get_user_role(db, asgn_info['instance_id'], auth.user.id)
         if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
             redirect(URL('assignment', 'all_result', args=[assignmentId]))
@@ -335,16 +335,32 @@ def assignment():
     
     @auth.requires_login()
     def POST(**fields):  
-        if len(fields['name'].strip()) > 0 and len(fields['starting'].strip()) > 0:
+        if len(fields['name'].strip()) > 0:
+            
+            inst_sections = get_instance_sections(db, fields['instance'])
+            section_dates = []
+            for s in inst_sections:
+                starting = 'starting_{0}'.format(s['id'])
+                ending = 'ending_{0}'.format(s['id'])
+                if starting in fields:
+                    section_dates.append({'id':s['id'], 'starting':fields[starting], 'ending':fields[ending]})
+        
             assignmentId = db.assignment.insert(name=fields['name'],
-                                                starting=fields['starting'],
-                                                ending=fields['ending'],
+                                                starting=section_dates[0]['starting'],
+                                                ending=section_dates[0]['ending'],
                                                 instance=fields['instance'],
                                                 file_types=fields['file_types'] if len(fields['file_types'].strip()) > 0 else None,
                                                 multiple=fields['multiple'] if 'multiple' in fields else False,
                                                 max_size=fields['max_size'],
                                                 in_groups=fields['in_groups'] if 'in_groups' in fields else False,
                                                 group_list=fields['group_list'] if 'group_list' in fields and len(fields['group_list'].strip()) > 0 else None)
+                                                
+            for sd in section_dates:
+                db.assignment_section.insert(   assignment=assignmentId,
+                                                section=sd['id'],
+                                                starting=sd['starting'],
+                                                ending=sd['ending'])
+                                                
                                                 
             if fields['file'] is not None:
                 o_filename, o_ext = os.path.splitext(fields['file'].filename)
@@ -353,10 +369,11 @@ def assignment():
                                             original_filename=fields['file'].filename,
                                             file=db.assignment_file.file.store(fields['file'].file, n_filename))
             
-            session.flash = "Trabajo agregado con éxito"
-            redirect(URL('view', args=[fields['instance']]))
+            session.flash = "Trabajo agregado con éxito"            
         else:
             session.flash = "No fue posible agregar el trabajo solicitado"        
+            
+        redirect(URL('view', args=[fields['instance']]))
         
     return locals()
 

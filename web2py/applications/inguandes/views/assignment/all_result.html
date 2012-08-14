@@ -11,9 +11,37 @@
             <h3>Información del Trabajo</h3>
             <dl class="dl-horizontal dl-horizontal-small">                
                 <dt>Inicio</dt>
-                <dd><span class="label">{{=asgn_info['starting'].strftime(datetime_format)}}</span></dd>
+                <dd>
+                    <span class="label">
+                    {{
+                    start_text = ''
+                    if asgn_info['section_dates'] is None or len(asgn_info['section_dates']) == 0:
+                        start_text = asgn_info['starting'].strftime(datetime_format)
+                    else:
+                        for (k,sd) in asgn_info['section_dates'].iteritems():
+                            start_text = '{0} {1} ({2}),'.format(start_text, sd['starting'].strftime(datetime_format), sd['nrc'])                            
+                        pass
+                    pass
+                    =start_text
+                    }}
+                    </span>
+                </dd>
                 <dt>Fin</dt>
-                <dd><span class="label label-important">{{=asgn_info['ending'].strftime(datetime_format)}}</span></dd>
+                <dd>
+                    <span class="label label-important">
+                    {{
+                    end_text = ''
+                    if asgn_info['section_dates'] is None or len(asgn_info['section_dates']) == 0:
+                        end_text = asgn_info['ending'].strftime(datetime_format)
+                    else:
+                        for (k,sd) in asgn_info['section_dates'].iteritems():
+                            end_text = '{0} {1} ({2}),'.format(end_text, sd['ending'].strftime(datetime_format), sd['nrc'])                            
+                        pass
+                    pass
+                    =end_text
+                    }}
+                    </span>
+                </dd>
                 <dt>Formato</dt>
                 <dd>{{='Sin restricción' if not asgn_info['file_types'] or len(asgn_info['file_types']) == 0 else XML('Se permiten archivos con las extensiones <span class="label label-warning">' + asgn_info['file_types_text'] + '</span>')}}</dd>
                 <dt># Archivos</dt>

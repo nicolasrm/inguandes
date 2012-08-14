@@ -20,3 +20,32 @@ def get_sections(db, courseid=None):
         section['professors'] = db((db.user_section.section==s.section.id) & (db.user_section.the_role==3)).count()
         sections_a.append(section)
     return sections_a
+
+def get_section_info(db, sectionId):
+    s = db.section[sectionId]
+    s_info = {}
+    s_info['id'] = s.id
+    s_info['nrc'] = s.nrc
+    s_info['course_id'] = s.course
+    s_info['course'] = s.course.name
+    s_info['instance_id'] = s.instance
+    s_info['instance'] = s.instance.title
+    s_info['course_code'] = s.course.code
+    s_info['professors'] = get_section_professors(db, s.id)
+    
+    return s_info
+    
+def get_section_professors(db, sectionId):
+    proffs = db((db.user_section.section == sectionId) & (db.user_section.the_role == 3) & (db.auth_user.id == db.user_section.the_user)).select(db.auth_user.ALL)
+    profs_info = []
+    for p in proffs:
+        pi = {}
+        pi['id'] = p.id
+        pi['first_name'] = p.first_name
+        pi['last_name'] = p.last_name
+        pi['name'] = '{0} {1}'.format(p.first_name, p.last_name)
+        pi['email'] = p.email
+        
+        profs_info.append(pi)
+    
+    return profs_info

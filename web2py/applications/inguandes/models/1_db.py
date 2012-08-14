@@ -212,7 +212,14 @@ db.define_table('assignment',
         Field('max_size', type='integer', requires=IS_IN_SET(file_size_options)),
         Field('in_groups', type='boolean', default=False),
         Field('group_list', type=db.group_list)
-        )  
+        )
+
+db.define_table('assignment_section',
+        Field('assignment', type=db.assignment, notnull=True),
+        Field('section', type=db.section, notnull=True),
+        Field('starting', type='datetime'),
+        Field('ending', type='datetime'),
+        )
 
 db.define_table('assignment_file',
         Field('assignment', type=db.assignment),

@@ -81,6 +81,7 @@ def get_instance_info(db, instanceId):
     inst_info['id'] = inst.id
     inst_info['title'] = inst.title
     inst_info['professors'] = pfs
+    inst_info['sections'] = get_instance_sections(db, instanceId)
     
     return inst_info
     
@@ -92,10 +93,16 @@ def get_user_instances(db, userId):
 def get_user_role(db, instanceId, userId):
     u_role = db((db.user_section.the_user == userId) & (db.user_section.section == db.section.id) & (db.section.instance == instanceId)).select(db.user_section.the_role).first()
     return u_role.the_role if u_role is not None else None
+    
+def get_user_section(db, instanceId, userId):
+    us = db((db.section.instance == instanceId) & (db.user_section.section == db.section.id)).select(db.section.ALL).first()
+        
+    return get_section_info(db, us.id)
 
-def get_user_tasks(db, instanceId, userId):
-    u_qzs = get_quizzes(db, instanceId, userId)
-    u_asgs = get_assignments(db, instanceId, userId)
+def get_user_tasks(db, instanceId, userId, section_info=None, user_role=None):
+
+    u_qzs = get_quizzes(db, instanceId, userId, section_info, user_role)
+    u_asgs = get_assignments(db, instanceId, userId, section_info, user_role)
     
     u_tasks = u_qzs
     for (k,v) in u_asgs.iteritems():
