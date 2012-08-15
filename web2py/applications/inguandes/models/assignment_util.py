@@ -18,14 +18,17 @@ def get_assignments(db, instanceId, userId, section_info=None, user_role=None):
         
         if user_role is not None and user_role >= 2 and a_info['section_dates'] is not None and len(a_info['section_dates']) > 0:
             inst_sections = get_instance_sections(db, instanceId)
-            for s in inst_sections:
-                ai = a_info.copy()
-                ai['name'] = '{0} ({1})'.format(ai['name'], s['nrc'])                
-                if s['id'] in ai['section_dates']:
-                    ai['starting'] = ai['section_dates'][s['id']]['starting']
-                    ai['ending'] = ai['section_dates'][s['id']]['ending']          
-                
-                ais.append(ai)
+            if len(inst_sections) > 1:
+                for s in inst_sections:
+                    ai = a_info.copy()
+                    ai['name'] = '{0} ({1})'.format(ai['name'], s['nrc'])                
+                    if s['id'] in ai['section_dates']:
+                        ai['starting'] = ai['section_dates'][s['id']]['starting']
+                        ai['ending'] = ai['section_dates'][s['id']]['ending']          
+                    
+                    ais.append(ai)
+            else:        
+                ais.append(a_info)
         else:        
             ais.append(a_info)
             
@@ -44,7 +47,7 @@ def get_assignment(db, asgnId, section_info=None):
     asgn_files = db(db.assignment_file.assignment == asgnId).select()
     
     section_dates = get_assignment_section_dates(db, asgnId)
-    
+    now = datetime.datetime.now()
     asgn_info = {}
     asgn_info['id'] = cAsgn.id
     asgn_info['name'] = cAsgn.name
@@ -57,13 +60,15 @@ def get_assignment(db, asgnId, section_info=None):
     asgn_info['max_size_kb'] = file_size_options_kb[cAsgn.max_size]
     asgn_info['instance'] = cAsgn.instance.title
     asgn_info['instance_id'] = cAsgn.instance
-    asgn_info['is_available'] = cAsgn.ending >= datetime.datetime.now()
+    asgn_info['is_available'] = cAsgn.ending >= now
     asgn_info['files'] = asgn_files
     asgn_info['in_groups'] = cAsgn.in_groups
     asgn_info['group_list'] = cAsgn.group_list
     asgn_info['section_dates'] = section_dates
     asgn_info['type'] = 'assignment'
     asgn_info['icon'] = 'icon-upload'
+    asgn_info['group_evaluation'] = db.group_evaluation[cAsgn.group_evaluation] if cAsgn.group_evaluation is not None else None
+    asgn_info['evaluation_available'] = db.group_evaluation[cAsgn.group_evaluation].ending >= now if cAsgn.group_evaluation is not None else False
     
     return asgn_info
     
@@ -142,6 +147,7 @@ def assignment_group_result(db, asgn_info, userId, user_group):
     gr_result['last_modification'] = max([f['uploaded'] for f in gr_files]) if len(gr_files) > 0 else '-'
     gr_result['files_count'] = len([f for f in gr_files if f['available']])
     gr_result['modifications_count'] = sum([len(f['history']) for f in gr_files]) if len(gr_files) > 0 else '-'
+    gr_result['group_size'] = len(user_group['students']) if user_group is not None else 1
     
     return gr_result
         
@@ -195,3 +201,32 @@ def zip_assignment(db, asgn_info):
     shutil.make_archive(zip_file_path, 'zip', new_temp_path)
     
     return zip_file_path + '.zip'
+    
+def get_assignment_group_evaluations(db, asgn_info):
+    if asgn_info['in_groups']:
+        stds = get_instance_users_by_role(db, asgn_info['instance_id'], 0)
+        a_evals = {}
+        for s in stds:
+            user_group = get_user_assignment_group(db, asgn_info, s['id'])
+            if user_group is not None:
+                std_eval = get_user_assignment_evaluation(db, asgn_info, s['id'])
+                if std_eval is not None:                                
+                    if user_group['id'] not in a_evals:
+                        a_evals[user_group['id']] = []
+                    a_evals[user_group['id']].append(std_eval)
+        
+        return a_evals
+    else:
+        return None
+    
+def get_user_assignment_evaluation(db, asgn_info, userId):
+    if asgn_info['group_evaluation'] is not None:
+        evals = db((db.user_group_evaluation.evaluator == userId) & (db.user_group_evaluation.group_evaluation == asgn_info['group_evaluation']['id'])).select()
+        evals_info = {}
+        for e in evals:
+            evals_info[e.the_user] = e.score
+            
+        return evals_info if len(evals_info) > 0 else None
+    else:
+        return None
+    

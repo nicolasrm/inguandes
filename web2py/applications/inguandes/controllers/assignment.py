@@ -23,8 +23,10 @@ def view():
         
     user_group = get_user_assignment_group(db, asgn_info, user_id)
     asgn_files = get_group_files(db, asgn_info, user_id)
+    
+    user_evals = get_user_assignment_evaluation(db, asgn_info, user_id)
             
-    return dict(asgn_info=asgn_info, asgn_files=asgn_files, user_group=user_group)
+    return dict(asgn_info=asgn_info, asgn_files=asgn_files, user_group=user_group, user_evals=user_evals)
     
 @request.restful()
 def assignment_files():
@@ -137,8 +139,9 @@ def all_result():
         redirect(URL('view', args=[assignmentId]))
     
     a_results = assignment_results(db, asgn_info)
+    a_evals = get_assignment_group_evaluations(db, asgn_info)
     
-    return dict(asgn_info=asgn_info, a_results=a_results)
+    return dict(asgn_info=asgn_info, a_results=a_results, a_evals=a_evals)
     
 @auth.requires_login()
 def download_all():
@@ -154,3 +157,52 @@ def download_all():
     response.headers['Content-Disposition'] = 'attachment; filename={0}.zip'.format(asgn_info['name'])
         
     return response.stream(open(tmpfilepath,'rb'),chunk_size=4096)
+
+@auth.requires_login()    
+def add_group_evaluation():
+    if request.vars.ending is not None and request.vars.assignmentid is not None:
+        assignmentId = int(request.vars.assignmentid)
+        ge_id = db.group_evaluation.insert( ending=request.vars.ending,
+                                            include_myself=request.vars.include_myself,
+                                            distribute_all=request.vars.distribute_all,
+                                            total_points=request.vars.total_points,
+                                            max_individual_points=request.vars.max_individual_points)
+                                            
+        asgn = db.assignment[assignmentId]
+        asgn.update_record(group_evaluation=ge_id)
+    
+    redirect(URL('all_result', args=[assignmentId]))
+    
+@auth.requires_login()    
+def evaluate_group():
+    if request.vars.assignmentid is not None:
+        assignmentId = int(request.vars.assignmentid)
+        asgn_info = get_assignment(db, assignmentId)
+        user_group = get_user_assignment_group(db, asgn_info, auth.user.id)
+        evals = {}
+        total = 0
+        error = None
+        for std in user_group['students']:
+            field = 'evaluation_' + str(std['id'])
+            if request.vars[field] is not None:
+                evals[std['id']] = int(request.vars[field]) if len(request.vars[field]) > 0 else 0
+                total = total + evals[std['id']]
+                if evals[std['id']] > asgn_info['group_evaluation']['max_individual_points']:
+                    error = 'No puedes asignar más de {0} puntos a un integrante.'.format(asgn_info['group_evaluation']['max_individual_points'])
+        
+        if asgn_info['group_evaluation']['distribute_all'] and asgn_info['group_evaluation']['total_points'] != total:
+            error = 'Debes distribuir exactamente {0} puntos.'.format(asgn_info['group_evaluation']['total_points'])
+        elif not asgn_info['group_evaluation']['distribute_all'] and asgn_info['group_evaluation']['total_points'] < total:
+            error = 'No puedes repartir más de {0} puntos.'.format(asgn_info['group_evaluation']['total_points'])
+            
+        if error is None:
+            for (k,v) in evals.iteritems():
+                db.user_group_evaluation.insert(group_evaluation=asgn_info['group_evaluation']['id'],
+                                                evaluator=auth.user.id,
+                                                the_user=k,
+                                                score=v)
+            session.flash = 'Evaluación guardada con éxito.'
+        else:
+            session.flash = error            
+        
+    redirect(URL('all_result', args=[assignmentId]))

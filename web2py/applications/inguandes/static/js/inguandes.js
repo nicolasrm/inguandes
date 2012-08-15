@@ -182,6 +182,7 @@
     };
     
     $(document).ready(function () {
-        
+        INGUANDES.startDateFields();
+        INGUANDES.startDatetimeFields();
     });
 }(this));

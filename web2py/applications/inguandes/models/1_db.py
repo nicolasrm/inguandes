@@ -209,6 +209,14 @@ db.define_table('group_evaluation',
         Field('total_points', type='integer'),
         Field('max_individual_points', type='integer'),
         )
+        
+db.define_table('user_group_evaluation',
+        Field('group_evaluation', type=db.group_evaluation),
+        Field('evaluator', type=db.auth_user),
+        Field('the_user', type=db.auth_user),
+        Field('score', type='integer'),
+        Field('created_on', type='datetime', default=request.now),
+        )
 
 db.define_table('assignment',
         Field('name', type='string', requires=IS_NOT_EMPTY()),

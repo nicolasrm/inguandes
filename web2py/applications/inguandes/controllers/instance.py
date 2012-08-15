@@ -362,7 +362,7 @@ def assignment():
                                                 ending=sd['ending'])
                                                 
                                                 
-            if fields['file'] is not None:
+            if fields['file'] is not None and not isinstance(fields['file'], str):
                 o_filename, o_ext = os.path.splitext(fields['file'].filename)
                 n_filename = fields['file'].filename if len(o_filename) < 30 else o_filename[:30] + o_ext
                 db.assignment_file.insert(  assignment=assignmentId,

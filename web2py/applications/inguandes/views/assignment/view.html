@@ -45,6 +45,13 @@
                 {{ pass }}
             </ul>
             {{ pass }}
+            {{ if asgn_info['group_evaluation'] is not None and asgn_info['evaluation_available']: }}
+                {{ if user_evals is None: }}
+                <a class="btn btn-inverse" data-toggle="modal" href="#modal-group-evaluation" ><i class="icon-list-alt icon-white"></i> Evaluar</a>
+                {{ else: }}
+                <span class="label label-success">Ya hiciste la evaluación.</span>
+                {{ pass }}
+            {{ pass }}
         </div>        
     </div>
     {{ pass }}
@@ -62,7 +69,7 @@
     </div>
 </div>
 <div class="row">
-    </div class="span12">
+    <div class="span12">
         <div class="well">  
             {{ if asgn_info['is_available']: }}
             <div class="row">
@@ -167,6 +174,44 @@
     </table>
 </div>
 
+{{ if asgn_info['in_groups'] and asgn_info['group_evaluation'] is not None and asgn_info['evaluation_available'] and user_evals is None: }}
+<div class="modal hide fade in" id="modal-group-evaluation">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Evaluar al grupo</h3>
+    </div>
+    <div class="modal-body">
+        <div class="well well-small">
+            <h4>Instrucciones</h4>
+            <ul>
+                <li>Una vez que realices la evaluación no la podrás cambiar.</li>                
+                <li>{{='Debes distribuir todos los {0} puntos.'.format(asgn_info['group_evaluation']['total_points']) if asgn_info['group_evaluation']['distribute_all'] else 'Tienes {0} puntos para repartir, aunque no es necesario que los asignes todos.'.format(asgn_info['group_evaluation']['total_points']) }}</li>
+                <li>{{='Puedes asignar un máximo de {0} puntos a cada uno.'.format(asgn_info['group_evaluation']['max_individual_points'])}}</li>
+            </ul>
+        </div>
+        <form class="form-horizontal" action="{{=URL('evaluate_group')}}" method="POST">
+            <fieldset>
+                {{ for std in user_group['students']: }}   
+                    {{ if asgn_info['group_evaluation']['include_myself'] or std['id'] != auth.user.id: }}
+                    <div class="control-group">
+                        <label class="control-label" for="evaluation-{{=std['id']}}">{{=std['first_name'] + ' ' + std['last_name']}}</label>
+                        <div class="controls">
+                            <input type="text" class="input-small" id="evaluation-{{=std['id']}}" name="evaluation_{{=std['id']}}"/>
+                        </div>
+                    </div>
+                    {{ pass }}
+                {{ pass }}
+                <input type="hidden" class="assignment-id" name="assignmentid" value="{{=asgn_info['id']}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Evaluar</a>
+    </div>
+</div>
+{{ pass }}
+
 {{block pagescripts}}
 <script src="{{=URL('static','js/jquery.ui.widget.js')}}"></script>
 <script src="{{=URL('static','js/jquery.iframe-transport.js')}}"></script>
@@ -214,6 +259,10 @@ $(function () {
     INGUANDES.allowed_multiple = {{='false' if not asgn_info['multiple'] else 'true'}};
     INGUANDES.max_size = {{=file_size_options_kb[asgn_info['max_size']]}}
     INGUANDES.is_available = {{='false' if not asgn_info['is_available'] else 'true'}};
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
 });
 </script>
 <script src="{{=URL('static','js/assignment/view.js')}}"></script>

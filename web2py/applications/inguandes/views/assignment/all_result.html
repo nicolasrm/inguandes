@@ -53,7 +53,13 @@
     </div>    
     <div class="span4">
         <a class="btn btn-info" href="{{=URL('assignment', 'download_all', args=[asgn_info['id']])}}"><i class="icon-download icon-white"></i> Descargar todo</a><br/><br/>
-        <a class="btn btn-inverse" href="#modal-group-evaluation" ><i class="icon-list-alt icon-white"></i> Habilitar intra-evaluación</a>
+        {{ if asgn_info['in_groups']: }}
+            {{ if asgn_info['group_evaluation'] is None: }}
+            <a class="btn btn-inverse" data-toggle="modal" href="#modal-group-evaluation" ><i class="icon-list-alt icon-white"></i> Habilitar intra-evaluación</a>
+            {{ else: }}
+            <div class="alert alert-info">Intra-evaluaciones habilitadas, con fecha límite {{=asgn_info['group_evaluation']['ending'].strftime(datetime_format)}}</div>
+            {{ pass }}
+        {{ pass }}
     </div>
 </div>
 <div class="row">
@@ -65,6 +71,9 @@
                     <th>Última</th>
                     <th># Archivos</th>
                     <th># Cambios</th>
+                    {{ if asgn_info['in_groups'] and asgn_info['group_evaluation'] is not None: }}
+                    <th>Intra-evaluaciones</th>
+                    {{ pass }}
                 </tr>
             </thead>
             <tbody>
@@ -74,6 +83,9 @@
                     <td>{{=gr['last_modification'].strftime(datetime_format) if isinstance(gr['last_modification'], datetime.datetime) else gr['last_modification'] }}</td>
                     <td>{{=gr['files_count']}}</td>
                     <td>{{=gr['modifications_count']}}</td>        
+                    {{ if asgn_info['in_groups'] and asgn_info['group_evaluation'] is not None: }}
+                    <td>{{='{0} / {1}'.format(len(a_evals[k]) if a_evals is not None and k in a_evals else 0, gr['group_size'])}}</td>
+                    {{ pass }}
                 </tr>
                 {{ pass }}
             </tbody>
@@ -87,7 +99,7 @@
         <h3>Habilitar evaluación intra-grupos</h3>
     </div>
     <div class="modal-body">
-        <form class="form-horizontal" action="{{=URL('add_new')}}" method="POST">
+        <form class="form-horizontal" action="{{=URL('add_group_evaluation')}}" method="POST">
             <fieldset>
                 <div class="control-group">
                     <label class="control-label" for="group-evaluation-ending">Fin</label>
@@ -96,20 +108,34 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" for="news-content">Contenido</label>
+                    <label class="control-label" for="group-evaluation-total_points">Puntos totales</label>
                     <div class="controls">
-                        <textarea class="input-xlarge" id="news-content" name="content"></textarea>
-                        <p class="help-block">Contenido de la noticia.</p>
+                        <input type="text" class="input-small" id="group-evaluation-total_points" name="total_points"/>
+                        <p class="help-block">Total de puntos que debe repartir quien evalúa.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="group-evaluation-max_individual_points">Máximo por integrante</label>
+                    <div class="controls">
+                        <input type="text" class="input-small" id="group-evaluation-max_individual_points" name="max_individual_points"/>
+                        <p class="help-block">Máxima cantidad de puntos que puede asignar a cada integrante quien evalúa.</p>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="controls">
-                        <label class="checkbox" id="news-email">
-                            <input type="checkbox" name="email" checked="checked"> Enviar por correo electrónio
+                        <label class="checkbox" id="group-evaluation-include_myself">
+                            <input type="checkbox" name="include_myself"> Se incluye al evaluador en su evaluación
                         </label>
                     </div>
-                </div>                
-                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkbox" id="group-evaluation-distribute_all">
+                            <input type="checkbox" name="distribute_all"> Se deben distribuir todos los puntos
+                        </label>
+                    </div>
+                </div>
+                <input type="hidden" class="assignment-id" name="assignmentid" value="{{=asgn_info['id']}}"/>
             </fieldset>
         </form>
     </div>
@@ -124,6 +150,10 @@
 <script>
 $(document).ready(function() {
     $("[rel=tooltip]").tooltip({placement: 'top'});
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
 });
 </script>
 {{end}}

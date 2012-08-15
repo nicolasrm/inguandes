@@ -305,9 +305,6 @@
     }
             
     $(document).ready( function () {
-        INGUANDES.startDateFields();
-        INGUANDES.startDatetimeFields();
-    
         $("[rel=tooltip]").tooltip({placement: 'top'});
         $("[rel=popover]").popover();
         $(".collapse").collapse();
