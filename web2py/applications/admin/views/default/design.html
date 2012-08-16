@@ -51,6 +51,7 @@ def deletefile(arglist):
     {{=button('#static', T("static"))}}
     {{=button('#modules', T("modules"))}}
     {{=button('#plugins', T("plugins"))}}
+	{{=button(URL('git/%s'%app), T("pull"))}}
     </span>
   </p>
 </div>

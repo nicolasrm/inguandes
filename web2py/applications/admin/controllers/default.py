@@ -1347,4 +1347,9 @@ def reload_routes():
     gluon.rewrite.load()
     redirect(URL('site'))
 
+def git():
+	import subprocess
+	process = subprocess.Popen(['pwd'], shell=False, stdout=subprocess.PIPE)
+	return dict(msg=process.communicate()[0])
+
 
