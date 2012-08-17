@@ -84,7 +84,7 @@
                     <td>{{=gr['files_count']}}</td>
                     <td>{{=gr['modifications_count']}}</td>        
                     {{ if asgn_info['in_groups'] and asgn_info['group_evaluation'] is not None: }}
-                    <td>{{='{0} / {1}'.format(len(a_evals[k]) if a_evals is not None and k in a_evals else 0, gr['group_size'])}}</td>
+                    <td>{{=XML('<a href="{0}">{1} / {2}</a>'.format(URL('assignment', 'group_evaluation', args=[asgn_info['id'], gr['user_id']]), len(a_evals[k]) if a_evals is not None and k in a_evals else 0, gr['group_size']))}}</td>
                     {{ pass }}
                 </tr>
                 {{ pass }}

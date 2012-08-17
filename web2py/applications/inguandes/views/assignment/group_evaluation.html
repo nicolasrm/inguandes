@@ -1,0 +1,69 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span12">
+        <h2>{{=asgn_info['name']}}</h2>
+        <h4><a href="{{=URL('instance','view', args=[asgn_info['instance_id']])}}">{{=asgn_info['instance']}}</a></h4>
+    </div>
+</div>
+<div class="row">    
+    <div class="span3">
+        <div class="well well-small">        
+            <h3>Información</h3>
+            <dl class="dl-horizontal dl-horizontal-small">                
+                <dt>Inicio</dt>
+                <dd><span class="label">{{=asgn_info['starting'].strftime(datetime_format)}}</span></dd>
+                <dt>Fin</dt>
+                <dd><span class="label label-important">{{=asgn_info['ending'].strftime(datetime_format)}}</span></dd>
+                <dt>Formato</dt>
+                <dd>{{='Sin restricción' if not asgn_info['file_types'] or len(asgn_info['file_types']) == 0 else XML('Se permiten archivos con las extensiones <span class="label label-warning">' + asgn_info['file_types_text'] + '</span>')}}</dd>
+                <dt># Archivos</dt>
+                <dd>{{='Uno' if not asgn_info['multiple'] else 'Uno o más'}}</dd>
+                <dt>Tamaño</dt>
+                <dd><span class="label label-info">{{=file_size_options[asgn_info['max_size']]}}</span> por archivo</dd>
+            </dl>
+            {{ if asgn_info['files'] is not None and len(asgn_info['files']) > 0: }}
+            <h6>Archivos</h6>
+            <ul class="nav">
+                {{ for fl in asgn_info['files']: }}
+                <li><a href="{{=URL('download_assignment_file', args=[fl['file']])}}" target="_blank">{{=fl['original_filename']}}</a></li>
+                {{ pass }}
+            </ul>
+            {{ pass }}
+        </div>        
+    </div>  
+    <div class="span9">
+        <h3>Evaluación Grupo {{=user_group['id']}}</h3>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Integrante</th>
+                    {{ for std in user_group['students']: }}
+                    <th>{{=std['first_name'] + ' ' + std['last_name']}}</th>
+                    {{ pass }}                    
+                </tr>
+            </thead>
+            <tbody>
+                {{ for std in user_group['students']: }}
+                <tr>
+                    <td>{{=std['first_name'] + ' ' + std['last_name']}}</td>
+                    {{ for s in user_group['students']: }}
+                    <td>{{=g_evals[std['id']][s['id']] if std['id'] in g_evals and s['id'] in g_evals[std['id']] else 0}}</td>
+                    {{ pass }}
+                </tr>
+                {{ pass }}                    
+            </tbody>
+        </table>
+        
+    </div>
+</div>    
+
+{{block pagescripts}}
+<script>
+$(function () {
+    
+});
+</script>
+{{end}}
+
+
+

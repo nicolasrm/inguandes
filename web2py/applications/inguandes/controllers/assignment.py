@@ -206,3 +206,21 @@ def evaluate_group():
             session.flash = error            
         
     redirect(URL('all_result', args=[assignmentId]))
+    
+@auth.requires_login()
+def group_evaluation():
+    assignmentId = int(request.args[0])
+    asgn_info = get_assignment(db, assignmentId)
+    
+    user_role = get_user_role(db, asgn_info['instance_id'], auth.user.id)
+    user_id = auth.user.id
+    if user_roles[user_role] != 'Profesor' and user_roles[user_role] != 'Ayudante Jefe':
+        redirect(URL('view', args=[assignmentId]))
+    if len(request.args) > 1:
+        user_id = int(request.args[1])
+        
+    user_group = get_user_assignment_group(db, asgn_info, user_id)
+    
+    g_evals = get_assignment_group_evaluation(db, asgn_info, user_group)
+    
+    return dict(asgn_info=asgn_info, user_group=user_group, g_evals=g_evals)

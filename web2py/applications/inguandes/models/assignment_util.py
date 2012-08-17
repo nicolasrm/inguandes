@@ -219,6 +219,18 @@ def get_assignment_group_evaluations(db, asgn_info):
     else:
         return None
     
+def get_assignment_group_evaluation(db, asgn_info, user_group):
+    if asgn_info['in_groups'] and user_group is not None:        
+        g_evals = {}
+        for std in user_group['students']:
+            std_eval = get_user_assignment_evaluation(db, asgn_info, std['id'])
+            if std_eval is not None:
+                g_evals[std['id']] = std_eval
+        
+        return g_evals
+    else:
+        return None
+    
 def get_user_assignment_evaluation(db, asgn_info, userId):
     if asgn_info['group_evaluation'] is not None:
         evals = db((db.user_group_evaluation.evaluator == userId) & (db.user_group_evaluation.group_evaluation == asgn_info['group_evaluation']['id'])).select()
