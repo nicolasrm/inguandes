@@ -20,8 +20,8 @@ pass
             </ul>            
             <ul class="nav nav-pills">                
                 <li {{=XML('class="active"') if category is None else ''}}><a href="{{=URL('view', args=[co.id])}}">Todas</a></li>
-                {{ for c in cats: }}                
-                <li {{=XML('class="active"') if category is not None and category==c else ''}}><a href="{{=URL('view', args=[co.id], vars={'category':c})}}">{{=c}}</a></li>
+                {{ for (k,v) in cats.iteritems(): }}                
+                <li {{=XML('class="active"') if category is not None and category==k else ''}}><a href="{{=URL('view', args=[co.id], vars={'category':k})}}">{{='{0} ({1})'.format(k, v)}}</a></li>
                 {{ pass }}
             </ul>
         </div>

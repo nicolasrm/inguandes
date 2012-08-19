@@ -3,12 +3,14 @@
 def get_questions(db, courseId):
     qs = db(db.question.course==courseId).select(db.question.ALL)
     
-    categories = []
+    categories = {}
     questions = {}
     for q in qs:
         if q.category not in categories:
-            categories.append(q.category)
+            categories[q.category] = 1
             questions[q.category] = []
+        else:
+            categories[q.category] += 1        
         questions[q.category].append(q)
     
     return questions, categories
