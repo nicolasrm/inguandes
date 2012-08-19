@@ -33,12 +33,13 @@ def view():
     u_tasks = get_user_tasks(db, instanceId, auth.user.id, section_info, user_role)
         
     inst_links = db(db.instance_link.instance == instanceId).select()
+    inst_grades = db(db.instance_grade_link.instance == instanceId).select()
     
     news = get_instance_news(db, instanceId)
     
     group_lists = get_group_lists(db, instanceId)
             
-    return dict(inst=inst_info, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links, news=news, group_lists=group_lists)
+    return dict(inst=inst_info, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links, news=news, group_lists=group_lists, inst_grades=inst_grades)
     
 @auth.requires_login()
 def add_contentgroup():
@@ -482,4 +483,13 @@ def add_new():
         session.flash = 'Noticia agregada correctamente'
     else:
         session.flash = 'No fue posible agregar la noticia'
+    redirect(URL('view', args=[instanceId]))
+    
+@auth.requires_login()
+def add_grade_link():
+    instanceId = int(request.vars.instanceid)
+    if request.vars.description is not None and request.vars.url is not None:
+        db.instance_grade_link.insert(  description=request.vars.description,
+                                        url=request.vars.url,
+                                        instance=instanceId)
     redirect(URL('view', args=[instanceId]))

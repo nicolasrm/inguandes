@@ -116,6 +116,12 @@ db.define_table('instance_link',
         Field('description', type='text')
         )
         
+db.define_table('instance_grade_link',
+        Field('description', type='string'),
+        Field('url', type='string'),
+        Field('instance', type=db.instance),        
+        )
+        
 db.define_table('group_list',
         Field('name', type='string'),
         Field('instance', type=db.instance)

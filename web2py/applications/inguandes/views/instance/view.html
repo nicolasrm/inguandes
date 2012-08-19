@@ -175,6 +175,14 @@
                     </li>
                     <!-- <li><a href="#" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
                     <li><a href="{{=URL('submit_ticket', args=[inst['id']])}}" rel="tooltip" title="Emitir ticket"><i class="icon-plus icon-white"></i><i class="icon-tag icon-white"></i></a></li>-->
+                    <li class="dropup">                        
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Notas"><i class="icon-check icon-white"></i> <b class="caret"></b></a>
+                        <ul class="dropdown-menu">   
+                            {{ for g in inst_grades: }}
+                            <li><a href="{{=g['url']}}" target="_blank">{{=g['description']}}</a></li>
+                            {{ pass }}
+                        </ul>
+                    </li>
                     <li class="divider-vertical"></li>
                     {{ for il in inst_links: }}
                     <li><a href="{{=il['url']}}" target="_blank" rel="tooltip" title="{{=il['description']}}"><i class="icon-{{=il['icon']}} icon-white"></i></a></li>
@@ -188,6 +196,7 @@
                     <li class="divider-vertical"></li>
                     <li><a rel="tooltip" title="Agregar grupo de contenido" data-toggle="modal" href="#modal-new-contentgroup"><i class="icon-plus icon-white"></i><i class="icon-book icon-white"></i></a></li>
                     <li><a rel="tooltip" title="Agregar link de instancia" data-toggle="modal" href="#modal-new-permanent-link"><i class="icon-plus icon-white"></i><i class="icon-bookmark icon-white"></i></a></li>
+                    <li><a rel="tooltip" title="Agregar link a planilla de notas" data-toggle="modal" href="#modal-new-grade-link"><i class="icon-plus icon-white"></i><i class="icon-check icon-white"></i></a></li>
                     <li><a rel="tooltip" title="Agregar noticia" data-toggle="modal" href="#modal-news"><i class="icon-plus icon-white"></i><i class="icon-bullhorn icon-white"></i></a></li>
                     <li><a href="{{=URL('groups', args=[inst['id']])}}" rel="tooltip" title="Administrar grupos"><i class="icon-random icon-white"></i></a></li>
                     <li><a href="{{=URL('ticket_categories', args=[inst['id']])}}" rel="tooltip" title="Administrar tickets"><i class="icon-user icon-white"></i><i class="icon-tags icon-white"></i></a></li>
@@ -716,6 +725,38 @@
                         <label class="checkbox" id="news-email">
                             <input type="checkbox" name="email" checked="checked"> Enviar por correo electrónio
                         </label>
+                    </div>
+                </div>                
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-grade-link">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar link a notas</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_grade_link')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="grade-link-description">Descripción</label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge" id="grade-link-description" name="description"/>
+                        <p class="help-block">Texto que describe las notas representadas en el link.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="grade-link-url">URL</label>
+                    <div class="controls">
+                        <input type="text" id="grade-link-url" name="url"/>
+                        <p class="help-block">Dirección de la planilla con las notas que se quieren publicar.</p>
                     </div>
                 </div>                
                 <input type="hidden" class="instance-id" name="instanceid" value="{{=inst['id']}}"/>
