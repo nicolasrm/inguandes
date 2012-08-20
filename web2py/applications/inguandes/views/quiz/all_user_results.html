@@ -1,0 +1,50 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span10">
+        <h2>Resumen resultados Quizzes</h2>
+        <h4><a href="{{=URL('instance','view', args=[inst_info['id']])}}">{{=inst_info['title']}}</a></h4>
+    </div>
+</div>
+<div class="row">
+    <div class="span12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    {{ for q in qzs: }}
+                    <th><a href="{{=URL('quiz', 'all_result', args=[q['id']])}}">{{=q['name']}}</a></th>
+                    {{ pass }}
+                </tr>
+            </thead>
+            <tbody>
+                {{ for s in stds: }}
+                <tr>
+                    <td><a href="{{=URL('user_results', args=[inst_info['id'], s['id']])}}" rel="tooltip" title="Resultados del alumno">{{='{0}, {1}'.format(s['last_name'], s['first_name'])}}</a></td>
+                    {{ for q in qzs: 
+                        qr = qs_results[s['id']][q['id']]
+                        grade = qr['grade'] if qr is not None else 1.0
+                        if qr is not None:
+                    }}
+                    <td><a class="badge {{='badge-info' if grade >= 3.95 else 'badge-important'}}" href="{{=URL('quiz', 'result', args=[q['id'], s['id']])}}">{{='{0:2}'.format(grade)}}</a></td>
+                    {{  else: }}
+                    <td><span class="badge badge-inverse">-</span></td>
+                    {{  pass
+                    pass }}
+                </tr>
+                {{ pass }}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{{block pagescripts}}
+<script>
+$(document).ready(function() {
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+});
+</script>
+{{end}}
+
+
+

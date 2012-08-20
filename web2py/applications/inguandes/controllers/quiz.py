@@ -89,11 +89,11 @@ def user_results():
     if len(request.args) == 2 and user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
         user_id = int(request.args[1])
         
-    user = db.auth_user[user_id]
+    user = db.auth_user[user_id]        
+    qzs = get_instance_quizzes(db, instanceId)
+    user_results = quizzes_user_results(db, user_id, instanceId)    
         
-    user_results = quizzes_user_results(db, user_id, instanceId)
-        
-    return dict(inst_info=inst_info, user_results=user_results, user=user)
+    return dict(inst_info=inst_info, qzs=qzs, user_results=user_results, user=user)
     
 @auth.requires_login()
 def all_result():
@@ -126,4 +126,8 @@ def all_user_results():
     if user_roles[user_role] != 'Profesor' and user_roles[user_role] != 'Ayudante Jefe':
         redirect(URL('instance', 'view', args=[instanceId]))
         
-    return dict(inst_info=inst_info)
+    stds = get_instance_users_by_role(db, instanceId, 0)
+    qzs = get_instance_quizzes(db, instanceId)
+    qs_results = quizzes_all_user_results(db, instanceId)
+        
+    return dict(inst_info=inst_info, stds=stds, qzs=qzs, qs_results=qs_results)

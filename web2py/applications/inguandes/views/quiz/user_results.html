@@ -23,7 +23,10 @@
                 </tr>
             </thead>
             <tbody>
-                {{ for qr in user_results: }}
+                {{ for q in qzs: 
+                    qr = user_results[q['id']]
+                    if qr is not None:
+                }}
                 <tr>
                     <td><a href="{{=URL('result', args=[qr['quiz']['id'], qr['user_id']])}}" rel="tooltip" title="Respuestas del alumno">{{=qr['quiz']['name']}}</a></td>
                     {{ if qr['quiz']['discount']: }}
@@ -40,7 +43,9 @@
                     <td>{{='{0:2}'.format(qr['score'])}}</td>
                     <td><span class="badge {{='badge-important' if qr['grade'] < 3.95 else 'badge-info'}}">{{='{0:2}'.format(qr['grade'])}}</span></td>
                 </tr>
-                {{ pass }}
+                {{  pass
+                pass 
+                }}
             </tbody>
         </table>
     </div>

@@ -2,6 +2,13 @@
 import datetime
 import random
 
+def get_instance_quizzes(db, instanceId):
+    qzs = db(db.quiz.instance==instanceId).select(db.quiz.ALL, orderby=db.quiz.id)
+    
+    qzs_info = [get_quiz(db, q.id) for q in qzs]
+    
+    return qzs_info
+
 def get_quizzes(db, instanceId, userId, section_info=None, user_role=None):
     qzs = db(db.quiz.instance==instanceId).select(db.quiz.ALL)
     
@@ -172,12 +179,20 @@ def quiz_user_result_resume(db, uq_info):
         
 def quizzes_user_results(db, user_id, instanceId):
     qzs = db(db.quiz.instance==instanceId).select(db.quiz.ALL, orderby=db.quiz.id)
-    results = []
+    results = {}
     for q in qzs:
         uq_info = get_user_quiz(db, q['id'], user_id)
-        results.append(quiz_user_result_resume(db, uq_info))
+        results[q['id']] = quiz_user_result_resume(db, uq_info)
         
     return results    
+    
+def quizzes_all_user_results(db, instanceId):
+    stds = get_instance_users_by_role(db, instanceId, 0)
+    qs_results = {}
+    for s in stds:
+        qs_results[s['id']] = quizzes_user_results(db, s['id'], instanceId)
+        
+    return qs_results
         
 def quiz_is_correct(db, uqq):
     if uqq.alternative is None:
