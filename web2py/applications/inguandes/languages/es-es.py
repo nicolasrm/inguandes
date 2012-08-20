@@ -80,7 +80,7 @@
 'Layout': 'Diseño de página',
 'License for': 'Licencia para',
 'Logged in': 'Sesión iniciada',
-'Logged out': 'Sesión terminada',
+'Logged out': 'Sesión finalizada',
 'Login': 'Inicio de sesión',
 'Login to the Administrative Interface': 'Inicio de sesión para la Interfaz Administrativa',
 'Logout': 'Fin de sesión',
