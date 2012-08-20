@@ -58,6 +58,11 @@
                 </ul>
             </nav>
             {{ pass }}
+            <nav class="nav-menu">
+                <ul>                                       
+                    <li><a href="{{=URL('quiz', 'user_results', args=[inst['id']])}}" rel="tooltip" title="Resumen resultados quizzes"><i class="icon-check"></i><i class="icon-th-list"></i></a></li>
+                </ul>
+            </nav>
         </div>
     </div>
     <div class="span8">    
@@ -516,15 +521,28 @@
             <form id="quiz-main-form" class="form-horizontal" action="{{=URL('quiz')}}" method="POST">
                 <div class="control-group">
                     <label class="control-label" for="assignment-name">Nombre</label>
-                    <input type="text" id="quiz-name" name="name" placeholder="Nombre del quiz"/>
+                    <div class="controls">
+                        <input type="text" id="quiz-name" name="name" placeholder="Nombre del quiz"/>
+                    </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="quiz-starting">Inicio</label>
-                    <input type="datetime" class="input-small" id="quiz-starting" name="starting" placeholder="Inicio"/>
+                    <div class="controls">
+                        <input type="datetime" class="input-small" id="quiz-starting" name="starting" placeholder="Inicio"/>
+                    </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="quiz-ending">Fin</label>
-                    <input type="datetime" class="input-small" id="quiz-ending" name="ending" placeholder="Fin"/>
+                    <div class="controls">
+                        <input type="datetime" class="input-small" id="quiz-ending" name="ending" placeholder="Fin"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkbox" id="quiz-discount">
+                            <input type="checkbox" name="discount"> Descontar una correcta por 2 incorrectas
+                        </label>
+                    </div>
                 </div>                
                 <input type="hidden" class="instance-id" id="quiz-instanceid" value="{{=inst['id']}}"/>
             </form>

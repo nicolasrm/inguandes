@@ -52,6 +52,8 @@
                     <th>Correctas</th>
                     <th>Omitidas</th>
                     <th>Incorrectas</th>
+                    <th>Puntaje</th>
+                    <th>Nota</th>
                 </tr>
             </thead>
             <tbody>
@@ -63,7 +65,9 @@
                     <td>{{=str(qr['questions_ready']) + '/' + str(quiz_info['q_count'])}}</td>                    
                     <td>{{=qr['correct']}}</td>                    
                     <td>{{=qr['omitted']}}</td>
-                    <td>{{=qr['incorrect']}}</td>                    
+                    <td>{{=qr['incorrect']}}</td>             
+                    <td>{{='{0:2}'.format(qr['score'])}}</td>
+                    <td><span class="badge {{='badge-important' if qr['grade'] < 3.95 else 'badge-info'}}">{{='{0:2}'.format(qr['grade'])}}</span></td>
                 </tr>
                 {{ pass }}
             </tbody>

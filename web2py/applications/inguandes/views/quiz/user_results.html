@@ -1,0 +1,59 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span10">
+        <h2>Resumen resultados Quizzes <small>{{='{0}, {1}'.format(user['last_name'], user['first_name']) if user is not None else ''}}</small></h2>
+        <h4><a href="{{=URL('instance','view', args=[inst_info['id']])}}">{{=inst_info['title']}}</a></h4>
+    </div>
+</div>
+<div class="row">
+    <div class="span12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Quiz</th>
+                    <th>Descuento</th>
+                    <th># Preguntas</th>
+                    <th>Comienzo</th>
+                    <th>Última</th>
+                    <th>Correctas</th>
+                    <th>Omitidas</th>
+                    <th>Incorrectas</th>                    
+                    <th>Puntaje</th>
+                    <th>Nota</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ for qr in user_results: }}
+                <tr>
+                    <td><a href="{{=URL('result', args=[qr['quiz']['id'], qr['user_id']])}}" rel="tooltip" title="Respuestas del alumno">{{=qr['quiz']['name']}}</a></td>
+                    {{ if qr['quiz']['discount']: }}
+                        <td><i class="icon-ok" rel="tooltip" title="Dos incorrectas descuentan una correcta."></i></td>
+                    {{ else: }}
+                        <td><i class="icon-remove" rel="tooltip" title="Este quiz no descuenta por respuestas incorrectas."></i></td>
+                    {{ pass }}
+                    <td>{{=qr['quiz']['q_count']}}</td>
+                    <td>{{=qr['started_on'].strftime(datetime_format)}}</td>
+                    <td>{{=qr['last'].strftime(datetime_format)}}</td>                    
+                    <td>{{=qr['correct']}}</td>                    
+                    <td>{{=qr['omitted']}}</td>
+                    <td>{{=qr['incorrect']}}</td>
+                    <td>{{='{0:2}'.format(qr['score'])}}</td>
+                    <td><span class="badge {{='badge-important' if qr['grade'] < 3.95 else 'badge-info'}}">{{='{0:2}'.format(qr['grade'])}}</span></td>
+                </tr>
+                {{ pass }}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{{block pagescripts}}
+<script>
+$(document).ready(function() {
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+});
+</script>
+{{end}}
+
+
+

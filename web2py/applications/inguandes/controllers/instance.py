@@ -308,7 +308,8 @@ def quiz():
             quiz_id = db.quiz.insert(   name=fields['name'],
                                         starting=fields['starting'],
                                         ending=fields['ending'],
-                                        instance=fields['instance'])   
+                                        instance=fields['instance'],
+                                        discount=fields['discount'])   
                                         
             for cat in categories:
                 if cat in fields:

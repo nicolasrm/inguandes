@@ -44,6 +44,7 @@ def get_quiz(db, quizId):
     quiz_info = {}
     quiz_info['id'] = cQuiz.id
     quiz_info['name'] = cQuiz.name
+    quiz_info['discount'] = cQuiz.discount
     quiz_info['starting'] = cQuiz.starting
     quiz_info['ending'] = cQuiz.ending
     quiz_info['q_count'] = q_count
@@ -66,6 +67,7 @@ def get_user_quiz(db, quizId, user_id):
         user = db.auth_user[user_id]        
         uq_info = {}
         uq_info['id'] = u_quiz.id
+        uq_info['quiz'] = quiz
         uq_info['user_id'] = user_id
         uq_info['user_name'] = user.last_name + ', ' + user.first_name
         uq_info['started_on'] = u_quiz.started_on
@@ -142,6 +144,7 @@ def quiz_user_result_resume(db, uq_info):
     else:
         user = db.auth_user[uq_info['user_id']]
         q_results = {}
+        q_results['quiz'] = uq_info['quiz']
         q_results['user_id'] = user.id
         q_results['name'] = user.last_name + ', ' + user.first_name
         q_results['started_on'] = uq_info['started_on']
@@ -161,8 +164,20 @@ def quiz_user_result_resume(db, uq_info):
                 q_results['omitted'] = q_results['omitted'] + 1
             if uq.started_on is not None and (q_results['last'] is None or q_results['last'] < uq.started_on):
                 q_results['last'] = uq.started_on
+                
+        q_results['score'] = q_results['correct'] - (q_results['incorrect']/2.0 if q_results['quiz']['discount'] else 0)
+        q_results['grade'] = 1.0 + 6.0*q_results['score']/q_results['quiz']['q_count'] if q_results['score'] > 0 else 1.0
         
         return q_results
+        
+def quizzes_user_results(db, user_id, instanceId):
+    qzs = db(db.quiz.instance==instanceId).select(db.quiz.ALL, orderby=db.quiz.id)
+    results = []
+    for q in qzs:
+        uq_info = get_user_quiz(db, q['id'], user_id)
+        results.append(quiz_user_result_resume(db, uq_info))
+        
+    return results    
         
 def quiz_is_correct(db, uqq):
     if uqq.alternative is None:
@@ -205,6 +220,5 @@ def quiz_question_resume(db, quiz_info, q_id):
     question_info['correct'] = db((db.user_quiz_question.question == q_id) & (db.user_quiz_question.alternative == db.question_alternative.id) & (db.question_alternative.is_correct == True)).count()
     question_info['omitted'] = db((db.user_quiz_question.question == q_id) & (db.user_quiz_question.alternative == None)).count()
     question_info['wrong'] = question_info['total'] - (question_info['correct'] + question_info['omitted'])
-    
-    
+        
     return question_info
