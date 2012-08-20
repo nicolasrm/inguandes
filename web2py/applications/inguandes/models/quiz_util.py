@@ -173,7 +173,7 @@ def quiz_user_result_resume(db, uq_info):
                 q_results['last'] = uq.started_on
                 
         q_results['score'] = q_results['correct'] - (q_results['incorrect']/2.0 if q_results['quiz']['discount'] else 0)
-        q_results['grade'] = 1.0 + 6.0*q_results['score']/q_results['quiz']['q_count'] if q_results['score'] > 0 else 1.0
+        q_results['grade'] = round(1.0 + 6.0*q_results['score']/q_results['quiz']['q_count'] if q_results['score'] > 0 else 1.0, 1)
         
         return q_results
         
