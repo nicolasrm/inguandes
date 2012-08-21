@@ -186,7 +186,7 @@
             <ul>
                 <li>Una vez que realices la evaluación no la podrás cambiar.</li>                
                 <li>{{='Debes distribuir todos los {0} puntos.'.format(asgn_info['group_evaluation']['total_points']) if asgn_info['group_evaluation']['distribute_all'] else 'Tienes {0} puntos para repartir, aunque no es necesario que los asignes todos.'.format(asgn_info['group_evaluation']['total_points']) }}</li>
-                <li>{{='Puedes asignar un máximo de {0} puntos a cada uno.'.format(asgn_info['group_evaluation']['max_individual_points'])}}</li>
+                <li>{{='Puedes asignar un máximo de {0} puntos a cada uno, respetando que la suma total no supere {1}.'.format(asgn_info['group_evaluation']['max_individual_points'], asgn_info['group_evaluation']['total_points'])}}</li>
             </ul>
         </div>
         <form class="form-horizontal" action="{{=URL('evaluate_group')}}" method="POST">
