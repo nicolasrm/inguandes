@@ -141,12 +141,15 @@ def send_new_by_email(db, instanceId, newId):
     new = db.instance_new[newId]
     sections = get_instance_sections(db, instanceId)
     inst_info = get_instance_info(db, instanceId)
+    ass = get_instance_users_by_role(db, instanceId, 2)
     bccs = [s.email for s in sections if s.email is not None]
     if len(bccs) > 0:
         tos = []
         tos.append(new.creator.email)
         
         ccs = [u.email for u in inst_info['professors']]
+        if ass is not None:
+            ccs = ccs + [u.email for u in ass]
         
         message = new.content
         message = message + '\r\n\r\n--\r\n{0}\r\n{1}'.format(new.creator.first_name + ' ' + new.creator.last_name, inst_info['title'])
