@@ -538,10 +538,10 @@
                     </div>
                 </div>
                 <div class="control-group">
+                    <label class="control-label" for="quiz-discount">Descuento</label>
                     <div class="controls">
-                        <label class="checkbox" id="quiz-discount">
-                            <input type="checkbox" name="discount"> Descontar una correcta por 2 incorrectas
-                        </label>
+                        <input type="text" class="input-small" id="quiz-discount" name="discount"/>
+                        <p class="help-block">Cantidad de incorrectas que descuentan una correcta, 0 si no hay descuento.</p>
                     </div>
                 </div>                
                 <input type="hidden" class="instance-id" id="quiz-instanceid" value="{{=inst['id']}}"/>

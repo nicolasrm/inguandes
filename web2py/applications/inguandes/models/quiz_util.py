@@ -51,7 +51,8 @@ def get_quiz(db, quizId):
     quiz_info = {}
     quiz_info['id'] = cQuiz.id
     quiz_info['name'] = cQuiz.name
-    quiz_info['discount'] = cQuiz.discount
+    quiz_info['discount_val'] = cQuiz.discount_val
+    quiz_info['discount'] = cQuiz.discount_val is not None and cQuiz.discount_val != 0
     quiz_info['starting'] = cQuiz.starting
     quiz_info['ending'] = cQuiz.ending
     quiz_info['q_count'] = q_count
@@ -172,7 +173,7 @@ def quiz_user_result_resume(db, uq_info):
             if uq.started_on is not None and (q_results['last'] is None or q_results['last'] < uq.started_on):
                 q_results['last'] = uq.started_on
                 
-        q_results['score'] = q_results['correct'] - (q_results['incorrect']/2.0 if q_results['quiz']['discount'] else 0)
+        q_results['score'] = q_results['correct'] - (q_results['incorrect']/float(q_results['quiz']['discount_val']) if q_results['quiz']['discount'] else 0)
         q_results['grade'] = round(1.0 + 6.0*q_results['score']/q_results['quiz']['q_count'] if q_results['score'] > 0 else 1.0, 1)
         
         return q_results

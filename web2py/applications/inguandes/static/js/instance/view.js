@@ -273,6 +273,7 @@
         new_quiz.starting = formQuiz.find('#quiz-starting').val();
         new_quiz.ending = formQuiz.find('#quiz-ending').val();
         new_quiz.instance = formQuiz.find('#quiz-instanceid').val();        
+        new_quiz.discount = formQuiz.find('#quiz-discount').val();        
         $.each(INGUANDES.quiz_categories, function (k,v) {
             new_quiz[k] = v;
         });

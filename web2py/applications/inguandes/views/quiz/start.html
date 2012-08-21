@@ -18,6 +18,8 @@
                 <dd>{{=quiz_info['categories_text']}}</dd>
                 <dt># Preguntas</dt>
                 <dd>{{=quiz_info['q_count']}}</dd>
+                <dt>Descuento</dt>
+                <dd>{{='Sin descuento' if not quiz_info['discount'] else '{0} malas descuentan una correcta'.format(quiz_info['discount_val'])}}</dd>
             </dl>
         </div>
     </div>    

@@ -167,7 +167,7 @@ db.define_table('quiz',
         Field('name', type='string'),
         Field('starting', type='datetime'),
         Field('ending', type='datetime'),
-        Field('discount', type='boolean', default=False),
+        Field('discount_val', type='integer', default=0),
         Field('instance', type=db.instance)
         )
         

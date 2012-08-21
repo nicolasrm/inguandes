@@ -309,7 +309,7 @@ def quiz():
                                         starting=fields['starting'],
                                         ending=fields['ending'],
                                         instance=fields['instance'],
-                                        discount=fields['discount'])   
+                                        discount_val=fields['discount'] if fields['discount'] is not None else 0)   
                                         
             for cat in categories:
                 if cat in fields:

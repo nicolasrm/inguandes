@@ -30,7 +30,7 @@
                 <tr>
                     <td><a href="{{=URL('result', args=[qr['quiz']['id'], qr['user_id']])}}" rel="tooltip" title="Respuestas del alumno">{{=qr['quiz']['name']}}</a></td>
                     {{ if qr['quiz']['discount']: }}
-                        <td><i class="icon-ok" rel="tooltip" title="Dos incorrectas descuentan una correcta."></i></td>
+                        <td><i class="icon-ok" rel="tooltip" title="{{=qr['quiz']['discount_val']}} incorrectas descuentan una correcta."></i></td>
                     {{ else: }}
                         <td><i class="icon-remove" rel="tooltip" title="Este quiz no descuenta por respuestas incorrectas."></i></td>
                     {{ pass }}
