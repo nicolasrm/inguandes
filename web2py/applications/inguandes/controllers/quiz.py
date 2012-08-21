@@ -93,7 +93,7 @@ def user_results():
     qzs = get_instance_quizzes(db, instanceId)
     user_results = quizzes_user_results(db, user_id, instanceId)    
         
-    return dict(inst_info=inst_info, qzs=qzs, user_results=user_results, user=user)
+    return dict(inst_info=inst_info, qzs=qzs, user_results=user_results, user=user, user_role=user_role)
     
 @auth.requires_login()
 def all_result():

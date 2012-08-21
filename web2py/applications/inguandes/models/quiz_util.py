@@ -47,6 +47,7 @@ def get_quiz(db, quizId):
     qc_text = qc_text[0:-2]
     
     quiz_course = db((db.section.instance == cQuiz.instance) & (db.section.course == db.course.id)).select(db.course.ALL).first()
+    now = datetime.datetime.now()
     
     quiz_info = {}
     quiz_info['id'] = cQuiz.id
@@ -55,6 +56,7 @@ def get_quiz(db, quizId):
     quiz_info['discount'] = cQuiz.discount_val is not None and cQuiz.discount_val != 0
     quiz_info['starting'] = cQuiz.starting
     quiz_info['ending'] = cQuiz.ending
+    quiz_info['active'] = cQuiz.starting >= now and cQuiz.ending <= now
     quiz_info['q_count'] = q_count
     quiz_info['categories'] = q_cats_table
     quiz_info['categories_text'] = qc_text

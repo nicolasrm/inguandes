@@ -25,7 +25,7 @@
             <tbody>
                 {{ for q in qzs: 
                     qr = user_results[q['id']]
-                    if qr is not None:
+                    if qr is not None and (not qr['quiz']['active'] or user_role >= 2):
                 }}
                 <tr>
                     <td><a href="{{=URL('result', args=[qr['quiz']['id'], qr['user_id']])}}" rel="tooltip" title="Respuestas del alumno">{{=qr['quiz']['name']}}</a></td>
