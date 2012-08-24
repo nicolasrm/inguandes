@@ -52,7 +52,7 @@ def result():
     quiz_info = get_quiz(db, quizId)
     
     user_role = get_user_role(db, quiz_info['instance_id'], auth.user.id)
-    if len(request.args) == 1 and user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe':
+    if len(request.args) == 1 and (user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe'):
         redirect(URL('quiz', 'all_result', args=[quizId]))
     
     if quiz_info['ending'] >= datetime.datetime.now() and user_roles[user_role] == 'Estudiante':
