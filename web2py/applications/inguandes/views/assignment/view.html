@@ -147,6 +147,20 @@
         </div>
     </div>
 </div>
+{{ if user_role >= 2: }}
+<div class="row">
+    <div class="span12">
+        <div class="well">
+            <h3>Archivos no disponibles <small>solo para profesores y ayudantes</small></h3>
+            <ul>
+            {{ for uf in asgn_files['unavailable']: }}
+                <li><a rel="tooltip" title="Descargar archivo" href="{{=URL('download_user_assignment_file', args=[uf['file']])}}" target="_blank">{{='{0} ({1}) - {2}'.format(uf['filename'], uf['uploaded'], uf['user'])}}</a></li>
+            {{ pass }}
+            </ul>
+        </div>
+    </div>
+</div>
+{{ pass }}
 
 <div class="hide">
     <table>
@@ -226,7 +240,7 @@ $(function () {
         
     {{ 
     if len(asgn_files) > 0: 
-        for uf in asgn_files:
+        for uf in asgn_files['available']:
     }}
     file = {}
     file.id = '{{=uf['id']}}';
@@ -241,6 +255,20 @@ $(function () {
     {{ for h in uf['history']: }}
     file.history.push({{=h}});
     {{ pass }}
+    
+    INGUANDES.all_files.push(file);
+    {{  pass }}
+    
+    {{  for uf in asgn_files['unavailable']: }}
+    file = {}
+    file.id = '{{=uf['id']}}';
+    file.filename = '{{=uf['filename']}}';
+    file.type = '{{=uf['type']}}';
+    file.size = '{{=uf['size']}}';
+    file.uploaded = '{{=uf['uploaded']}}';
+    file.user = '{{=uf['user']}}';
+    file.available = {{='false' if not uf['available'] else 'true'}};
+    file.href_arg = '{{=uf['file']}}'
     
     INGUANDES.all_files.push(file);
     {{  pass }}

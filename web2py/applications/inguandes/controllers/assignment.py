@@ -13,11 +13,15 @@ def view():
         redirect(URL('default', 'index'))
     assignmentId = int(request.args[0])
     
+    asgn_info = get_assignment(db, assignmentId)
+    
+    user_role = get_user_role(db, asgn_info['instance_id'], auth.user.id)
+    
     user_id = auth.user.id
-    if len(request.args) > 1 and auth.has_membership(role='admin'):
+    if len(request.args) > 1 and user_role >= 2:
         user_id = int(request.args[1])
     
-    asgn_info = get_assignment(db, assignmentId)
+    
     section_info = get_user_section(db, asgn_info['instance_id'], user_id)
     asgn_info = get_assignment(db, assignmentId, section_info)    
         
@@ -26,7 +30,7 @@ def view():
     
     user_evals = get_user_assignment_evaluation(db, asgn_info, user_id)
             
-    return dict(asgn_info=asgn_info, asgn_files=asgn_files, user_group=user_group, user_evals=user_evals)
+    return dict(asgn_info=asgn_info, asgn_files=asgn_files, user_group=user_group, user_evals=user_evals, user_role=user_role)
     
 @request.restful()
 def assignment_files():

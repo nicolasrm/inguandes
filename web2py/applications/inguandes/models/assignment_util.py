@@ -104,20 +104,30 @@ def get_assignment_file_info(db, file_id):
 
 def get_group_files(db, asgn_info, userId):
     user_group = get_user_assignment_group(db, asgn_info, userId)
-    files_info = []
+    files_info = {}
+    files_info['available'] = []
+    files_info['unavailable'] = []
     if user_group is None:
         files_info = get_user_files(db, asgn_info, userId)
     if user_group is not None:
         for std in user_group['students']:
-            files_info = files_info + get_user_files(db, asgn_info, std['id'])
+            u_files = get_user_files(db, asgn_info, std['id'])
+            files_info['available'] = files_info['available'] + u_files['available']
+            files_info['unavailable'] = files_info['unavailable'] + u_files['unavailable']
         
     return files_info       
     
 def get_user_files(db, asgn_info, userId):
     u_files = db((db.user_assignment_file.the_user == userId) & (db.user_assignment_file.assignment == asgn_info['id'])).select(orderby =~ db.user_assignment_file.created_on)
-    files_info = []
+    files_info = {}
+    files_info['available'] = []
+    files_info['unavailable'] = []
     for uf in u_files:
-        files_info.append(get_assignment_file_info(db, uf.id))
+        f_info = get_assignment_file_info(db, uf.id)
+        if f_info['available']:
+            files_info['available'].append(f_info)
+        else:
+            files_info['unavailable'].append(f_info)
     
     return files_info   
 
@@ -144,9 +154,9 @@ def assignment_group_result(db, asgn_info, userId, user_group):
     gr_result['user_id'] = userId
     gr_result['files'] = gr_files
     gr_result['name'] = 'Grupo ' + str(user_group['id']) if user_group is not None else user.last_name + ', ' + user.first_name
-    gr_result['last_modification'] = max([f['uploaded'] for f in gr_files]) if len(gr_files) > 0 else '-'
-    gr_result['files_count'] = len([f for f in gr_files if f['available']])
-    gr_result['modifications_count'] = sum([len(f['history']) for f in gr_files]) if len(gr_files) > 0 else '-'
+    gr_result['last_modification'] = max([f['uploaded'] for f in gr_files['available']]) if len(gr_files['available']) > 0 else '-'
+    gr_result['files_count'] = len(gr_files['available'])
+    gr_result['modifications_count'] = len(gr_files['available']) + len(gr_files['unavailable'])
     gr_result['group_size'] = len(user_group['students']) if user_group is not None else 1
     
     return gr_result
@@ -193,7 +203,7 @@ def zip_assignment(db, asgn_info):
             if not os.path.exists(group_base_path):
                 os.makedirs(group_base_path)
             
-            for file in [f for f in gr['files'] if f['available']]:
+            for file in [f for f in gr['files']['available']]:
                 file_dest = os.path.join(group_base_path, file['original_filename'])
                 file_src = os.path.join(request.folder, 'uploads', file['file'])                                
                 shutil.copyfile(file_src, file_dest)
