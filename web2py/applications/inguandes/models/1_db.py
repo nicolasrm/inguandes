@@ -268,6 +268,16 @@ db.define_table('download_file_log',
         Field('created_on', type='datetime', default=request.now),
         Field('request_ip', type='string', default=request.env["remote_addr"])
         )
+
+########## Log ##########
+db.define_table('action_log',
+        Field('the_user', type=db.auth_user),
+        Field('table_name', type='string'),
+        Field('element_id', type='integer'),
+        Field('action', type='string'),
+        Field('created_on', type='datetime', default=request.now),
+        Field('request_ip', type='string', default=request.env["remote_addr"])
+        )
         
 ########## Tickets ##########
 

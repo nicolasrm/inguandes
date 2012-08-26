@@ -99,7 +99,8 @@ def assignment_files():
         response.status = 200
         
         if asgn_info['is_available']:
-            db.user_assignment_file[file_id].update_record(available=False)        
+            db.user_assignment_file[file_id].update_record(available=False)
+            log_action(db, auth.user.id, 'delete_file', 'user_assignment_file', file_id)
             return response.json({'mensaje': 'archivo ' + file_id + ' eliminado'})
         else:            
             return response.json({'mensaje': 'No esta permitido borrar archivos'})

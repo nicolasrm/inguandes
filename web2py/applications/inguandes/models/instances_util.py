@@ -161,4 +161,10 @@ def send_new_by_email(db, instanceId, newId):
                     subject=subject,                    
                     reply_to=new.creator.email,
                     message=message)
+                    
+def log_action(db, user, action, table, element_id):
+    db.action_log.insert(   the_user=user,
+                            table_name=table,
+                            element_id=element_id,
+                            action=action)
     
