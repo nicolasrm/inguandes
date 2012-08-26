@@ -278,6 +278,34 @@ db.define_table('action_log',
         Field('created_on', type='datetime', default=request.now),
         Field('request_ip', type='string', default=request.env["remote_addr"])
         )
+
+########## Forum ##########
+db.define_table('forum_topic',
+        Field('instance', type=db.instance),
+        Field('name', type='string'),
+        Field('available', type='boolean', default=True)
+        )
+        
+db.define_table('forum_thread',
+        Field('forum_topic', type=db.forum_topic),
+        Field('title', type='string'),
+        Field('content', type='text'),
+        Field('the_user', type=db.auth_user),
+        Field('open', type='boolean', default=True),
+        Field('available', type='boolean', default=True),
+        Field('created_on', type='datetime', default=request.now),
+        Field('request_ip', type='string', default=request.env["remote_addr"])
+        )
+        
+db.define_table('forum_post',
+        Field('forum_thread', type=db.forum_thread),
+        Field('content', type='text'),
+        Field('the_user', type=db.auth_user),
+        Field('best_answer', type='boolean', default=False),
+        Field('available', type='boolean', default=True),
+        Field('created_on', type='datetime', default=request.now),        
+        Field('request_ip', type='string', default=request.env["remote_addr"])
+        )
         
 ########## Tickets ##########
 

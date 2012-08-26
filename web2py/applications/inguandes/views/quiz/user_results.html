@@ -1,8 +1,10 @@
 {{extend 'layout.html'}}
 <div class="row">
-    <div class="span10">
-        <h2>Resumen resultados Quizzes <small>{{='{0}, {1}'.format(user['last_name'], user['first_name']) if user is not None else ''}}</small></h2>
-        <h4><a href="{{=URL('instance','view', args=[inst_info['id']])}}">{{=inst_info['title']}}</a></h4>
+    <div class="span12">
+        <div class="page-header">
+            <h2>Resumen resultados Quizzes <small>{{='{0}, {1}'.format(user['last_name'], user['first_name']) if user is not None else ''}}</small></h2>
+            <h4><a href="{{=URL('instance','view', args=[inst_info['id']])}}">{{=inst_info['title']}}</a></h4>
+        </div>
     </div>
 </div>
 <div class="row">

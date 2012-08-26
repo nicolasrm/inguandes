@@ -1,8 +1,10 @@
 {{extend 'layout.html'}}
 <div class="row">
-    <div class="span6">
-        <h2>Administración de Grupos</h2>
-        <h4><a href="{{=URL('instance','view', args=[inst['id']])}}">{{=inst['title']}}</a></h4>
+    <div class="span12">
+        <div class="page-header">
+            <h2>Administración de Grupos</h2>
+            <h4><a href="{{=URL('instance','view', args=[inst['id']])}}">{{=inst['title']}}</a></h4>
+        </div>
     </div>
 </div>
 <div class="row">

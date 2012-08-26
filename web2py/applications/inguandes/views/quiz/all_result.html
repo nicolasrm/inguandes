@@ -1,11 +1,13 @@
 {{extend 'layout.html'}}
-<div class="row">
-    <div class="span10">
-        <h2>{{=quiz_info['name']}}</h2>
-        <h4><a href="{{=URL('instance','view', args=[quiz_info['instance_id']])}}">{{=quiz_info['instance']}}</a></h4>
-    </div>
-    <div class="span2">
-        <a class="btn btn-inverse btn-small" href="{{=URL('start', args=[quiz_info['id']])}}">Responder</a>
+<div class="row">    
+    <div class="span12">        
+        <div class="page-header">
+            <h2>{{=quiz_info['name']}}</h2>
+            <h4><a href="{{=URL('instance','view', args=[quiz_info['instance_id']])}}">{{=quiz_info['instance']}}</a></h4>
+            <div class="pull-right">
+                <a class="btn btn-inverse btn-small" href="{{=URL('start', args=[quiz_info['id']])}}">Responder</a>
+            </div>
+        </div>
     </div>
 </div>
 <div class="row">    

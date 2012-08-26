@@ -1,7 +1,9 @@
 {{extend 'layout.html'}}
 <div class="row">
     <div class="span12">
-        <h2>{{=inst['title']}}</h2>
+        <div class="page-header">
+            <h2>{{=inst['title']}}</h2>
+        </div>
     </div>
 </div>
 <div class="row">
@@ -177,9 +179,8 @@
                             </li>
                             {{ pass }}
                         </ul>
-                    </li>
-                    <!-- <li><a href="#" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
-                    <li><a href="{{=URL('submit_ticket', args=[inst['id']])}}" rel="tooltip" title="Emitir ticket"><i class="icon-plus icon-white"></i><i class="icon-tag icon-white"></i></a></li>-->
+                    </li>                    
+                    <!-- <li><a href="{{=URL('submit_ticket', args=[inst['id']])}}" rel="tooltip" title="Emitir ticket"><i class="icon-plus icon-white"></i><i class="icon-tag icon-white"></i></a></li>-->
                     <li class="dropup">                        
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Notas"><i class="icon-check icon-white"></i> <b class="caret"></b></a>
                         <ul class="dropdown-menu">   
@@ -188,6 +189,7 @@
                             {{ pass }}
                         </ul>
                     </li>
+                    <li><a href="{{=URL('forum', 'forum', args=[inst['id']])}}" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
                     <li class="divider-vertical"></li>
                     {{ for il in inst_links: }}
                     <li><a href="{{=il['url']}}" target="_blank" rel="tooltip" title="{{=il['description']}}"><i class="icon-{{=il['icon']}} icon-white"></i></a></li>

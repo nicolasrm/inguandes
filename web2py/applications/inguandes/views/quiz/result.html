@@ -1,8 +1,10 @@
 {{extend 'layout.html'}}
 <div class="row">
     <div class="span12">
-        <h2>{{=quiz_info['name']}} <small>{{=user_quiz['user_name'] if user_quiz is not None else ''}}</small></h2>
-        <h4><a href="{{=URL('instance','view', args=[quiz_info['instance_id']])}}">{{=quiz_info['instance']}}</a></h4>
+        <div class="page-header">
+            <h2>{{=quiz_info['name']}} <small>{{=user_quiz['user_name'] if user_quiz is not None else ''}}</small></h2>
+            <h4><a href="{{=URL('instance','view', args=[quiz_info['instance_id']])}}">{{=quiz_info['instance']}}</a></h4>
+        </div>
     </div>
 </div>
 <div class="row">    
