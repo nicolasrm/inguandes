@@ -1,0 +1,247 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span12">
+        <div class="page-header">
+            <h2>Foro</h2>
+            <h4><a href="{{=URL('instance','view', args=[forum_info['instance_id']])}}">{{=forum_info['instance']}}</a></h4>
+        </div>
+    </div>
+</div>
+<div class="row">    
+    <div class="span3">        
+        <ul class="nav nav-list">
+            <li class="nav-header">Temas</li>
+        {{ for t in forum_info['topics']: }}
+            <li class="{{='active' if topic_info is not None and topic_info['id'] == t['id'] else ''}}"><a href="{{=URL('forum', args=[forum_info['instance_id'], t['id']])}}">{{='{0} ({1})'.format(t['name'], t['count'])}}</a></li>
+        {{ pass }}
+            <li class="divider"></li>
+        </ul>
+        {{ if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe': }}
+        <nav class="nav-menu">
+            <ul>                                       
+                <li><a data-toggle="modal" href="#modal-new-topic" rel="tooltip" title="Agregar tema"><i class="icon-plus"></i><i class="icon-comment"></i></a></li>
+            </ul>
+        </nav>
+        {{ pass }}
+    </div>
+    {{ if topic_info is not None and thread_detail is None: }}
+    <div class="span9">
+        <div class="row">
+            <div class="span6">
+                <h3>{{=topic_info['name']}}</h3>
+            </div>
+            <div class="span3">
+                <a class="btn btn-success pull-right" data-toggle="modal" href="#modal-new-thread"><i class="icon-plus icon-white"></i> Pregunta</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span9">                
+                {{ for th in thread_list: }}
+                    <div class="well well-small">
+                        <div class="row">
+                            <div class="span7">
+                                <a href="{{=URL('forum', args=[forum_info['instance_id'], th['topic'], th['id']])}}">{{=th['title']}}</a>
+                            </div>
+                            <div class="span1">
+                                <span class="badge {{='badge-info' if not th['has_answer'] else 'badge-success'}} pull-right">{{=th['count']}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="span3">
+                                <span class="label">Creación: {{=th['created'].strftime(datetime_format)}}</span>
+                            </div>
+                            <div class="span3">
+                                <span class="label label-info">Última actividad: {{=th['last_post'].strftime(datetime_format) if th['last_post'] is not None else th['created'].strftime(datetime_format)}}</span>
+                            </div>
+                            <div class="span2">
+                                <span class="label label-inverse">{{='{0} {1}'.format(th['user']['first_name'], th['user']['last_name'])}}</span>
+                            </div>
+                        </div>
+                    </div>
+                {{ pass }}
+            </div>
+        </div>        
+    </div>
+    {{ elif thread_detail is not None: }}
+    <div class="span9">
+        <div class="well well-small">
+            <div class="row thread-header">
+                <div class="span5">
+                    <h4>{{=thread_detail['title']}}</h4>
+                </div>
+                <div class="span3">
+                    <span class="label label-inverse pull-right">{{='{0} {1}'.format(thread_detail['user']['first_name'], thread_detail['user']['last_name'])}}</span>
+                    <span class="label label-info pull-right">{{=thread_detail['created'].strftime(datetime_format)}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span8">
+                    {{=XML(thread_detail['content'])}}
+                </div>
+            </div>
+        </div>
+        {{
+            best_answer = [p for p in thread_detail['posts'] if p['is_best_answer']]
+            if len(best_answer) > 0:
+                best_answer = best_answer[0]
+        }}
+        <div class="forum-post">            
+            <div class="row label label-success">
+                <div class="span2">
+                    {{='{0} {1}'.format(best_answer['user']['first_name'], best_answer['user']['last_name'])}}
+                </div>
+                <div class="span2">
+                    {{=best_answer['created'].strftime(datetime_format)}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="span8">                
+                    {{=XML(best_answer['content'])}}
+                </div>
+            </div>            
+        </div>
+        {{ pass }}
+        {{ for p in thread_detail['posts']: }}
+        <div class="forum-post">            
+            <div class="row label label-inverse">
+                <div class="span2">
+                    {{='{0} {1}'.format(p['user']['first_name'], p['user']['last_name'])}}
+                </div>
+                <div class="span2">
+                    {{=p['created'].strftime(datetime_format)}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="span8">                
+                    {{=XML(p['content'])}}
+                </div>
+            </div>  
+            {{ if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe': }}
+            <div class="row">
+                <div class="span2 offset6">
+                    <nav class="nav-menu">
+                        <ul>                                       
+                            <li><a href="{{=URL('remove_post', args=[forum_info['instance_id'],topic_info['id'],thread_detail['id'],p['id']])}}" rel="tooltip" title="Eliminar mensaje"><i class="icon-remove"></i></a></li>
+                            <li><a href="{{=URL('best_answer', args=[forum_info['instance_id'],topic_info['id'],thread_detail['id'],p['id']])}}" rel="tooltip" title="Elegir como mejor respuesta"><i class="icon-ok"></i></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            {{ elif p['user']['id'] == auth.user.id: }}
+            <div class="row">
+                <div class="span2 offset6">
+                    <nav class="nav-menu">
+                        <ul>
+                            <li><a href="{{=URL('remove_post', args=[forum_info['instance_id'],topic_info['id'],thread_detail['id'],p['id']])}}" rel="tooltip" title="Eliminar mensaje"><i class="icon-remove"></i></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>            
+            {{ pass }}
+        </div>
+        {{ pass }}
+        <div class="row forum-answer">
+            <div class="span8">
+                <h4>Colabora con tu respuesta</h4>
+                <form action="{{=URL('add_post')}}" method="POST">
+                    <fieldset>
+                        <div class="controls">  
+                            <textarea id="post-content" rows="5" name="content" class="input-xxlarge wysihtml5"></textarea>
+                            <p class="help-block">Incorpora una respuesta o comentario que ayude a solucionar la pregunta planteada.</p>
+                        </div>
+                        <button type="submit" class="btn btn-success"><i class="icon-plus icon-white"></i> Responder</button>
+                        <input type="hidden" class="thread-id" name="threadid" value="{{=thread_detail['id']}}"/>
+                        <input type="hidden" class="topic-id" name="topicid" value="{{=topic_info['id']}}"/>
+                        <input type="hidden" class="instance-id" name="instanceid" value="{{=forum_info['instance_id']}}"/>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{ pass }}
+</div>
+
+{{ if topic_info is not None: }}
+<div class="modal hide fade in" id="modal-new-thread" style="width: 760px; margin: -250px 0 0 -380px;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar pregunta</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_thread')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="thread-title">Título</label>
+                    <div class="controls">
+                        <input type="text" id="thread-title" name="title" class="input-xxlarge"/>
+                        <p class="help-block">Utiliza un título descriptivo de tu pregunta, de modo que para todos sea fácil identificarla.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="thread-content">Pregunta</label>
+                    <div class="controls">  
+                        <textarea id="thread-content" rows="5" name="content" class="input-xxlarge wysihtml5"></textarea>
+                        <p class="help-block">Expresa tu pregunta de forma clara, entregando toda la información que permita generar una buena respuesta.</p>
+                    </div>
+                </div>
+                <input type="hidden" class="topic-id" name="topicid" value="{{=topic_info['id']}}"/>
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=forum_info['instance_id']}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+{{ pass }}
+
+{{ if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe': }}
+<!-- Forum admin modals -->
+<div class="modal hide fade in" id="modal-new-topic">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Agregar tema</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_topic')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="topic-name">Nombre</label>
+                    <div class="controls">
+                        <input type="text" id="topic-name" name="name"/>
+                        <p class="help-block">Nombre que identificará al nuevo tema.</p>
+                    </div>
+                </div>                
+                <input type="hidden" class="instance-id" name="instanceid" value="{{=forum_info['instance_id']}}"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+{{ pass }}
+
+{{block pagescripts}}
+<script src="{{=URL('static','js/wysihtml5-0.3.0_rc2.js')}}"></script>
+<script src="{{=URL('static','js/bootstrap-wysihtml5-0.0.2.js')}}"></script>
+<script>
+$(document).ready( function () {
+    $("[rel=tooltip]").tooltip({placement: 'top'});
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
+    
+    $('.wysihtml5').wysihtml5({
+        'font-styles': false,
+        'html': true
+    });
+});
+</script>
+{{end}}
+
+
+

@@ -1,0 +1,55 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span12">
+        <h2>{{=quiz_info['name']}}</h2>
+        <h4><a href="{{=URL('instance','view', args=[quiz_info['instance_id']])}}">{{=quiz_info['instance']}}</a></h4>
+    </div>
+</div>
+<div class="row">    
+    <div class="span4">
+        <div class="well well-small">
+            <h3>Información del Quiz</h3>
+            <dl class="dl-horizontal dl-horizontal-small">            
+                <dt>Inicio</dt>
+                <dd><span class="label">{{=quiz_info['starting'].strftime(datetime_format)}}</span></dd>
+                <dt>Fin</dt>
+                <dd><span class="label label-important">{{=quiz_info['ending'].strftime(datetime_format)}}</span></dd>
+                <dt>Materia</dt>
+                <dd>{{=quiz_info['categories_text']}}</dd>
+                <dt># Preguntas</dt>
+                <dd>{{=quiz_info['q_count']}}</dd>
+                <dt>Descuento</dt>
+                <dd>{{='Sin descuento' if not quiz_info['discount'] else '{0} malas descuentan una correcta'.format(quiz_info['discount_val'])}}</dd>
+            </dl>
+        </div>
+    </div>    
+    <div class="span8">
+        <div class="well well-small">
+            <h3>Instrucciones</h3>
+            <p>Estas a punto de comenzar a desarrollar el quiz <i>{{=quiz_info['name']}}</i>. Ten en consideración las siguientes instrucciones antes de comenzar:</p>
+            <ul>
+                <li>Cada pregunta define un tiempo para completarla, una vez completado ese tiempo se considera incorrecta.</li>
+                <li>Al finalizar cada pregunta, se te pedirá que indiques cuando quieres pasar a la siguiente.</li>
+                <li>Una vez enviada una respuesta no puedes cambiarla.</li>
+                <li>Si en cualquier momento dejas de completar el quiz, ya sea porque te cambias de página o cierras el navegador, si estabas en una nueva pregunta, esta se considerará incorrecta.</li>
+            </ul>
+            {{ if user_quiz is None: }}
+            <a class="btn btn-large btn-primary pull-right" href="{{=URL('answer', args=[quiz_info['id']])}}"><i class="icon-play icon-white"></i> Comenzar</a>
+            {{ elif user_quiz['questions_pending'] > 0: }}
+            <span class="label label-important pull-right">Te quedan {{=user_quiz['questions_pending']}} preguntas por responder.</span>
+            <a class="btn btn-large btn-primary pull-right" href="{{=URL('answer', args=[quiz_info['id']])}}"><i class="icon-play icon-white"></i> Continuar</a>
+            {{ else: }}
+            <span class="label label-info pull-right">Ya respondiste este quiz.</span>
+            {{ pass }}
+        </div>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script>
+
+</script>
+{{end}}
+
+
+

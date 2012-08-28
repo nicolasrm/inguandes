@@ -108,3 +108,23 @@ body {
 .ribbon-red:before, .ribbon-red:after {
   border-top:   3px solid #790014;
 }
+
+.thread-header {
+  padding-bottom: 4px;
+  margin: 5px 0 6px;
+  border-bottom: 1px solid #aaaaaa;
+}
+
+.forum-post {  
+  padding: 4px;
+  margin: 5px 0 10px 30px;  
+  border-bottom: 1px solid #cccccc;
+}
+
+.forum-answer {
+  padding: 4px;
+  margin: 20px 0 5px 5px;  
+  border-bottom: 1px solid #cccccc;
+}
+
+
