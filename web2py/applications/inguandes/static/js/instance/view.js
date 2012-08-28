@@ -307,7 +307,7 @@
             
     $(document).ready( function () {
         $("[rel=tooltip]").tooltip({placement: 'top'});
-        $("[rel=popover]").popover();
+        $("[rel=popover]").popover({trigger: 'hover'});
         $(".collapse").collapse();
         
         $('.modal .modal-action').click( function () {
