@@ -21,7 +21,6 @@ def view():
     if len(request.args) > 1 and user_role >= 2:
         user_id = int(request.args[1])
     
-    
     section_info = get_user_section(db, asgn_info['instance_id'], user_id)
     asgn_info = get_assignment(db, assignmentId, section_info)    
         
@@ -36,8 +35,11 @@ def view():
 def assignment_files():
 
     @auth.requires_login()
-    def POST(assignment_id, **fields):        
+    def POST(assignment_id, **fields):              
         asgn_info = get_assignment(db, assignment_id)
+        section_info = get_user_section(db, asgn_info['instance_id'], auth.user.id)
+        asgn_info = get_assignment(db, assignment_id, section_info)    
+        
         uploaded_files = []
         error_msg = ''
                         
@@ -95,6 +97,9 @@ def assignment_files():
     def DELETE(file_id):
         u_file = db.user_assignment_file[file_id]
         asgn_info = get_assignment(db, u_file.assignment)
+        section_info = get_user_section(db, asgn_info['instance_id'], auth.user.id)
+        asgn_info = get_assignment(db, u_file.assignment, section_info)    
+        
         response.headers['Content-Type'] = 'application/json'
         response.status = 200
         
