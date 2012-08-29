@@ -60,7 +60,7 @@ def get_assignment(db, asgnId, section_info=None):
     asgn_info['max_size_kb'] = file_size_options_kb[cAsgn.max_size]
     asgn_info['instance'] = cAsgn.instance.title
     asgn_info['instance_id'] = cAsgn.instance
-    asgn_info['is_available'] = cAsgn.ending >= now
+    asgn_info['is_available'] = asgn_info['ending'] >= now
     asgn_info['files'] = asgn_files
     asgn_info['in_groups'] = cAsgn.in_groups
     asgn_info['group_list'] = cAsgn.group_list
