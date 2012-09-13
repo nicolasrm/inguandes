@@ -1,0 +1,43 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span12">
+        <div class="page-header">
+            <h2>Noticias</h2>
+            <h4><a href="{{=URL('instance','view', args=[inst['id']])}}">{{=inst['title']}}</a></h4>
+        </div>
+    </div>
+</div>
+
+{{ for n in news: }}
+<div class="row">
+    <div class="span8 offset2">
+        <div class="well well-small">
+            <div class="row thread-header">
+                <div class="span5">
+                    <h4>{{=n['title']}}</h4>
+                </div>
+                <div class="span2">
+                    <span class="label label-info pull-right">{{=n['created_on'].strftime(datetime_format)}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span8">
+                    {{=n['content']}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ pass }}    
+
+
+{{block pagescripts}}
+<script>
+$(document).ready( function () {
+    
+});
+</script>
+{{end}}
+
+
+

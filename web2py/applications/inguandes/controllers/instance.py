@@ -494,3 +494,13 @@ def add_grade_link():
                                         url=request.vars.url,
                                         instance=instanceId)
     redirect(URL('view', args=[instanceId]))
+    
+def news():
+    if len(request.args) == 0:
+        redirect(URL('default', 'index'))
+    instanceId = int(request.args[0])
+    inst = db.instance[instanceId]
+    
+    news = get_instance_news(db, instanceId)
+    
+    return dict(inst=inst, news=news)
