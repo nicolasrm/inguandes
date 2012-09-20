@@ -7,6 +7,9 @@ def forum():
         redirect(URL('default', 'index'))
     instanceId = int(request.args[0])
     
+    if len(request.args) == 1:
+        save_visit(db, auth.user.id, instanceId)
+    
     user_role = get_user_role(db, instanceId, auth.user.id)    
     forum_info = get_instance_forum(db, instanceId)
     

@@ -307,6 +307,13 @@ db.define_table('forum_post',
         Field('request_ip', type='string', default=request.env["remote_addr"])
         )
         
+db.define_table('forum_visit',
+        Field('instance', type=db.instance),
+        Field('the_user', type=db.auth_user),
+        Field('visited_on', type='datetime', default=request.now),
+        Field('request_ip', type='string', default=request.env["remote_addr"])
+        )
+        
 ########## Tickets ##########
 
 ticket_status = {

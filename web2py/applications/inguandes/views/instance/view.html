@@ -201,7 +201,15 @@
                             {{ pass }}
                         </ul>
                     </li>
-                    <li><a href="{{=URL('forum', 'forum', args=[inst['id']])}}" rel="tooltip" title="Foro"><i class="icon-comment icon-white"></i></a></li>
+                    <li>
+                        <a href="{{=URL('forum', 'forum', args=[inst['id']])}}" rel="tooltip" title="{{='Foro' if not pending_forum else 'Foro: hay mensajes sin leer'}}">
+                            {{ if not pending_forum:}}
+                                <i class="icon-comment icon-white"></i>
+                            {{ else:}}
+                                <span class="label label-important" style="width:40px;"><i class="icon-comment icon-white"></i> !</span>
+                            {{ pass }}
+                        </a>
+                    </li>
                     <li class="divider-vertical"></li>
                     {{ for il in inst_links: }}
                     <li><a href="{{=il['url']}}" target="_blank" rel="tooltip" title="{{=il['description']}}"><i class="icon-{{=il['icon']}} icon-white"></i></a></li>

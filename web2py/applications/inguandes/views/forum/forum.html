@@ -12,7 +12,13 @@
         <ul class="nav nav-list">
             <li class="nav-header">Temas</li>
         {{ for t in forum_info['topics']: }}
-            <li class="{{='active' if topic_info is not None and topic_info['id'] == t['id'] else ''}}"><a href="{{=URL('forum', args=[forum_info['instance_id'], t['id']])}}">{{='{0} ({1})'.format(t['name'], t['count'])}}</a></li>
+            <li class="{{='active' if topic_info is not None and topic_info['id'] == t['id'] else ''}}">
+                <a href="{{=URL('forum', args=[forum_info['instance_id'], t['id']])}}" {{=XML('rel="tooltip" title="Hay mensajes sin leer"') if t['has_new'] else ''}}>
+                    {{=XML('<span class="label label-important">') if t['has_new'] else '' }}
+                    {{='{0} ({1})'.format(t['name'], t['count'])}}
+                    {{=XML('</span>') if t['has_new'] else '' }}
+                </a>
+            </li>
         {{ pass }}
             <li class="divider"></li>
         </ul>

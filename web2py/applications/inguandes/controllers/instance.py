@@ -38,8 +38,11 @@ def view():
     news = get_instance_news(db, instanceId)
     
     group_lists = get_group_lists(db, instanceId)
+    
+    pending_forum = has_pending_forum(db, auth.user.id, instanceId)
             
-    return dict(inst=inst_info, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links, news=news, group_lists=group_lists, inst_grades=inst_grades)
+    return dict(inst=inst_info, c_groups=c_groups, contents=contents, cats=cats, u_tasks=u_tasks, user_role=user_role, inst_links=inst_links, news=news, group_lists=group_lists, 
+                inst_grades=inst_grades, pending_forum=pending_forum)
     
 @auth.requires_login()
 def add_contentgroup():
