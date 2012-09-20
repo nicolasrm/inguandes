@@ -66,7 +66,7 @@ def get_instance_professors(db, instanceId):
     return get_instance_users_by_role(db, instanceId, 3)
     
 def get_instance_users_by_role(db, instanceId, role_id):
-    users = db((db.section.instance == instanceId) & (db.user_section.section == db.section.id) & (db.auth_user.id == db.user_section.the_user) & (db.user_section.the_role == role_id)).select(db.auth_user.id, db.auth_user.first_name, db.auth_user.last_name, db.auth_user.email)
+    users = db((db.section.instance == instanceId) & (db.user_section.section == db.section.id) & (db.auth_user.id == db.user_section.the_user) & (db.user_section.the_role == role_id)).select(db.auth_user.id, db.auth_user.first_name, db.auth_user.last_name, db.auth_user.email, orderby=db.auth_user.last_name)
     return users
     
 def get_instance_users_by_role_count(db, instanceId, role_id):
