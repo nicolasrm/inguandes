@@ -45,7 +45,7 @@ def get_topic_threads(db, topic_info):
         th_info['is_open'] = th.open
         th_info['count'] = len(posts)
         th_info['posts'] = posts
-        th_info['last_post'] = posts[len(posts)-1].created_on if len(posts) > 0 else None
+        th_info['last_post'] = posts[len(posts)-1].created_on if len(posts) > 0 else th.created_on
         th_info['has_answer'] = len([p for p in th_info['posts'] if p.best_answer]) > 0 if len(posts) > 0 else False
         threads.append(th_info)
         
