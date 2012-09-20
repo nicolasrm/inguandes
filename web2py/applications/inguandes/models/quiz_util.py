@@ -240,3 +240,36 @@ def quiz_question_resume(db, quiz_info, q_id):
     question_info['wrong'] = question_info['total'] - (question_info['correct'] + question_info['omitted'])
         
     return question_info
+    
+def quizzes_all_user_results_fast(db, instanceId):
+    quiz_answers = db(  (db.user_quiz.id == db.user_quiz_question.user_quiz) & 
+                        (db.question_alternative.id == db.user_quiz_question.alternative)).select(db.user_quiz.the_user, db.user_quiz.quiz, db.question_alternative.is_correct)
+                        
+    qs_results = {}
+    quizzes = {}
+    for ans in quiz_answers:
+        if ans[db.user_quiz.the_user] not in qs_results:
+            qs_results[ans[db.user_quiz.the_user]] = {}        
+        if ans[db.user_quiz.quiz] not in qs_results[ans[db.user_quiz.the_user]]:
+            qs_results[ans[db.user_quiz.the_user]][ans[db.user_quiz.quiz]] = {'correct':0, 'incorrect': 0}
+        quiz_result = qs_results[ans[db.user_quiz.the_user]][ans[db.user_quiz.quiz]]
+        if ans[db.question_alternative.is_correct] == True:
+            quiz_result['correct'] += 1
+        elif ans[db.question_alternative.is_correct] == False:
+            quiz_result['incorrect'] += 1
+            
+    for (s,lq) in qs_results.iteritems():
+        for (q, dq) in lq.iteritems():
+            if q not in quizzes:
+                quizzes[q] = get_quiz(db, q)
+            dq['score'] = dq['correct'] - (dq['incorrect']/float(quizzes[q]['discount_val']) if quizzes[q]['discount'] else 0)
+            dq['grade'] = round(1.0 + 6.0*dq['score']/quizzes[q]['q_count'] if dq['score'] > 0 else 1.0, 1)
+            
+    for (s,lq) in qs_results.iteritems():
+        avg = len(quizzes) - len(lq)
+        for (q, dq) in lq.iteritems():
+            avg += dq['grade']
+        avg = avg/len(quizzes)
+        lq['average'] = avg
+                
+    return qs_results

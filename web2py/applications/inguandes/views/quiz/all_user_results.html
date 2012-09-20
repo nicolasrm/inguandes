@@ -13,6 +13,7 @@
             <thead>
                 <tr>
                     <th>Alumno</th>
+                    <th>Promedio</th>
                     {{ for q in qzs: }}
                     <th><a href="{{=URL('quiz', 'all_result', args=[q['id']])}}">{{=q['name']}}</a></th>
                     {{ pass }}
@@ -22,19 +23,44 @@
                 {{ for s in stds: }}
                 <tr>
                     <td><a href="{{=URL('user_results', args=[inst_info['id'], s['id']])}}" rel="tooltip" title="Resultados del alumno">{{='{0}, {1}'.format(s['last_name'], s['first_name'])}}</a></td>
+                    <td>
+                    {{ if s['id'] in qs_results: 
+                        if qs_results[s['id']]['average'] < 3.95:
+                            badge = 'badge-important'
+                        elif qs_results[s['id']]['average'] < 4.95:
+                            badge = 'badge-warning'
+                        elif qs_results[s['id']]['average'] < 5.95:
+                            badge = 'badge-info'
+                        else:
+                            badge = 'badge-success'
+                        pass
+                    }}
+                    <span class="badge {{=badge}}">{{=qs_results[s['id']]['average']}}</span>
+                    {{ else: }}
+                    <span class="badge badge-inverse">1.0</span>
+                    {{pass }}
+                    </td>
                     {{ for q in qzs: 
-                        qr = qs_results[s['id']][q['id']]
-                        grade = qr['grade'] if qr is not None else 1.0
-                        if qr is not None:
-                            if grade < 3.95:
-                                badge = 'badge-important'
-                            elif grade < 4.95:
-                                badge = 'badge-warning'
-                            elif grade < 5.95:
-                                badge = 'badge-info'
-                            else:
-                                badge = 'badge-success'
+                        ready = False
+                        if s['id'] in qs_results:
+                            if q['id'] in qs_results[s['id']]:
+                                qr = qs_results[s['id']][q['id']]
+                                grade = qr['grade'] if qr is not None else 1.0
+                                if qr is not None:
+                                    ready = True
+                                    if grade < 3.95:
+                                        badge = 'badge-important'
+                                    elif grade < 4.95:
+                                        badge = 'badge-warning'
+                                    elif grade < 5.95:
+                                        badge = 'badge-info'
+                                    else:
+                                        badge = 'badge-success'
+                                    pass                        
+                                pass
                             pass
+                        pass
+                        if ready:
                     }}
                     <td><a class="badge {{=badge}}" href="{{=URL('quiz', 'result', args=[q['id'], s['id']])}}">{{='{0:2}'.format(grade)}}</a></td>
                     {{  else: }}

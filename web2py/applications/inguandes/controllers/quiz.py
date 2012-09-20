@@ -128,6 +128,6 @@ def all_user_results():
         
     stds = get_instance_users_by_role(db, instanceId, 0)
     qzs = get_instance_quizzes(db, instanceId)
-    qs_results = quizzes_all_user_results(db, instanceId)
+    qs_results = quizzes_all_user_results_fast(db, instanceId)
         
     return dict(inst_info=inst_info, stds=stds, qzs=qzs, qs_results=qs_results)
