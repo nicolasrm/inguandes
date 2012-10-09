@@ -362,6 +362,43 @@ db.define_table('message',
         Field('prev_status', type='integer', requires=IS_IN_SET(ticket_status)),
         Field('next_status', type='integer', requires=IS_IN_SET(ticket_status))
         )
+
+####### Practice ############
+practice_category = {
+    0: 'Práctica de Operario',
+    1: 'Trabajo en la Empresa I',
+    2: 'Trabajo en la Empresa II',
+}
+
+db.define_table('company',
+        Field('rut', type='string', notnull=True),
+        Field('name', type='string', notnull=True),
+        Field('businessLine', type='string', notnull=True),
+        Field('address', type='text', notnull=True),
+        Field('city', type='string', notnull=True),
+        Field('country', type='string', notnull=True)
+        )
+        
+db.define_table('company_employee',        
+        Field('company', type=db.company, notnull=True),
+        Field('first_name', type='string', notnull=True),
+        Field('last_name', type='string', notnull=True),
+        Field('position', type='string', notnull=True),
+        Field('department', type='string', notnull=True),
+        Field('phone', type='string', notnull=True),
+        Field('email', type='string', notnull=True)
+        )
+        
+db.define_table('practice',
+        Field('the_user', type=db.auth_user, notnull=True),
+        Field('company', type=db.company, notnull=True),
+        Field('validator', type=db.company, notnull=True),
+        Field('category', type='integer', requires=IS_IN_SET(practice_category)),
+        Field('starting', type='datetime'),
+        Field('ending', type='datetime'),
+        Field('description', type='text'),
+        Field('created', type='datetime', default=request.now),
+        )
         
 ####### Constants ############
 datetime_format = '%d-%m-%Y %H:%M'
