@@ -14,7 +14,7 @@
                 {{ for p in practices: 
                     if p['state'] == 'pending': }}
                 <li class="{{='active' if p_info is not None and p_info['id'] == p['id'] else ''}}">
-                    <a href="{{=URL('view', args=[p['category']])}}">{{=p['category_name']}}</a>
+                    <a href="{{=URL('view', args=[p['id']])}}">{{=p['category_name']}}</a>
                 </li>
                 {{  pass
                 }}
@@ -33,6 +33,7 @@
             </nav>
         </div>
     </div>
+    {{ if p_info is not None: }}
     <div class="span9">
         <div class="row">
             <div class="span9">
@@ -40,106 +41,136 @@
                     <legend>Empresa <small>completa los datos de la Empresa donde realizarás la práctica.</small></legend>
                     <fieldset>
                         <div class="control-group">
-                            <label class="control-label" for="practice-rut">RUT</label>
+                            <label class="control-label" for="company-rut">RUT</label>
                             <div class="controls">
-                                <input type="text" id="practice-rut" name="rut" class="input-medium"/>
+                                <input type="text" id="company-rut" name="rut" class="input-medium" value="{{=p_info['company']['rut'] if p_info['company'] is not None else ''}}"/>
                                 <span class="help-inline">Sin puntos y con guión (77666555-4).</span>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="practice-name">Nombre</label>
+                            <label class="control-label" for="company-name">Nombre</label>
                             <div class="controls">
-                                <input type="text" id="practice-name" name="name" class="input-xxlarge"/>
+                                <input type="text" id="company-name" name="name" class="input-xlarge" value="{{=p_info['company']['name'] if p_info['company'] is not None else ''}}"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="practice-businessLine">Giro Comercial</label>
+                            <label class="control-label" for="company-businessLine">Giro Comercial</label>
                             <div class="controls">
-                                <input type="text" id="practice-businessLine" name="businessLine" class="input-xxlarge"/>
+                                <input type="text" id="company-businessLine" name="businessLine" class="input-xlarge" value="{{=p_info['company']['businessLine'] if p_info['company'] is not None else ''}}"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="practice-address">Dirección</label>
+                            <label class="control-label" for="company-address">Dirección</label>
                             <div class="controls">
-                                <textarea id="practice-address" name="address" class="input-xxlarge"></textarea>
+                                <textarea id="company-address" name="address" class="input-xlarge">{{=p_info['company']['address'] if p_info['company'] is not None else ''}}</textarea>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="practice-city">Ciudad</label>
+                            <label class="control-label" for="company-city">Ciudad</label>
                             <div class="controls">
-                                <input type="text" id="practice-city" name="city" class="input-medium"/>
+                                <input type="text" id="company-city" name="city" class="input-medium" value="{{=p_info['company']['city'] if p_info['company'] is not None else ''}}"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="practice-country">País</label>
+                            <label class="control-label" for="company-country">País</label>
                             <div class="controls">
-                                <input type="text" id="practice-country" name="country" class="input-medium"/>
+                                <input type="text" id="company-country" name="country" class="input-medium" value="{{=p_info['company']['country'] if p_info['company'] is not None else ''}}"/>
                             </div>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
-                    </fieldset>                    
+                    </fieldset>  
+                    <input type="hidden" name="practiceid" value="{{=p_info['id']}}"/>
                 </form>
             </div>
         </div>
         <div class="row">
             <div class="span9">
-                <form class="form-horizontal" action="{{=URL('update_company')}}" method="POST">
+                <form class="form-horizontal" action="{{=URL('update_validator')}}" method="POST">
                     <legend>Contacto <small>debe trabajar en la Empresa para validar tu solicitud (no es el supervisor necesariamente).</small></legend>
                     <fieldset>
                         <div class="control-group">
-                            <label class="control-label" for="practice-rut">RUT</label>
+                            <label class="control-label" for="validator-first_name">Nombre</label>
                             <div class="controls">
-                                <input type="text" id="practice-rut" name="rut" class="input-medium"/>
-                                
+                                <input type="text" id="validator-first_name" name="first_name" class="input-xlarge" value="{{=p_info['validator']['first_name'] if p_info['validator'] is not None else ''}}"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="practice-rut">Nombre</label>
+                            <label class="control-label" for="validator-last_name">Apellidos</label>
                             <div class="controls">
-                                <input type="text" id="practice-name" name="name" class="input-xxlarge"/>
+                                <input type="text" id="validator-last_name" name="last_name" class="input-xlarge" value="{{=p_info['validator']['last_name'] if p_info['validator'] is not None else ''}}"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="practice-rut">Giro Comercial</label>
+                            <label class="control-label" for="validator-position">Cargo</label>
                             <div class="controls">
-                                <input type="text" id="practice-businessLine" name="businessLine" class="input-xxlarge"/>
+                                <input type="text" id="validator-position" name="position" class="input-medium" value="{{=p_info['validator']['position'] if p_info['validator'] is not None else ''}}"/>
+                                <span class="help-inline">rol desempeñado en la empresa.</span>
                             </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="validator-department">Departamento/Unidad</label>
+                            <div class="controls">
+                                <input type="text" id="validator-department" name="department" class="input-medium" value="{{=p_info['validator']['department'] if p_info['validator'] is not None else ''}}"/>
+                                <span class="help-inline">lugar de trabajo dentro de la estructura de la empresa.</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="validator-phone">Teléfono</label>
+                            <div class="controls">
+                                <input type="text" id="validator-phone" name="phone" class="input-medium" value="{{=p_info['validator']['phone'] if p_info['validator'] is not None else ''}}"/>
+                                <span class="help-inline">teléfono de la oficina, no móvil.</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="validator-email">Correo Electrónico</label>
+                            <div class="controls">
+                                <input type="text" id="validator-email" name="email" class="input-medium" value="{{=p_info['validator']['email'] if p_info['validator'] is not None else ''}}"/>
+                                <span class="help-inline">email institucional (no puede ser gmail, hotmail, etc.).</span>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
                     </fieldset>
+                    <input type="hidden" name="practiceid" value="{{=p_info['id']}}"/>
                 </form>
             </div>
         </div>
         <div class="row">
             <div class="span9">
-                <form class="form-horizontal" action="{{=URL('update_company')}}" method="POST">
-                    <legend>Detalles Práctica <small>otros detalles respecto del trabajo que realizarás.</small></legend>
+                <form class="form-horizontal" action="{{=URL('update_practice')}}" method="POST">
+                    <legend>Detalles Práctica <small>detalles del trabajo que realizarás.</small></legend>
                     <fieldset>
                         <div class="control-group">
-                            <label class="control-label" for="practice-rut">RUT</label>
+                            <label class="control-label" for="practice-description">Descripción</label>
                             <div class="controls">
-                                <input type="text" id="practice-rut" name="rut" class="input-medium"/>
-                                
+                                <textarea id="practice-description" name="description" class="input-xlarge">{{=p_info['description'] if p_info['description'] is not None else ''}}</textarea>                                
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="practice-rut">Nombre</label>
+                            <label class="control-label" for="practice-starting">Inicio</label>
                             <div class="controls">
-                                <input type="text" id="practice-name" name="name" class="input-xxlarge"/>
+                                <input type="date" id="practice-starting" name="starting" class="input-medium" value="{{=p_info['starting'] if p_info['starting'] is not None else ''}}"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="practice-rut">Giro Comercial</label>
+                            <label class="control-label" for="practice-ending">Fin</label>
                             <div class="controls">
-                                <input type="text" id="practice-businessLine" name="businessLine" class="input-xxlarge"/>
+                                <input type="date" id="practice-ending" name="ending" class="input-medium" value="{{=p_info['ending'] if p_info['ending'] is not None else ''}}"/>
                             </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
                     </fieldset>
+                    <input type="hidden" name="practiceid" value="{{=p_info['id']}}"/>
                 </form>
             </div>
         </div>
     </div>
+    {{ pass }}
 </div>
 
 <div class="modal hide fade in" id="modal-new-practice">
