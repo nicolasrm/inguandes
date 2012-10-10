@@ -7,22 +7,166 @@
     </div>
 </div>
 <div class="row">
-    <div class="span3 well well-small">        
-        <ul class="nav nav-list">
-            <li class="nav-header">Pendientes</li>
-            <li class="divider"></li>
-            <li class="nav-header">Activas</li>
-            <li class="divider"></li>
-            <li class="nav-header">Finalizadas</li>
-            <li class="divider"></li>
-        </ul>
-        <nav class="nav-menu">
-            <ul>                                       
-                <li><a data-toggle="modal" href="#modal-new-practice" rel="tooltip" title="Inscribir nueva solicitud de práctica"><i class="icon-plus"></i><i class="icon-wrench"></i></a></li>
+    <div class="span3">        
+        <div class="well well-small">
+            <ul class="nav nav-list">
+                <li class="nav-header">Pendientes</li>
+                {{ for p in practices: 
+                    if p['state'] == 'pending': }}
+                <li class="{{='active' if p_info is not None and p_info['id'] == p['id'] else ''}}">
+                    <a href="{{=URL('view', args=[p['category']])}}">{{=p['category_name']}}</a>
+                </li>
+                {{  pass
+                }}
+                
+                {{ pass }}
+                <li class="divider"></li>
+                <li class="nav-header">Activas</li>
+                <li class="divider"></li>
+                <li class="nav-header">Finalizadas</li>
+                <li class="divider"></li>
             </ul>
-        </nav>
+            <nav class="nav-menu">
+                <ul>                                       
+                    <li><a data-toggle="modal" href="#modal-new-practice" rel="tooltip" title="Crear nueva solicitud de práctica"><i class="icon-plus"></i><i class="icon-wrench"></i></a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
     <div class="span9">
+        <div class="row">
+            <div class="span9">
+                <form class="form-horizontal" action="{{=URL('update_company')}}" method="POST">
+                    <legend>Empresa <small>completa los datos de la Empresa donde realizarás la práctica.</small></legend>
+                    <fieldset>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-rut">RUT</label>
+                            <div class="controls">
+                                <input type="text" id="practice-rut" name="rut" class="input-medium"/>
+                                <span class="help-inline">Sin puntos y con guión (77666555-4).</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-name">Nombre</label>
+                            <div class="controls">
+                                <input type="text" id="practice-name" name="name" class="input-xxlarge"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-businessLine">Giro Comercial</label>
+                            <div class="controls">
+                                <input type="text" id="practice-businessLine" name="businessLine" class="input-xxlarge"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-address">Dirección</label>
+                            <div class="controls">
+                                <textarea id="practice-address" name="address" class="input-xxlarge"></textarea>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-city">Ciudad</label>
+                            <div class="controls">
+                                <input type="text" id="practice-city" name="city" class="input-medium"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-country">País</label>
+                            <div class="controls">
+                                <input type="text" id="practice-country" name="country" class="input-medium"/>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </fieldset>                    
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span9">
+                <form class="form-horizontal" action="{{=URL('update_company')}}" method="POST">
+                    <legend>Contacto <small>debe trabajar en la Empresa para validar tu solicitud (no es el supervisor necesariamente).</small></legend>
+                    <fieldset>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-rut">RUT</label>
+                            <div class="controls">
+                                <input type="text" id="practice-rut" name="rut" class="input-medium"/>
+                                
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-rut">Nombre</label>
+                            <div class="controls">
+                                <input type="text" id="practice-name" name="name" class="input-xxlarge"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-rut">Giro Comercial</label>
+                            <div class="controls">
+                                <input type="text" id="practice-businessLine" name="businessLine" class="input-xxlarge"/>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span9">
+                <form class="form-horizontal" action="{{=URL('update_company')}}" method="POST">
+                    <legend>Detalles Práctica <small>otros detalles respecto del trabajo que realizarás.</small></legend>
+                    <fieldset>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-rut">RUT</label>
+                            <div class="controls">
+                                <input type="text" id="practice-rut" name="rut" class="input-medium"/>
+                                
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-rut">Nombre</label>
+                            <div class="controls">
+                                <input type="text" id="practice-name" name="name" class="input-xxlarge"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="practice-rut">Giro Comercial</label>
+                            <div class="controls">
+                                <input type="text" id="practice-businessLine" name="businessLine" class="input-xxlarge"/>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-new-practice">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Crear solicitud de práctica</h3>
+        <p id="modal-question-text"></p>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="{{=URL('add_practice')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="practice-category">Tipo</label>
+                    <div class="controls">
+                        <select id="practice-category" name="category">
+                        {{ for (k,v) in practice_category.iteritems(): }}
+                            <option value="{{=k}}">{{=v}}</option>
+                        {{ pass }}
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
     </div>
 </div>
 
@@ -30,6 +174,10 @@
 <script>
 $(document).ready( function () {
     $("[rel=tooltip]").tooltip({placement: 'top'});    
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
 });
 </script>
 {{end}}
