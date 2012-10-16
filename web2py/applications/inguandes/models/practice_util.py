@@ -15,11 +15,14 @@ def get_practice(db, pId):
     p_info['category'] = p.category
     p_info['category_name'] = practice_category[p.category]
     p_info['company'] = get_company(db, p.company)
-    p_info['validator'] = get_employee(db, p.validator)
-    p_info['state'] = 'pending'
+    p_info['validator'] = get_employee(db, p.validator)    
     p_info['description'] = p.description
     p_info['starting'] = p.starting
     p_info['ending'] = p.ending
+    p_info['state'] = 'pending'
+    if (p_info['company'] is not None and p_info['company']['is_complete'] and p_info['validator'] is not None and p_info['validator']['is_complete'] and p_info['description'] is not None 
+            and len(p_info['description']) > 0 and p_info['starting'] is not None and p_info['ending'] is not None):
+        p_info['state'] = 'ready_to_validate'
     
     return p_info 
 
@@ -35,6 +38,7 @@ def get_company(db, comId):
         com_info['address'] = com.address
         com_info['city'] = com.city
         com_info['country'] = com.country
+        com_info['is_complete'] = False if com_info['rut'] is None or com_info['name'] is None or com_info['businessLine'] is None or com_info['address'] is None or com_info['city'] is None or com_info['country'] is None else True
         
         return com_info
     else:
@@ -53,6 +57,7 @@ def get_employee(db, empId):
         emp_info['department'] = emp.department
         emp_info['phone'] = emp.phone
         emp_info['email'] = emp.email
+        emp_info['is_complete'] = False if emp_info['first_name'] is None or emp_info['last_name'] is None or emp_info['position'] is None or emp_info['department'] is None or emp_info['phone'] is None or emp_info['email'] is None else True
         
         return emp_info
     else:
