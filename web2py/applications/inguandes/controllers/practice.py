@@ -15,7 +15,8 @@ def add_practice():
                                     category=request.vars.category)
     
     redirect(URL('view', args=[p_id]))
-    
+
+@auth.requires_login()    
 def update_company():
     p_id = request.vars.practiceid
     practice = db.practice[p_id]
@@ -37,8 +38,11 @@ def update_company():
                             city=request.vars.city,
                             country=request.vars.country)
         
+    session.flash = 'Datos guardados con éxito.'
+    session.flash_level = 'success'
     redirect(URL('view', args=[p_id]))
-    
+
+@auth.requires_login()    
 def update_validator():
     p_id = request.vars.practiceid
     practice = db.practice[p_id]
@@ -61,8 +65,11 @@ def update_validator():
                             phone=request.vars.phone,
                             email=request.vars.email)
     
+    session.flash = 'Datos guardados con éxito.'
+    session.flash_level = 'success'
     redirect(URL('view', args=[p_id]))
 
+@auth.requires_login()
 def update_practice():
     p_id = request.vars.practiceid
     practice = db.practice[p_id]
@@ -70,4 +77,13 @@ def update_practice():
                             starting=request.vars.starting,
                             ending=request.vars.ending)
     
+    session.flash = 'Datos guardados con éxito.'
+    session.flash_level = 'success'
+    redirect(URL('view', args=[p_id]))
+
+@auth.requires_login()    
+def start_validation():
+    if len(request.args) == 0:
+        redirect(URL('view'))
+    p_id = int(request.args[0])
     redirect(URL('view', args=[p_id]))
