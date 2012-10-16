@@ -37,14 +37,25 @@
     <div class="span9">
         <div class="row">
             <div class="span9">
-                <form class="form-horizontal" action="{{=URL('update_company')}}" method="POST">
+                <div class="well well-small">
+                    <h3>Instrucciones</h3>
+                    <p>Completa los datos solicitados para la inscripción de tu práctica. Una vez hayas completado todos los campos podrás proceder a la validación de esta por parte de la empresa.</p>
+                    {{ if p_info['state'] == 'ready_to_validate': }}
+                    <a class="btn btn-success" data-toggle="modal" href="#modal-validate-practice" rel="tooltip" title="Proceder al envío de validación de la práctica."><i class="icon-forward icon-white"></i> Validar</a>
+                    {{ pass }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span9">
+                <form class="form-horizontal" action="{{=URL('update_company')}}" method="POST" id="form-company">
                     <legend>Empresa <small>completa los datos de la Empresa donde realizarás la práctica.</small></legend>
                     <fieldset>
                         <div class="control-group">
                             <label class="control-label" for="company-rut">RUT</label>
                             <div class="controls">
-                                <input type="text" id="company-rut" name="rut" class="input-medium" value="{{=p_info['company']['rut'] if p_info['company'] is not None else ''}}"/>
-                                <span class="help-inline">Sin puntos y con guión (77666555-4).</span>
+                                <input type="text" id="company-rut" name="rut" class="input-medium" value="{{=p_info['company']['rut'] if p_info['company'] is not None else ''}}" data-validator="valid-rut"/>
+                                <span class="help-inline">el rut ingresado no es válido.</span>
                             </div>
                         </div>
                         <div class="control-group">
@@ -87,7 +98,7 @@
         </div>
         <div class="row">
             <div class="span9">
-                <form class="form-horizontal" action="{{=URL('update_validator')}}" method="POST">
+                <form class="form-horizontal" action="{{=URL('update_validator')}}" method="POST" id="form-validator">
                     <legend>Contacto <small>debe trabajar en la Empresa para validar tu solicitud (no es el supervisor necesariamente).</small></legend>
                     <fieldset>
                         <div class="control-group">
@@ -126,7 +137,7 @@
                         <div class="control-group">
                             <label class="control-label" for="validator-email">Correo Electrónico</label>
                             <div class="controls">
-                                <input type="text" id="validator-email" name="email" class="input-medium" value="{{=p_info['validator']['email'] if p_info['validator'] is not None else ''}}"/>
+                                <input type="text" id="validator-email" name="email" class="input-medium" value="{{=p_info['validator']['email'] if p_info['validator'] is not None else ''}}" data-validator="institutional-email"/>
                                 <span class="help-inline">email institucional (no puede ser gmail, hotmail, etc.).</span>
                             </div>
                         </div>
@@ -146,7 +157,7 @@
                         <div class="control-group">
                             <label class="control-label" for="practice-description">Descripción</label>
                             <div class="controls">
-                                <textarea id="practice-description" name="description" class="input-xlarge">{{=p_info['description'] if p_info['description'] is not None else ''}}</textarea>                                
+                                <textarea id="practice-description" name="description" class="input-xlarge" rows="5">{{=p_info['description'] if p_info['description'] is not None else ''}}</textarea>                                
                             </div>
                         </div>
                         <div class="control-group">
@@ -201,6 +212,24 @@
     </div>
 </div>
 
+{{ if p_info is not None and p_info['state'] == 'ready_to_validate': }}
+<div class="modal hide fade in" id="modal-validate-practice">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Enviar la práctica a validar</h3>
+        <p id="modal-question-text"></p>
+    </div>
+    <div class="modal-body">
+        <p>El siguiente paso es validar la práctica inscrita. Para ello se le enviará un correo al contacto que has ingresado pidiéndole que valide tu inscripción. 
+        Confirma que la información ingresada de la práctica está correcta. Una vez confrmada no podrás cambiar la información hasta que esta sea validada o rechazada.</p>        
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary">Confirmar</a>
+    </div>
+</div>
+{{ pass }}
+
 {{block pagescripts}}
 <script>
 $(document).ready( function () {
@@ -209,7 +238,90 @@ $(document).ready( function () {
     $('.modal .modal-action').click( function () {
         $(this).closest('.modal').find('form').submit();
     });
+    
+    {{ if p_info is not None and p_info['state'] == 'ready_to_validate': }}
+    $('#modal-validate-practice').find('.btn-primary').click( function () {
+        window.location = '{{=URL('start_validation', args=[p_info['id']])}}';
+    });
+    {{ pass }}
+    
+    $("#form-company").validator({
+        validators: {
+            'valid-rut' : function (element) {
+                var val = $(element).val();
+                if (val.length > 0) {
+                    try {
+                        return validateRut(val);
+                    } catch (e) {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+    });
+    $("#form-validator").validator({
+        validators: {
+            'institutional-email' : function (element) {
+                var val = $(element).val();
+                if (val.length > 0) {
+                    try {
+                        return institutionalEmail(val);
+                    } catch (e) {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+    });
 });
+
+function validateRut(rut) {
+    var rexp = new RegExp(/^([0-9])+\-([kK0-9])+$/);
+    if(rut.match(rexp)) {
+        var RUT = rut.split("-");
+        var elRut = RUT[0].split('');
+        var factor = 2;
+        var suma = 0;
+        var dv;
+        for(i = (elRut.length-1); i >= 0; i--) {
+            factor = factor > 7 ? 2 : factor;
+            suma += parseInt(elRut[i])*parseInt(factor++);
+        }
+        dv = 11 -(suma % 11);
+        if (dv == 11) {
+            dv = 0;
+        } else if (dv == 10) {
+            dv = "k";
+        }
+        
+        if (dv == RUT[1].toLowerCase()) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+};
+function institutionalEmail(email) {
+    var vals = email.split("@");
+    var server = vals[1].split(".")[0];
+    var invalidServers = ["gmail", "hotmail", "yahoo"];
+        
+    var results = $.grep(invalidServers, function(s, i) {
+        return s == server;
+    });
+    
+    if (results.length > 0) {
+        return false;
+    } else {
+        return true;
+    }
+};
 </script>
 {{end}}
 

@@ -20,6 +20,7 @@
   <script src="{{=URL('static','js/modernizr.custom.js')}}"></script>    
   <script src="{{=URL('static','js/jquery.js')}}"></script>  
   <script src="{{=URL('static','js/bootstrap.js')}}"></script>  
+  <script src="{{=URL('static','js/jquery.bootstrap-validate.js')}}"></script>  
   <script src="{{=URL('static','js/web2py.js')}}"></script>
   
   <script>
@@ -32,6 +33,10 @@
  
   {{
   response.include_files()
+  if session.flash_level is not None:
+    response.flash_level = session.flash_level
+    session.flash_level = None
+  pass
   }}
   
 </head>
@@ -142,7 +147,7 @@
     $(document).ready(function() {
         $('.dropdown-toggle').dropdown();
         {{  if response.flash: }}
-        INGUANDES.notify('', '{{=response.flash}}');
+        INGUANDES.notify('{{=response.flash_level}}', '{{=response.flash}}');
         {{  pass }}
     });
     </script>
