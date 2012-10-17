@@ -90,15 +90,19 @@ def start_validation():
     practice = db.practice[p_id]
     practice.update_record(p_key=p_key)
     
-    send_validation_email(db, p_id)
+    result = send_validation_email(db, p_id)
     
-    practice.update_record(validation_sent=request.now)
-    
-    session.flash = 'Correo electrónico enviado correctamente.'
-    session.flash_level = 'success'
+    if result:    
+        practice.update_record(validation_sent=request.now)
+        session.flash = 'Correo electrónico enviado correctamente a {}.'.format(practice.validator.email)
+        session.flash_level = 'success'
+    else:
+        session.flash = 'No se pudo enviar el correo electrónico a {}.'.format(practice.validator.email)
+        session.flash_level = 'error'
     
     redirect(URL('view', args=[p_id]))
-    
+
+# Not require authorization
 def validate_practice():
     if len(request.args) == 0:
         redirect(URL(''))
@@ -111,3 +115,39 @@ def validate_practice():
         redirect(URL(''))
     
     return dict()
+ 
+@auth.requires_membership(role='admin')   
+def view_all():
+    selected_state = request.vars.state
+    if selected_state is None:
+        selected_state = 'validation_ready'
+        
+    pid = None
+    if len(request.args) > 0:
+        pid = int(request.args[0])
+        
+    practices = None
+    p_info = None
+    if pid is None:
+        practices = get_practice_by_state(db, selected_state)
+    else:
+        p_info = get_practice(db, pid)
+    return dict(selected_state=selected_state, practices=practices, p_info=p_info)
+    
+def approve():
+    if len(request.args) == 0:
+        redirect(URL('view'))
+    p_id = int(request.args[0])
+    practice = db.practice[p_id]
+    practice.update_record( approved=True,
+                            approved_date=request.now)
+    redirect(URL('view_all', vars={'state':'validation_ready'}))
+
+def reject():
+    if len(request.args) == 0:
+        redirect(URL('view'))
+    p_id = int(request.args[0])
+    practice = db.practice[p_id]
+    practice.update_record( approved=False,
+                            approved_date=request.now)
+    redirect(URL('view_all', vars={'state':'validation_ready'}))

@@ -1,0 +1,169 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span12">
+        <div class="page-header">
+            <h2>Prácticas</h2>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="span3">        
+        <div class="well well-small">
+            <ul class="nav nav-list">
+                <li class="nav-header">Estados</li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'pending' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'pending'})}}">Borradores</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'validation_sent' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'validation_sent'})}}">En Validación</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'validation_ready' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'validation_ready'})}}">Pendientes de Aprobación</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'approved' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'approved'})}}">Activas</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'rejected' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'rejected'})}}">Rechazadas</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'ended' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'ended'})}}">Finalizadas</a>
+                </li>
+            </ul>
+        </div>
+    </div>    
+    <div class="span9">
+    {{ if practices is not None: }}    
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Tipo</th>
+                    <th>Creación</th>
+                    <th>Validación</th>
+                    <th>Aprobación</th>
+                    <th></th>
+                    {{ if selected_state is not None and selected_state == 'validation_ready': }}
+                    <th></th>
+                    <th></th>
+                    {{ pass }}
+                </tr>
+            </thead>
+            <tbody>
+            {{ for p in practices: }}
+                <tr>
+                    <td>{{=p['user_name']}}</td>
+                    <td>{{=p['category_name']}}</td>
+                    <td>{{=p['created'].strftime(datetime_format)}}</td>
+                    <td>{{=p['validation_ready'].strftime(datetime_format) if p['validation_ready'] is not None else '-'}}</td>
+                    <td>{{=p['approved_date'].strftime(datetime_format) if p['approved_date'] is not None else '-'}}</td>
+                    <td><a class="btn btn-info" rel="tooltip" title="Ver detalles" href="{{=URL('view_all', args=[p['id']], vars={'state':selected_state})}}"><i class="icon-play-circle icon-white"></i></a></td>
+                    {{ if selected_state is not None and selected_state == 'validation_ready': }}
+                    <td><a class="btn btn-success" data-btn-type="confirm-evaluation" data-user="{{=p['user_name']}}" data-confirm-text="Confirma la aprobación de la práctica del alumno:" data-confirm-url="{{=URL('approve', args=[p['id']])}}" rel="tooltip" title="Aprobar inscripción de práctica" href="#"><i class="icon-ok-circle icon-white"></i></a></td>
+                    <td><a class="btn btn-danger" data-btn-type="confirm-evaluation" data-user="{{=p['user_name']}}" data-confirm-text="Confirma el rechazo de la práctica del alumno:" data-confirm-url="{{=URL('reject', args=[p['id']])}}" rel="tooltip" title="Rechazar inscripción de práctica" href="#"><i class="icon-remove-circle icon-white"></i></a></td>
+                    {{ pass }}
+                </tr>
+            {{ pass }}
+            </tbody>
+        </table>
+    {{ elif p_info is not None: }}
+        <div class="row">
+            <div class="span9">
+                <legend>Empresa <small>datos de la Empresa donde se realizará la práctica.</small></legend>
+                <dl class="dl-horizontal">
+                    <dt>RUT</dt>
+                    <dd>{{=p_info['company']['rut'] if p_info['company'] is not None and len(p_info['company']['rut']) > 0 else '-'}}</dd>
+                    <dt>Nombre</dt>
+                    <dd>{{=p_info['company']['name'] if p_info['company'] is not None and len(p_info['company']['name']) > 0 else '-'}}</dd>
+                    <dt>Giro Comercial</dt>
+                    <dd>{{=p_info['company']['businessLine'] if p_info['company'] is not None and len(p_info['company']['businessLine']) > 0 else '-'}}</dd>
+                    <dt>Dirección</dt>
+                    <dd>{{=p_info['company']['address'] if p_info['company'] is not None and len(p_info['company']['address']) > 0 else '-'}}</dd>
+                    <dt>Ciudad</dt>
+                    <dd>{{=p_info['company']['city'] if p_info['company'] is not None and len(p_info['company']['city']) > 0 else '-'}}</dd>
+                    <dt>País</dt>
+                    <dd>{{=p_info['company']['country'] if p_info['company'] is not None and len(p_info['company']['country']) > 0 else '-'}}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span9">
+                <legend>Contacto <small>persona que validará la solicitud (no es el supervisor necesariamente).</small></legend>
+                <dl class="dl-horizontal">
+                    <dt>Nombre</dt>
+                    <dd>{{=p_info['validator']['first_name'] if p_info['validator'] is not None and len(p_info['validator']['first_name']) > 0 else '-'}}</dd>
+                    <dt>Apellidos</dt>
+                    <dd>{{=p_info['validator']['last_name'] if p_info['validator'] is not None and len(p_info['validator']['last_name']) > 0 else '-'}}</dd>
+                    <dt>Cargo</dt>
+                    <dd>{{=p_info['validator']['position'] if p_info['validator'] is not None and len(p_info['validator']['position']) > 0 else '-'}}</dd>
+                    <dt>Departamento/Unidad</dt>
+                    <dd>{{=p_info['validator']['department'] if p_info['validator'] is not None and len(p_info['validator']['department']) > 0 else '-'}}</dd>
+                    <dt>Teléfono</dt>
+                    <dd>{{=p_info['validator']['phone'] if p_info['validator'] is not None and len(p_info['validator']['phone']) > 0 else '-'}}</dd>
+                    <dt>Correo Electrónico</dt>
+                    <dd><span class="label label-important">{{=p_info['validator']['email'] if p_info['validator'] is not None and len(p_info['validator']['email']) > 0 else '-'}}</span></dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span9">
+                <legend>Detalles Práctica <small>detalles del trabajo que se realizará.</small></legend>
+                <dl class="dl-horizontal">
+                    <dt>Descripción</dt>
+                    <dd>{{=p_info['description'] if p_info['description'] is not None else '-'}}</dd>
+                    <dt>Inicio Estimado</dt>
+                    <dd>{{=p_info['starting'] if p_info['starting'] is not None else '-'}}</dd>
+                    <dt>Fin Estimado</dt>
+                    <dd>{{=p_info['ending'] if p_info['ending'] is not None else '-'}}</dd>
+                </dl>
+            </div>
+        </div>    
+    {{ pass }}
+    </div>    
+</div>
+
+<div class="modal hide fade in" id="modal-confirm-evaluation">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Confirmar evaluación de inscripción de práctica</h3>
+    </div>
+    <div class="modal-body">
+        <span id="modal-confirm-text"></span> <span class="label label-info" id="modal-confirm-user"></span>        
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cancelar</a>
+        <a href="#" class="btn btn-primary" id="modal-confirm-button">Confirmar</a>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script>
+$(document).ready( function () {
+    $("[rel=tooltip]").tooltip({placement: 'top'});    
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
+    
+    $('[data-btn-type="confirm-evaluation"]').click(showConfirmModal);
+});
+
+function showConfirmModal (event) {
+    var modal = $('#modal-confirm-evaluation'),    
+        data = $(event.currentTarget).data(),
+        confirmUser = data.user,
+        confirmText = data.confirmText,
+        confirmUrl = data.confirmUrl;
+                        
+    modal.find('#modal-confirm-text').text(confirmText);
+    modal.find('#modal-confirm-user').text(confirmUser);
+    modal.find('#modal-confirm-button').attr('href', confirmUrl);
+    
+    modal.modal('show');
+}
+
+</script>
+{{end}}
+
+
+

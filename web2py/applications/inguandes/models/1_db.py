@@ -401,6 +401,8 @@ db.define_table('practice',
         Field('created', type='datetime', default=request.now),
         Field('validation_sent', type='datetime'),
         Field('validation_ready', type='datetime'),
+        Field('approved', type='boolean'),
+        Field('approved_date', type='datetime'),
         )
         
 ####### Constants ############
