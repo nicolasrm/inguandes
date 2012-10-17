@@ -12,7 +12,7 @@
             <ul class="nav nav-list">
                 <li class="nav-header">Pendientes</li>
                 {{ for p in practices: 
-                    if p['state'] == 'pending': }}
+                    if p['state'] == 'pending' or p['state'] == 'ready_to_validate': }}
                 <li class="{{='active' if p_info is not None and p_info['id'] == p['id'] else ''}}">
                     <a href="{{=URL('view', args=[p['id']])}}">{{=p['category_name']}}</a>
                 </li>

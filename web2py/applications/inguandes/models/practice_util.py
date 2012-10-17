@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import random
+import string
 
 def get_user_practices(db, userId):
     ps = db(db.practice.the_user==userId).select(db.practice.ALL)
@@ -62,3 +64,31 @@ def get_employee(db, empId):
         return emp_info
     else:
         return None
+        
+def generate_key(pId):
+    p_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(6))
+    p_key = p_key + str(pId)
+    return p_key
+        
+def send_validation_email(db, pId):
+    practice = db.practice[pId]
+    validator = db.company_employee[practice.validator]
+    the_user = db.auth_user[practice.the_user]
+    company = db.company[practice.company]
+    tos = [validator.email]
+        
+    message = 'Estimado,\r\nel alumno {} {} ha inscrito su práctica indicando la siguiente información:\r\n'.format(the_user.first_name, the_user.last_name)
+    message = message + 'Rut empresa: {}\r\n'.format(company.rut)
+    message = message + 'Nombre empresa: {}\r\n'.format(company.name)
+    message = message + 'Dirección empresa: {}\r\n\r\n'.format(company.address)
+    message = message + 'Descripción práctica: {}\r\n'.format(practice.description)
+    message = message + 'Fecha estimada de inicio: {}\r\n'.format(practice.starting)
+    message = message + 'Fecha estimada de fin: {}\r\n\r\n'.format(practice.ending)
+    message = message + 'Si la información es correcta, le pedimos que presione en el link a continuación como validación de la inscripción de la práctica del alumno. Si no conoce al alumno, o no tiene la información para validar esta inscripción, por favor eliminar este correo.\r\n'
+    message = message + URL('practice', 'validate_practice', args=[practice.p_key], scheme=True, host=True)
+    message = message + '\r\n--\r\nFacultad de Ingeniería y Ciencias Aplicadas\r\nUniversidad de los Andes'
+    subject = '[iuandes] Validación Inscripción Práctica'
+    
+    mail.send(  to=tos,
+                subject=subject,
+                message=message)

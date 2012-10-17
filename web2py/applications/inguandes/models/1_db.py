@@ -392,12 +392,15 @@ db.define_table('company_employee',
 db.define_table('practice',
         Field('the_user', type=db.auth_user, notnull=True),
         Field('company', type=db.company),
-        Field('validator', type=db.company),
+        Field('validator', type=db.company_employee),
         Field('category', type='integer', requires=IS_IN_SET(practice_category)),
         Field('starting', type='date'),
         Field('ending', type='date'),
         Field('description', type='text'),
+        Field('p_key', type='string'),        
         Field('created', type='datetime', default=request.now),
+        Field('validation_sent', type='datetime'),
+        Field('validation_ready', type='datetime'),
         )
         
 ####### Constants ############
