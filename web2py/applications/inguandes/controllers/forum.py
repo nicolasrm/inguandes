@@ -32,7 +32,7 @@ def add_topic():
 def add_thread():
     instanceId = int(request.vars.instanceid)
     topicId = int(request.vars.topicid)
-    if request.vars.title is not None and request.vars.content is not None:
+    if request.vars.title and request.vars.content:
         db.forum_thread.insert( title=request.vars.title,
                                 content=request.vars.content,
                                 the_user=auth.user.id,
