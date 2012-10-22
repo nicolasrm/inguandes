@@ -9,6 +9,9 @@ import random
 if not db(db.auth_group).count():
     auth.add_group('admin')
 
+if db(db.auth_group).count() == 1:
+    auth.add_group('ing-admin')
+
 # Create courses
 courses_id = {}
 if not db(db.course).count():

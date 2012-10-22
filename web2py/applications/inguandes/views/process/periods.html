@@ -1,0 +1,106 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span12">
+        <div class="page-header">
+            <h2>Periodos de procesos <small>fechas de apertura y cierre de disponibilidad de procesos para alumnos.</small></h2>            
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="span3">        
+        <div class="well well-small">
+            <ul class="nav nav-list">
+                <li class="nav-header">Estados</li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'pending' else ''}}">
+                    <a href="{{=URL('periods', vars={'state':'pending'})}}">Próximos</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'open' else ''}}">
+                    <a href="{{=URL('periods', vars={'state':'open'})}}">Abiertos</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'close' else ''}}">
+                    <a href="{{=URL('periods', vars={'state':'close'})}}">Cerrados</a>
+                </li>                
+            </ul>
+            <nav class="nav-menu">
+                <ul>                                       
+                    <li><a data-toggle="modal" href="#modal-add-period" rel="tooltip" title="Agregar un nuevo periodo para un proceso"><i class="icon-plus"></i><i class="icon-time"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>    
+    <div class="span9">    
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>Proceso</th>
+                    <th>Comienzo</th>
+                    <th>Fin</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{ for p in periods: }}
+                <tr>
+                    <td>{{=p['process_name']}}</td>
+                    <td>{{=p['starting'].strftime(datetime_format)}}</td>
+                    <td>{{=p['ending'].strftime(datetime_format)}}</td>
+                </tr>
+            {{ pass}}
+            </tbody>
+        </table>
+    </div>    
+</div>
+
+<div class="modal hide fade in" id="modal-add-period">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Crear periodo para proceso</h3>
+    </div>
+    <div class="modal-body">        
+        <form class="form-horizontal" action="{{=URL('add_period')}}" method="POST">  
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="period-process">Proceso</label>
+                    <div class="controls">
+                        <select id="period-process" name="process">
+                        {{ for (k,v) in process_list.iteritems(): }}
+                            <option value="{{=k}}">{{=v}}</option>
+                        {{ pass }}
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="practice-starting">Inicio</label>
+                    <div class="controls">
+                        <input type="datetime" id="period-starting" name="starting" class="input-medium"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="practice-starting">Fin</label>
+                    <div class="controls">
+                        <input type="datetime" id="period-starting" name="ending" class="input-medium"/>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cancelar</a>
+        <a href="#" class="btn btn-primary modal-action">Crear</a>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script>
+$(document).ready( function () {
+    $("[rel=tooltip]").tooltip({placement: 'top'});    
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
+});
+
+</script>
+{{end}}
+
+
+

@@ -194,6 +194,27 @@
         {{ elif p_info['state'] == 'validation_sent' or p_info['state'] == 'validation_ready' or p_info['state'] == 'approved' or p_info['state'] == 'rejected':}}
             <div class="row">
                 <div class="span9">
+                    <legend>Proceso <small>datos de las etapas del registro de la práctica.</small></legend>
+                    <dl class="dl-horizontal">
+                        <dt>Creación</dt>
+                        <dd>{{=p_info['created'].strftime(datetime_format)}}</dd>
+                        <dt>Envío a Validación</dt>
+                        <dd>{{=p_info['validation_sent'].strftime(datetime_format) if p_info['validation_sent'] is not None else '-'}}</dd>
+                        <dt>Validación</dt>
+                        <dd>{{=p_info['validation_ready'].strftime(datetime_format) if p_info['validation_ready'] is not None else '-'}}</dd>
+                        <dt>Resultado Validación</dt>
+                        <dd>{{='-' if p_info['validation_result'] is None else XML('<span class="label label-success">Validada</span>') if p_info['validation_result'] else XML('<span class="label label-important">Invalidada</span>')}}</dd>                    
+                        <dt>Aprobación</dt>
+                        <dd>{{=p_info['approved_date'].strftime(datetime_format) if p_info['approved_date'] is not None else '-'}}</dd>
+                        <dt>Resultado Aprobación</dt>
+                        <dd>{{='-' if p_info['approved'] is None else XML('<span class="label label-success">Aprobada</span>') if p_info['approved'] else XML('<span class="label label-important">Rechazada</span>')}}</dd>                    
+                        <dt>Comentario Aprobación</dt>
+                        <dd>{{=p_info['approved_comment'] if p_info['approved_comment'] is not None else '-'}}</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span9">
                     <legend>Empresa <small>datos de la Empresa donde realizarás la práctica.</small></legend>
                     <dl class="dl-horizontal">
                         <dt>RUT</dt>

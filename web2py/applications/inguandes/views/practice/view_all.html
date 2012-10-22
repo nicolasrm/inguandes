@@ -59,14 +59,52 @@
                     <td>{{=p['approved_date'].strftime(datetime_format) if p['approved_date'] is not None else '-'}}</td>
                     <td><a class="btn btn-info" rel="tooltip" title="Ver detalles" href="{{=URL('view_all', args=[p['id']], vars={'state':selected_state})}}"><i class="icon-play-circle icon-white"></i></a></td>
                     {{ if selected_state is not None and selected_state == 'validation_ready': }}
-                    <td><a class="btn btn-success" data-btn-type="confirm-evaluation" data-user="{{=p['user_name']}}" data-confirm-text="Confirma la aprobación de la práctica del alumno:" data-confirm-url="{{=URL('approve', args=[p['id']])}}" rel="tooltip" title="Aprobar inscripción de práctica" href="#"><i class="icon-ok-circle icon-white"></i></a></td>
-                    <td><a class="btn btn-danger" data-btn-type="confirm-evaluation" data-user="{{=p['user_name']}}" data-confirm-text="Confirma el rechazo de la práctica del alumno:" data-confirm-url="{{=URL('reject', args=[p['id']])}}" rel="tooltip" title="Rechazar inscripción de práctica" href="#"><i class="icon-remove-circle icon-white"></i></a></td>
+                    <td><a class="btn btn-success" data-btn-type="confirm-evaluation" data-user="{{=p['user_name']}}" data-confirm-text="Confirma la aprobación de la práctica del alumno:" data-practice-id="{{=p['id']}}" data-approve-result="1" rel="tooltip" title="Aprobar inscripción de práctica" href="#"><i class="icon-ok-circle icon-white"></i></a></td>
+                    <td><a class="btn btn-danger" data-btn-type="confirm-evaluation" data-user="{{=p['user_name']}}" data-confirm-text="Confirma el rechazo de la práctica del alumno:" data-practice-id="{{=p['id']}}" data-approve-result="0" rel="tooltip" title="Rechazar inscripción de práctica" href="#"><i class="icon-remove-circle icon-white"></i></a></td>
                     {{ pass }}
                 </tr>
             {{ pass }}
             </tbody>
         </table>
     {{ elif p_info is not None: }}
+        <div class="row">
+            <div class="span9">
+                <legend>Alumno <small>datos propios del alumno.</small></legend>
+                <dl class="dl-horizontal">
+                    <dt>RUT</dt>
+                    <dd>{{=p_info['user'].rut if p_info['user'].rut is not None and len(p_info['user'].rut) > 0 else '-'}}</dd>
+                    <dt>Nombres</dt>
+                    <dd>{{=p_info['user'].first_name if p_info['user'].first_name is not None and len(p_info['user'].first_name) > 0 else '-'}}</dd>
+                    <dt>Apellidos</dt>
+                    <dd>{{=p_info['user'].last_name if p_info['user'].last_name is not None and len(p_info['user'].last_name) > 0 else '-'}}</dd>
+                    <dt>Correo Electrónico</dt>
+                    <dd>{{=p_info['user'].email if p_info['user'].email is not None and len(p_info['user'].email) > 0 else '-'}}</dd>
+                    <dt>Especialidad</dt>
+                    <dd>{{=specialties[p_info['user'].specialty] if p_info['user'].specialty is not None else XML('<span class="label label-important">No seleccionada</span>')}}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span9">
+                <legend>Proceso <small>datos de las etapas del registro de la práctica.</small></legend>
+                <dl class="dl-horizontal">
+                    <dt>Creación</dt>
+                    <dd>{{=p_info['created'].strftime(datetime_format)}}</dd>
+                    <dt>Envío a Validación</dt>
+                    <dd>{{=p_info['validation_sent'].strftime(datetime_format) if p_info['validation_sent'] is not None else '-'}}</dd>
+                    <dt>Validación</dt>
+                    <dd>{{=p_info['validation_ready'].strftime(datetime_format) if p_info['validation_ready'] is not None else '-'}}</dd>
+                    <dt>Resultado Validación</dt>
+                    <dd>{{='-' if p_info['validation_result'] is None else XML('<span class="label label-success">Validada</span>') if p_info['validation_result'] else XML('<span class="label label-important">Invalidada</span>')}}</dd>                    
+                    <dt>Aprobación</dt>
+                    <dd>{{=p_info['approved_date'].strftime(datetime_format) if p_info['approved_date'] is not None else '-'}}</dd>
+                    <dt>Resultado Aprobación</dt>
+                    <dd>{{='-' if p_info['approved'] is None else XML('<span class="label label-success">Aprobada</span>') if p_info['approved'] else XML('<span class="label label-important">Rechazada</span>')}}</dd>                    
+                    <dt>Comentario Aprobación</dt>
+                    <dd>{{=p_info['approved_comment'] if p_info['approved_comment'] is not None else '-'}}</dd>
+                </dl>
+            </div>
+        </div>
         <div class="row">
             <div class="span9">
                 <legend>Empresa <small>datos de la Empresa donde se realizará la práctica.</small></legend>
@@ -101,7 +139,7 @@
                     <dt>Teléfono</dt>
                     <dd>{{=p_info['validator']['phone'] if p_info['validator'] is not None and len(p_info['validator']['phone']) > 0 else '-'}}</dd>
                     <dt>Correo Electrónico</dt>
-                    <dd><span class="label label-important">{{=p_info['validator']['email'] if p_info['validator'] is not None and len(p_info['validator']['email']) > 0 else '-'}}</span></dd>
+                    <dd><span class="label label-info">{{=p_info['validator']['email'] if p_info['validator'] is not None and len(p_info['validator']['email']) > 0 else '-'}}</span></dd>
                 </dl>
             </div>
         </div>
@@ -128,11 +166,21 @@
         <h3>Confirmar evaluación de inscripción de práctica</h3>
     </div>
     <div class="modal-body">
-        <span id="modal-confirm-text"></span> <span class="label label-info" id="modal-confirm-user"></span>        
+        <p><span id="modal-confirm-text"></span> <span class="label label-info" id="modal-confirm-user"></span></p>
+        <form class="form-horizontal" action="{{=URL('practice_register_evaluation')}}" method="POST">
+            <div class="control-group">
+                <label class="control-label" for="practice-comments">Comentario</label>
+                <div class="controls">
+                    <textarea id="practice-comments" name="comments" placeholder="Comentarios del resultado..."></textarea>
+                </div>
+            </div>
+            <input type="hidden" id="practice-id" name="practiceid" />
+            <input type="hidden" id="approve-result" name="approveresult" />
+        </form>        
     </div>
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">Cancelar</a>
-        <a href="#" class="btn btn-primary" id="modal-confirm-button">Confirmar</a>
+        <a href="#" class="btn btn-primary modal-action">Confirmar</a>
     </div>
 </div>
 
@@ -153,11 +201,13 @@ function showConfirmModal (event) {
         data = $(event.currentTarget).data(),
         confirmUser = data.user,
         confirmText = data.confirmText,
-        confirmUrl = data.confirmUrl;
+        practiceId = data.practiceId,
+        approveResult = data.approveResult;
                         
     modal.find('#modal-confirm-text').text(confirmText);
     modal.find('#modal-confirm-user').text(confirmUser);
-    modal.find('#modal-confirm-button').attr('href', confirmUrl);
+    modal.find('#practice-id').val(practiceId);
+    modal.find('#approve-result').val(approveResult);
     
     modal.modal('show');
 }

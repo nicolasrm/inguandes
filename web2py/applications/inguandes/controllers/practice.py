@@ -108,15 +108,16 @@ def validate_practice():
         redirect(URL(''))
     p_key = request.args[0]
     practice = db(db.practice.p_key == p_key).select().first()
+    validation_result = True if int(request.args[1]) == 1 else False
     
     if practice is not None:
-        practice.update_record(validation_ready=request.now)
+        practice.update_record(validation_ready=request.now, validation_result=validation_result)
     else:
         redirect(URL(''))
     
-    return dict()
+    return dict(validation_result=validation_result)
  
-@auth.requires_membership(role='admin')   
+@auth.requires_membership(role='ing-admin')   
 def view_all():
     selected_state = request.vars.state
     if selected_state is None:
@@ -133,21 +134,13 @@ def view_all():
     else:
         p_info = get_practice(db, pid)
     return dict(selected_state=selected_state, practices=practices, p_info=p_info)
-    
-def approve():
-    if len(request.args) == 0:
-        redirect(URL('view'))
-    p_id = int(request.args[0])
-    practice = db.practice[p_id]
-    practice.update_record( approved=True,
-                            approved_date=request.now)
-    redirect(URL('view_all', vars={'state':'validation_ready'}))
 
-def reject():
-    if len(request.args) == 0:
-        redirect(URL('view'))
-    p_id = int(request.args[0])
+@auth.requires_membership(role='ing-admin')       
+def practice_register_evaluation():    
+    p_id = int(request.vars.practiceid)
     practice = db.practice[p_id]
-    practice.update_record( approved=False,
+    approve_result = True if request.vars.approveresult == 1 else False    
+    practice.update_record( approved=approve_result,
+                            approved_comment=request.vars.comments if len(request.vars.comments) > 0 else None,
                             approved_date=request.now)
     redirect(URL('view_all', vars={'state':'validation_ready'}))

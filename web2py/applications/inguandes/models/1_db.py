@@ -37,7 +37,14 @@ from gluon.contrib.login_methods.email_auth import email_auth
 auth.settings.actions_disabled = ['change_password']
 auth.settings.login_methods.append(email_auth("smtp.gmail.com:587", "@miuandes.cl"))
 
-auth.settings.extra_fields[auth.settings.table_user_name] = [Field('rut', type='string')]
+specialties = {
+    0: 'Industrial',
+    1: 'Obras Civiles',
+    2: 'Eléctrica',
+    3: 'Ciencia de la Computación'
+}
+
+auth.settings.extra_fields[auth.settings.table_user_name] = [Field('rut', type='string'), Field('specialty', type='integer', requires=IS_IN_SET(specialties))]
 
 ## create all tables needed by auth if not custom tables
 auth.define_tables()
@@ -363,6 +370,16 @@ db.define_table('message',
         Field('next_status', type='integer', requires=IS_IN_SET(ticket_status))
         )
 
+####### Process ############
+process_list = {
+    0: 'Prácticas'
+}
+db.define_table('process_period',
+        Field('process', type='integer', requires=IS_IN_SET(process_list)),
+        Field('starting', type='datetime'),
+        Field('ending', type='datetime')
+        )
+        
 ####### Practice ############
 practice_category = {
     0: 'Práctica de Operario',
@@ -371,22 +388,22 @@ practice_category = {
 }
 
 db.define_table('company',
-        Field('rut', type='string', notnull=True),
-        Field('name', type='string', notnull=True),
-        Field('businessLine', type='string', notnull=True),
-        Field('address', type='text', notnull=True),
-        Field('city', type='string', notnull=True),
-        Field('country', type='string', notnull=True)
+        Field('rut', type='string'),
+        Field('name', type='string'),
+        Field('businessLine', type='string'),
+        Field('address', type='text'),
+        Field('city', type='string'),
+        Field('country', type='string')
         )
         
-db.define_table('company_employee',        
-        Field('company', type=db.company, notnull=True),
-        Field('first_name', type='string', notnull=True),
-        Field('last_name', type='string', notnull=True),
-        Field('position', type='string', notnull=True),
-        Field('department', type='string', notnull=True),
-        Field('phone', type='string', notnull=True),
-        Field('email', type='string', notnull=True)
+db.define_table('company_employee',
+        Field('company', type=db.company),
+        Field('first_name', type='string'),
+        Field('last_name', type='string'),
+        Field('position', type='string'),
+        Field('department', type='string'),
+        Field('phone', type='string'),
+        Field('email', type='string')
         )
         
 db.define_table('practice',
@@ -401,8 +418,10 @@ db.define_table('practice',
         Field('created', type='datetime', default=request.now),
         Field('validation_sent', type='datetime'),
         Field('validation_ready', type='datetime'),
+        Field('validation_result', type='boolean'),
         Field('approved', type='boolean'),
         Field('approved_date', type='datetime'),
+        Field('approved_comment', type='text')
         )
         
 ####### Constants ############
