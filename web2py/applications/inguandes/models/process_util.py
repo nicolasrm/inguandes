@@ -27,10 +27,16 @@ def get_period(db, pid):
     
     return p_info
     
-def is_process_open(db, pid):
+def is_process_open(db, process_idx):
     now = datetime.datetime.now()
-    pss = db((db.process_period.starting <= now) & (db.process_period.ending > now) & (db.process_period.process==pid)).select(db.process_period.id)
+    pss = db((db.process_period.starting <= now) & (db.process_period.ending > now) & (db.process_period.process==process_idx)).select(db.process_period.id)
     if len(pss) > 0:
         return True
     else:
         return False
+        
+def get_current_next_period(db, process_idx):
+    now = datetime.datetime.now()
+    period = db((db.process_period.ending > now) & (db.process_period.process==process_idx)).select(db.process_period.id, orderby=db.process_period.ending).first()
+    
+    return None if period is None else get_period(db, period.id)

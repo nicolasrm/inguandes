@@ -70,7 +70,7 @@
         <div class="row">
             <div class="span9">
                 <legend>Alumno <small>datos propios del alumno.</small></legend>
-                <dl class="dl-horizontal">
+                <dl class="dl-horizontal dl-horizontal-large">
                     <dt>RUT</dt>
                     <dd>{{=p_info['user'].rut if p_info['user'].rut is not None and len(p_info['user'].rut) > 0 else '-'}}</dd>
                     <dt>Nombres</dt>
@@ -87,7 +87,7 @@
         <div class="row">
             <div class="span9">
                 <legend>Proceso <small>datos de las etapas del registro de la práctica.</small></legend>
-                <dl class="dl-horizontal">
+                <dl class="dl-horizontal dl-horizontal-large">
                     <dt>Creación</dt>
                     <dd>{{=p_info['created'].strftime(datetime_format)}}</dd>
                     <dt>Envío a Validación</dt>
@@ -108,13 +108,13 @@
         <div class="row">
             <div class="span9">
                 <legend>Empresa <small>datos de la Empresa donde se realizará la práctica.</small></legend>
-                <dl class="dl-horizontal">
+                <dl class="dl-horizontal dl-horizontal-large">
                     <dt>RUT</dt>
                     <dd>{{=p_info['company']['rut'] if p_info['company'] is not None and len(p_info['company']['rut']) > 0 else '-'}}</dd>
                     <dt>Nombre</dt>
                     <dd>{{=p_info['company']['name'] if p_info['company'] is not None and len(p_info['company']['name']) > 0 else '-'}}</dd>
                     <dt>Giro Comercial</dt>
-                    <dd>{{=p_info['company']['businessLine'] if p_info['company'] is not None and len(p_info['company']['businessLine']) > 0 else '-'}}</dd>
+                    <dd>{{=p_info['company']['businessLine'] if p_info['company'] is not None and p_info['company']['businessLine'] is not None and len(p_info['company']['businessLine']) > 0 else '-'}}</dd>
                     <dt>Dirección</dt>
                     <dd>{{=p_info['company']['address'] if p_info['company'] is not None and len(p_info['company']['address']) > 0 else '-'}}</dd>
                     <dt>Ciudad</dt>
@@ -127,7 +127,7 @@
         <div class="row">
             <div class="span9">
                 <legend>Contacto <small>persona que validará la solicitud (no es el supervisor necesariamente).</small></legend>
-                <dl class="dl-horizontal">
+                <dl class="dl-horizontal dl-horizontal-large">
                     <dt>Nombre</dt>
                     <dd>{{=p_info['validator']['first_name'] if p_info['validator'] is not None and len(p_info['validator']['first_name']) > 0 else '-'}}</dd>
                     <dt>Apellidos</dt>
@@ -146,7 +146,7 @@
         <div class="row">
             <div class="span9">
                 <legend>Detalles Práctica <small>detalles del trabajo que se realizará.</small></legend>
-                <dl class="dl-horizontal">
+                <dl class="dl-horizontal dl-horizontal-large">
                     <dt>Descripción</dt>
                     <dd>{{=p_info['description'] if p_info['description'] is not None else '-'}}</dd>
                     <dt>Inicio Estimado</dt>

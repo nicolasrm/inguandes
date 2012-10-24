@@ -5,7 +5,8 @@ def view():
     if len(request.args) > 0:
         p_info = get_practice(db, int(request.args[0]))
     practices = get_user_practices(db, auth.user.id)
-    return dict(practices=practices, p_info=p_info)   
+    p_period = get_current_next_period(db, 0)
+    return dict(practices=practices, p_info=p_info, p_period=p_period)   
 
 @auth.requires_login()
 def add_practice():
@@ -24,7 +25,7 @@ def update_company():
     if practice.company is None:
         com_id = db.company.insert( rut=request.vars.rut,
                                     name=request.vars.name,
-                                    businessLine=request.vars.businessLine,
+                                    business_line=request.vars.businessLine,
                                     address=request.vars.address,
                                     city=request.vars.city,
                                     country=request.vars.country)
@@ -33,7 +34,7 @@ def update_company():
         com = db.company[practice.company]
         com.update_record(  rut=request.vars.rut,
                             name=request.vars.name,
-                            businessLine=request.vars.businessLine,
+                            business_line=request.vars.businessLine,
                             address=request.vars.address,
                             city=request.vars.city,
                             country=request.vars.country)

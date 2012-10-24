@@ -12,7 +12,7 @@
             <ul class="nav nav-list">
                 <li class="nav-header">Pendientes</li>
                 {{ for p in practices: 
-                    if p['state'] == 'pending' or p['state'] == 'ready_to_validate' or p['state'] == 'validation_sent' or p['state'] == 'validation_ready': }}
+                    if p['state'] == 'pending' or p['state'] == 'ready_to_validate' or p['state'] == 'validation_sent' or p['state'] == 'validation_ready' or p['state'] == 'validation_rejected': }}
                 <li class="{{='active' if p_info is not None and p_info['id'] == p['id'] else ''}}">
                     <a href="{{=URL('view', args=[p['id']])}}">{{=p['category_name']}}</a>
                 </li>
@@ -20,17 +20,43 @@
                 pass }}
                 <li class="divider"></li>
                 <li class="nav-header">Aprobadas/Activas</li>
+                {{ for p in practices: 
+                    if p['state'] == 'approved': }}
+                <li class="{{='active' if p_info is not None and p_info['id'] == p['id'] else ''}}">
+                    <a href="{{=URL('view', args=[p['id']])}}">{{=p['category_name']}}</a>
+                </li>
+                {{  pass
+                pass }}
                 <li class="divider"></li>
                 <li class="nav-header">Finalizadas</li>
                 <li class="divider"></li>
                 <li class="nav-header">Rechazadas</li>
+                {{ for p in practices: 
+                    if p['state'] == 'rejected': }}
+                <li class="{{='active' if p_info is not None and p_info['id'] == p['id'] else ''}}">
+                    <a href="{{=URL('view', args=[p['id']])}}">{{=p['category_name']}}</a>
+                </li>
+                {{  pass
+                pass }}
                 <li class="divider"></li>
             </ul>
+            {{ if is_process_open(db, 0): }}
             <nav class="nav-menu">
                 <ul>                                       
                     <li><a data-toggle="modal" href="#modal-new-practice" rel="tooltip" title="Crear nueva solicitud de práctica"><i class="icon-plus"></i><i class="icon-wrench"></i></a></li>
                 </ul>
             </nav>
+                {{ if p_period['ending'] is not None: }}
+                <div class="alert alert-info">
+                    El periodo de prácticas se encuentra abierto hasta el <br><strong>{{=p_period['ending'].strftime(datetime_format)}}</strong>
+                </div>
+                {{ pass }}
+            {{ else: }}
+            <div class="alert alert-info">
+                El periodo de prácticas se encuentra cerrado.
+                {{=XML('<br><strong>Su apertura es el <br>{}</strong>'.format(p_period['starting'].strftime(datetime_format))) if p_period is not None else ''}}
+            </div>
+            {{ pass }}
         </div>
     </div>
     {{ if p_info is not None: }}    
@@ -38,25 +64,37 @@
         <div class="row">
             <div class="span9">
                 <div class="well well-small">
-                    <h3>Instrucciones</h3>
+                    <h3>Instrucciones</h3>                    
                     {{ if p_info['state'] == 'pending' or p_info['state'] == 'ready_to_validate': }}
-                        <p>Completa los datos solicitados para la inscripción de tu práctica. Una vez hayas completado todos los campos podrás proceder a la validación de esta por parte de la empresa.</p>
-                        {{ if p_info['state'] == 'ready_to_validate': }}
-                        <a class="btn btn-success" data-toggle="modal" href="#modal-validate-practice" rel="tooltip" title="Proceder al envío de validación de la práctica."><i class="icon-forward icon-white"></i> Validar</a>
+                        {{ if is_process_open(db, 0): }}
+                            <p>Completa los datos solicitados para la inscripción de tu práctica. Una vez hayas completado todos los campos podrás proceder a la validación de esta por parte de la empresa.</p>
+                            {{ if p_info['state'] == 'ready_to_validate' and auth.user.specialty is not None: }}
+                            <a class="btn btn-success" data-toggle="modal" href="#modal-validate-practice" rel="tooltip" title="Proceder al envío de validación de la práctica."><i class="icon-forward icon-white"></i> Validar</a>
+                            {{ pass }}
+                        {{ else: }}
+                            <p>El periodo de práctica se encuentra cerrado, por lo que no es posible enviar tu registro hasta su apertura.</p>
                         {{ pass }}
                     {{ elif p_info['state'] == 'validation_sent': }}
                         <p>El <span class="label label-info">{{=p_info['validation_sent'].strftime(datetime_format)}}</span> se ha enviado un correo electrónico para la confirmación de su práctica al contacto indicado. En estos momentos se está a la espera de la validación de inscripción de tu práctica. Te recomendamos contactar a la persona que recibió el correo electrónico para verificar su recepción. En caso de que el correo no haya llegado al destino informa a <span class="label label-info">iuandes@miuandes.cl</span></p>                    
                     {{ elif p_info['state'] == 'validation_ready': }}
                         <p>El <span class="label label-info">{{=p_info['validation_ready'].strftime(datetime_format)}}</span> tu práctica fue validada por el contacto que definiste en la empresa. Ahora debes esperar la aprobación de tú práctica por parte de la Facultad. Ante cualquier duda comúnicate a <span class="label label-info">iuandes@miuandes.cl</span></p>                    
+                    {{ elif p['state'] == 'validation_rejected': }}
+                        <p>El <span class="label label-info">{{=p_info['validation_ready'].strftime(datetime_format)}}</span> tu práctica fue rechazada por el contacto que definiste en la empresa. Te recomendamos contactarte con el y corregir la información necesaria antes de volver a validar.</p>    
+                        {{ if auth.user.specialty is not None: }}
+                            <a class="btn btn-success" data-toggle="modal" href="#modal-validate-practice" rel="tooltip" title="Proceder al envío de validación de la práctica."><i class="icon-forward icon-white"></i> Validar</a>
+                        {{ pass }}
                     {{ elif p_info['state'] == 'approved': }}
                         <p>El <span class="label label-info">{{=p_info['approved_date'].strftime(datetime_format)}}</span> la Facultad de Ingeniería y Ciencias Aplicadas <span class="label label-success">aprobó</span> la inscripción de tu práctica. Cualquier duda puedes comunicarte a <span class="label label-info">iuandes@miuandes.cl</span></p>                    
                     {{ elif p_info['state'] == 'rejected': }}
                         <p>El <span class="label label-info">{{=p_info['approved_date'].strftime(datetime_format)}}</span> la Facultad de Ingeniería y Ciencias Aplicadas <span class="label label-important">rechazó</span> la inscripción de tu práctica. Cualquier duda puedes comunicarte a <span class="label label-info">iuandes@miuandes.cl</span></p>
                     {{ pass }}
+                    {{ if auth.user.specialty is None: }}
+                    <p class="alert alert-error">No tienes definida tu especialidad, necesitarás hacerlo para poder continuar. Puedes hacerlo <strong><a href="{{=URL('default', 'user', args=['profile'])}}">aquí.</a></strong></p>
+                    {{ pass }}
                 </div>
             </div>
         </div>
-        {{ if p_info['state'] == 'pending' or p_info['state'] == 'ready_to_validate': }}
+        {{ if p_info['state'] == 'pending' or p_info['state'] == 'ready_to_validate' or p['state'] == 'validation_rejected': }}
             <div class="row">
                 <div class="span9">                
                     <form class="form-horizontal" action="{{=URL('update_company')}}" method="POST" id="form-company">
@@ -195,7 +233,7 @@
             <div class="row">
                 <div class="span9">
                     <legend>Proceso <small>datos de las etapas del registro de la práctica.</small></legend>
-                    <dl class="dl-horizontal">
+                    <dl class="dl-horizontal dl-horizontal-large">
                         <dt>Creación</dt>
                         <dd>{{=p_info['created'].strftime(datetime_format)}}</dd>
                         <dt>Envío a Validación</dt>
@@ -216,7 +254,7 @@
             <div class="row">
                 <div class="span9">
                     <legend>Empresa <small>datos de la Empresa donde realizarás la práctica.</small></legend>
-                    <dl class="dl-horizontal">
+                    <dl class="dl-horizontal dl-horizontal-large">
                         <dt>RUT</dt>
                         <dd>{{=p_info['company']['rut']}}</dd>
                         <dt>Nombre</dt>
@@ -235,7 +273,7 @@
             <div class="row">
                 <div class="span9">
                     <legend>Contacto <small>persona que validará tu solicitud (no es el supervisor necesariamente).</small></legend>
-                    <dl class="dl-horizontal">
+                    <dl class="dl-horizontal dl-horizontal-large">
                         <dt>Nombre</dt>
                         <dd>{{=p_info['validator']['first_name']}}</dd>
                         <dt>Apellidos</dt>
@@ -254,7 +292,7 @@
             <div class="row">
                 <div class="span9">
                     <legend>Detalles Práctica <small>detalles del trabajo que realizarás.</small></legend>
-                    <dl class="dl-horizontal">
+                    <dl class="dl-horizontal dl-horizontal-large">
                         <dt>Descripción</dt>
                         <dd>{{=p_info['description']}}</dd>
                         <dt>Inicio Estimado</dt>

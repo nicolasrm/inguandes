@@ -44,7 +44,7 @@ specialties = {
     3: 'Ciencia de la Computación'
 }
 
-auth.settings.extra_fields[auth.settings.table_user_name] = [Field('rut', type='string'), Field('specialty', type='integer', requires=IS_IN_SET(specialties))]
+auth.settings.extra_fields[auth.settings.table_user_name] = [Field('rut', type='string'), Field('specialty', type='integer', label='Especialidad', requires=IS_IN_SET(specialties))]
 
 ## create all tables needed by auth if not custom tables
 auth.define_tables()
@@ -390,7 +390,7 @@ practice_category = {
 db.define_table('company',
         Field('rut', type='string'),
         Field('name', type='string'),
-        Field('businessLine', type='string'),
+        Field('business_line', type='string'),
         Field('address', type='text'),
         Field('city', type='string'),
         Field('country', type='string')

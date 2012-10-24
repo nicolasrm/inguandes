@@ -33,6 +33,14 @@ body {
   margin-left: 85px;
 }
 
+.dl-horizontal-large dt {
+  width: 160px;
+}
+
+.dl-horizontal-large dd {
+  margin-left: 170px;
+}
+
 .ribbon-wrapper {
   width: 65px;
   height: 68px;

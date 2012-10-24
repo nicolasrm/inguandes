@@ -14,6 +14,7 @@ def get_user_practices(db, userId):
 # - ready_to_validate
 # - validation_sent
 # - validation_ready
+# - validation_rejected
 # - approved
 # - rejected
 #####
@@ -35,6 +36,7 @@ def get_practice(db, pId):
     p_info['p_key'] = p.p_key    
     p_info['validation_sent'] = p.validation_sent
     p_info['validation_ready'] = p.validation_ready
+    p_info['validation_result'] = p.validation_result
     p_info['approved'] = p.approved
     p_info['approved_date'] = p.approved_date
     p_info['approved_comment'] = p.approved_comment
@@ -42,7 +44,7 @@ def get_practice(db, pId):
     if p_info['approved_date'] is not None:
         p_info['state'] = 'approved' if p_info['approved'] else 'rejected'
     elif p_info['validation_ready'] is not None:
-        p_info['state'] = 'validation_ready'
+        p_info['state'] = 'validation_ready' if p_info['validation_result'] else 'validation_rejected'
     elif p_info['validation_sent'] is not None:
         p_info['state'] = 'validation_sent'
     elif (p_info['company'] is not None and p_info['company']['is_complete'] and p_info['validator'] is not None and p_info['validator']['is_complete'] and p_info['description'] is not None 
@@ -59,7 +61,7 @@ def get_company(db, comId):
         com_info['id'] = com.id
         com_info['rut'] = com.rut
         com_info['name'] = com.name
-        com_info['businessLine'] = com.businessLine
+        com_info['businessLine'] = com.business_line
         com_info['address'] = com.address
         com_info['city'] = com.city
         com_info['country'] = com.country
@@ -124,11 +126,11 @@ def send_validation_email(db, pId):
 def get_practice_by_state(db, state):
     pids = []
     if state == 'pending':
-        pids = db(db.practice.validation_sent == None).select(db.practice.id, orderby=db.practice.created)
+        pids = db((db.practice.validation_sent == None) | (db.practice.validation_result == False)).select(db.practice.id, orderby=db.practice.created)
     elif state == 'validation_sent':
-        pids = db((db.practice.validation_sent != None) & (db.practice.validation_ready == None)).select(db.practice.id, orderby=db.practice.created)
+        pids = db((db.practice.validation_sent != None) & (db.practice.validation_ready == None) & (db.practice.validation_result == True)).select(db.practice.id, orderby=db.practice.created)
     elif state == 'validation_ready':
-        pids = db((db.practice.validation_ready != None) & (db.practice.approved_date == None)).select(db.practice.id, orderby=db.practice.created)
+        pids = db((db.practice.validation_ready != None) & (db.practice.approved_date == None) & (db.practice.validation_result == True)).select(db.practice.id, orderby=db.practice.created)
     elif state == 'approved':
         pids = db((db.practice.approved_date != None) & (db.practice.approved == True)).select(db.practice.id, orderby=db.practice.created)
     elif state == 'rejected':
