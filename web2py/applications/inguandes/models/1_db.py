@@ -31,6 +31,7 @@ mail.settings.login = settings.email_login
 auth.settings.registration_requires_verification = False
 auth.settings.registration_requires_approval = False
 auth.settings.reset_password_requires_verification = True
+auth.settings.create_user_groups = False
 
 # Use miuandes as authentification
 from gluon.contrib.login_methods.email_auth import email_auth
@@ -44,7 +45,8 @@ specialties = {
     3: 'Ciencia de la Computación'
 }
 
-auth.settings.extra_fields[auth.settings.table_user_name] = [Field('rut', type='string'), Field('specialty', type='integer', label='Especialidad', requires=IS_IN_SET(specialties))]
+auth.settings.extra_fields[auth.settings.table_user_name] = [   Field('rut', type='string'), 
+                                                                Field('specialty', type='integer', label='Especialidad', requires=IS_IN_SET(specialties))]
 
 ## create all tables needed by auth if not custom tables
 auth.define_tables()
