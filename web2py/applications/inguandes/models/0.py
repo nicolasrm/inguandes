@@ -19,3 +19,6 @@ settings.plugins = []
 settings.email_server = 'smtp.gmail.com:587'
 settings.email_sender = 'cursos@inguandes.cl'
 settings.email_login = 'cursos@inguandes.cl:LarCh?reC~inLet~pepoS54'
+
+settings.iua_email_sender = 'iuandes@miuandes.cl'
+settings.iua_email_login = 'iuandes@miuandes.cl:iuandes123'

@@ -27,6 +27,12 @@ mail.settings.server = settings.email_server
 mail.settings.sender = settings.email_sender
 mail.settings.login = settings.email_login
 
+from gluon.tools import Mail
+mail_iua=Mail()
+mail_iua.settings.server = settings.email_server
+mail_iua.settings.sender = settings.iua_email_sender
+mail_iua.settings.login = settings.iua_email_login
+
 ## configure auth policy
 auth.settings.registration_requires_verification = False
 auth.settings.registration_requires_approval = False

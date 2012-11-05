@@ -112,16 +112,15 @@ def send_validation_email(db, pId):
     message = message + 'Fecha estimada de fin: {}\r\n\r\n'.format(practice.ending)
     message = message + 'Si la información es correcta, le pedimos que presione en el siguiente link como validación de la inscripción de la práctica del alumno:\r\n\r\n'
     message = message + URL('practice', 'validate_practice', args=[practice.p_key, 1], scheme=True, host=True)
-    message = message + '\r\n\r\nSi no conoce al alumno, o no le es posible validar esta inscripción, por favor precione el siguiente link:\r\n\r\n'
+    message = message + '\r\n\r\nSi no conoce al alumno, o no le es posible validar esta inscripción, por favor presione el siguiente link:\r\n\r\n'
     message = message + URL('practice', 'validate_practice', args=[practice.p_key, 0], scheme=True, host=True)
     
     message = message + '\r\n--\r\nFacultad de Ingeniería y Ciencias Aplicadas\r\nUniversidad de los Andes\r\niuandes@miuandes.cl'
     subject = '[iuandes] Validación Inscripción Práctica'
     
-    return mail.send(   to=tos,
-                        subject=subject,
-                        message=message,
-                        reply_to='iuandes@miuandes.cl')
+    return mail_iua.send(   to=tos,
+                            subject=subject,
+                            message=message)
                         
 def get_practice_by_state(db, state):
     pids = []
