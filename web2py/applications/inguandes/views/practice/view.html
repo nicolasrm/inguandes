@@ -402,8 +402,9 @@ $(document).ready( function () {
 });
 
 function validateRut(rut) {
-    var rexp = new RegExp(/^([0-9])+\-([kK0-9])+$/);
+    var rexp = new RegExp(/^([0-9.])+\-([kK0-9])+$/);
     if(rut.match(rexp)) {
+        rut = rut.replace(/[.]/gi, '');
         var RUT = rut.split("-");
         var elRut = RUT[0].split('');
         var factor = 2;
@@ -413,13 +414,13 @@ function validateRut(rut) {
             factor = factor > 7 ? 2 : factor;
             suma += parseInt(elRut[i])*parseInt(factor++);
         }
+        
         dv = 11 -(suma % 11);
         if (dv == 11) {
             dv = 0;
         } else if (dv == 10) {
             dv = "k";
         }
-        
         if (dv == RUT[1].toLowerCase()) {
             return true;
         } else {

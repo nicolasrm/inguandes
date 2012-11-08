@@ -121,8 +121,8 @@ def send_validation_email(db, pId):
     return mail_iua.send(   to=tos,
                             subject=subject,
                             message=message)
-                        
-def get_practice_by_state(db, state):
+
+def get_practice_by_state_ids(db, state):
     pids = []
     if state == 'pending':
         pids = db((db.practice.validation_sent == None) | (db.practice.validation_result == False)).select(db.practice.id, orderby=db.practice.created)
@@ -136,7 +136,19 @@ def get_practice_by_state(db, state):
         pids = db((db.practice.approved_date != None) & (db.practice.approved == False)).select(db.practice.id, orderby=db.practice.created)
     elif state == 'ended':
         pids = []
+    return pids
+                            
+def get_practice_by_state(db, state):
+    pids = get_practice_by_state_ids(db, state)
         
     practices = [get_practice(db, pid) for pid in pids]
     return practices
+    
+def get_practices_state_counts(db):
+    st_counts = {}
+    states = ['pending', 'validation_sent', 'validation_ready', 'approved', 'rejected', 'ended']
+    for st in states:
+        st_counts[st] = len(get_practice_by_state_ids(db, st))
+    
+    return st_counts
         

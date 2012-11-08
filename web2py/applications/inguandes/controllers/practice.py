@@ -134,7 +134,10 @@ def view_all():
         practices = get_practice_by_state(db, selected_state)
     else:
         p_info = get_practice(db, pid)
-    return dict(selected_state=selected_state, practices=practices, p_info=p_info)
+        
+    st_counts = get_practices_state_counts(db)
+        
+    return dict(selected_state=selected_state, practices=practices, p_info=p_info, st_counts=st_counts)
 
 @auth.requires_membership(role='ing-admin')       
 def practice_register_evaluation():    

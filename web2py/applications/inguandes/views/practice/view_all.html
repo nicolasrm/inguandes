@@ -12,22 +12,22 @@
             <ul class="nav nav-list">
                 <li class="nav-header">Estados</li>
                 <li class="{{='active' if selected_state is not None and selected_state == 'pending' else ''}}">
-                    <a href="{{=URL('view_all', vars={'state':'pending'})}}">Borradores</a>
+                    <a href="{{=URL('view_all', vars={'state':'pending'})}}">Borradores ({{=st_counts['pending']}})</a>
                 </li>
                 <li class="{{='active' if selected_state is not None and selected_state == 'validation_sent' else ''}}">
-                    <a href="{{=URL('view_all', vars={'state':'validation_sent'})}}">En Validación</a>
+                    <a href="{{=URL('view_all', vars={'state':'validation_sent'})}}">En Validación ({{=st_counts['validation_sent']}})</a>
                 </li>
                 <li class="{{='active' if selected_state is not None and selected_state == 'validation_ready' else ''}}">
-                    <a href="{{=URL('view_all', vars={'state':'validation_ready'})}}">Pendientes de Aprobación</a>
+                    <a href="{{=URL('view_all', vars={'state':'validation_ready'})}}">Aprobación Pendiente ({{=st_counts['validation_ready']}})</a>
                 </li>
                 <li class="{{='active' if selected_state is not None and selected_state == 'approved' else ''}}">
-                    <a href="{{=URL('view_all', vars={'state':'approved'})}}">Activas</a>
+                    <a href="{{=URL('view_all', vars={'state':'approved'})}}">Activas ({{=st_counts['approved']}})</a>
                 </li>
                 <li class="{{='active' if selected_state is not None and selected_state == 'rejected' else ''}}">
-                    <a href="{{=URL('view_all', vars={'state':'rejected'})}}">Rechazadas</a>
+                    <a href="{{=URL('view_all', vars={'state':'rejected'})}}">Rechazadas ({{=st_counts['rejected']}})</a>
                 </li>
                 <li class="{{='active' if selected_state is not None and selected_state == 'ended' else ''}}">
-                    <a href="{{=URL('view_all', vars={'state':'ended'})}}">Finalizadas</a>
+                    <a href="{{=URL('view_all', vars={'state':'ended'})}}">Finalizadas ({{=st_counts['ended']}})</a>
                 </li>
             </ul>
         </div>
