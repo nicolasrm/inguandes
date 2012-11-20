@@ -127,7 +127,7 @@ def get_practice_by_state_ids(db, state):
     if state == 'pending':
         pids = db((db.practice.validation_sent == None) | (db.practice.validation_result == False)).select(db.practice.id, orderby=db.practice.created)
     elif state == 'validation_sent':
-        pids = db((db.practice.validation_sent != None) & (db.practice.validation_ready == None) & (db.practice.validation_result == True)).select(db.practice.id, orderby=db.practice.created)
+        pids = db((db.practice.validation_sent != None) & (db.practice.validation_ready == None)).select(db.practice.id, orderby=db.practice.created)
     elif state == 'validation_ready':
         pids = db((db.practice.validation_ready != None) & (db.practice.approved_date == None) & (db.practice.validation_result == True)).select(db.practice.id, orderby=db.practice.created)
     elif state == 'approved':
