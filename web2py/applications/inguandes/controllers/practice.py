@@ -143,7 +143,7 @@ def view_all():
 def practice_register_evaluation():    
     p_id = int(request.vars.practiceid)
     practice = db.practice[p_id]
-    approve_result = True if request.vars.approveresult == 1 else False    
+    approve_result = True if int(request.vars.approveresult) == 1 else False    
     practice.update_record( approved=approve_result,
                             approved_comment=request.vars.comments if len(request.vars.comments) > 0 else None,
                             approved_date=request.now)
