@@ -25,6 +25,7 @@ def get_practice(db, pId):
     p_info['id'] = p.id
     p_info['user'] = p.the_user
     p_info['user_name'] = p.the_user.last_name + ', ' + p.the_user.first_name
+    p_info['user_specialty'] = specialties[p.the_user.specialty]
     p_info['category'] = p.category
     p_info['category_name'] = practice_category[p.category]
     p_info['company'] = get_company(db, p.company)
@@ -127,13 +128,13 @@ def get_practice_by_state_ids(db, state):
     if state == 'pending':
         pids = db((db.practice.validation_sent == None) | (db.practice.validation_result == False)).select(db.practice.id, orderby=db.practice.created)
     elif state == 'validation_sent':
-        pids = db((db.practice.validation_sent != None) & (db.practice.validation_ready == None)).select(db.practice.id, orderby=db.practice.created)
+        pids = db((db.practice.validation_sent != None) & (db.practice.validation_ready == None)).select(db.practice.id, orderby=db.practice.validation_sent)
     elif state == 'validation_ready':
-        pids = db((db.practice.validation_ready != None) & (db.practice.approved_date == None) & (db.practice.validation_result == True)).select(db.practice.id, orderby=db.practice.created)
+        pids = db((db.practice.validation_ready != None) & (db.practice.approved_date == None) & (db.practice.validation_result == True)).select(db.practice.id, orderby=db.practice.validation_ready)
     elif state == 'approved':
-        pids = db((db.practice.approved_date != None) & (db.practice.approved == True)).select(db.practice.id, orderby=db.practice.created)
+        pids = db((db.practice.approved_date != None) & (db.practice.approved == True)).select(db.practice.id, orderby=db.practice.approved_date)
     elif state == 'rejected':
-        pids = db((db.practice.approved_date != None) & (db.practice.approved == False)).select(db.practice.id, orderby=db.practice.created)
+        pids = db((db.practice.approved_date != None) & (db.practice.approved == False)).select(db.practice.id, orderby=db.practice.approved_date)
     elif state == 'ended':
         pids = []
     return pids

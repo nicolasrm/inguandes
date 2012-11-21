@@ -38,6 +38,7 @@
             <thead>
                 <tr>
                     <th>Alumno</th>
+                    <th>Especialidad</th>
                     <th>Tipo</th>
                     <th>Creación</th>
                     <th>Validación</th>
@@ -53,6 +54,7 @@
             {{ for p in practices: }}
                 <tr>
                     <td>{{=p['user_name']}}</td>
+                    <td>{{=p['user_specialty']}}</td>
                     <td>{{=p['category_name']}}</td>
                     <td>{{=p['created'].strftime(datetime_format)}}</td>
                     <td>{{=p['validation_ready'].strftime(datetime_format) if p['validation_ready'] is not None else '-'}}</td>
