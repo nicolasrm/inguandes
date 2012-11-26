@@ -25,7 +25,7 @@ def get_practice(db, pId):
     p_info['id'] = p.id
     p_info['user'] = p.the_user
     p_info['user_name'] = p.the_user.last_name + ', ' + p.the_user.first_name
-    p_info['user_specialty'] = specialties[p.the_user.specialty]
+    p_info['user_specialty'] = specialties[p.the_user.specialty] if p.the_user.specialty is not None else None
     p_info['category'] = p.category
     p_info['category_name'] = practice_category[p.category]
     p_info['company'] = get_company(db, p.company)
