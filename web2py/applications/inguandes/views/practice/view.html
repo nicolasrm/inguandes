@@ -64,7 +64,13 @@
         <div class="row">
             <div class="span9">
                 <div class="well well-small">
-                    <h3>Instrucciones</h3>                    
+                    {{if p_info['state'] == 'pending' or p_info['state'] == 'ready_to_validate': }}
+                        <a class="btn btn-danger pull-right" href="{{=URL('delete_practice', args=[p_info['id']])}}">
+                            <i class="icon-trash"></i>
+                            Eliminar
+                        </a>                 
+                    {{pass}}   
+                    <h3>Instrucciones</h3>
                     {{ if p_info['state'] == 'pending' or p_info['state'] == 'ready_to_validate': }}
                         {{ if is_process_open(db, 0): }}
                             <p>Completa los datos solicitados para la inscripción de tu práctica. Una vez hayas completado todos los campos podrás proceder a la validación de esta por parte de la empresa.</p>
@@ -85,7 +91,7 @@
                         {{ pass }}
                     {{ elif p_info['state'] == 'approved': }}
                         <p>El <span class="label label-info">{{=p_info['approved_date'].strftime(datetime_format)}}</span> la Facultad de Ingeniería y Ciencias Aplicadas <span class="label label-success">aprobó</span> la inscripción de tu práctica. Cualquier duda puedes comunicarte a <span class="label label-info">iuandes@miuandes.cl</span></p>     
-                        <p>Puedes descargar la carta del seguro para tu práctica presionando <a href="{{=URL('get_secure', args=[p_info['id']])}}">aquí</a></p>.          
+                        <p>Puedes descargar la carta del seguro para tu práctica presionando <a href="{{=URL('get_secure', args=[p_info['id']])}}">aquí</a>. Si lo requieres, puedes llevar la carta impresa a la facultad para que le pongan el timbre oficial</p>.          
                     {{ elif p_info['state'] == 'rejected': }}
                         <p>El <span class="label label-info">{{=p_info['approved_date'].strftime(datetime_format)}}</span> la Facultad de Ingeniería y Ciencias Aplicadas <span class="label label-important">rechazó</span> la inscripción de tu práctica. Cualquier duda puedes comunicarte a <span class="label label-info">iuandes@miuandes.cl</span></p>
                     {{ pass }}

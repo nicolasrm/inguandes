@@ -157,3 +157,8 @@ def get_secure():
     response.headers['Content-Disposition']="attachment; filename=Carta_Presentacion_Practica.pdf";
     data = open(filepath,"rb").read()
     return data
+    
+def delete_practice():
+    p_id = int(request.args[0])
+    del db.practice[p_id]
+    redirect(URL('view'))
