@@ -1,6 +1,19 @@
 # -*- coding: utf-8 -*-
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import *
+from reportlab.rl_config import defaultPageSize
+from reportlab.lib.units import inch, mm
+from reportlab.lib.enums import TA_LEFT, TA_RIGHT, TA_CENTER, TA_JUSTIFY
+from reportlab.lib import colors
+from pyPdf import PdfFileWriter, PdfFileReader
+from uuid import uuid4
+from cgi import escape
+import os
 import random
 import string
+import datetime
 
 def get_user_practices(db, userId):
     ps = db(db.practice.the_user==userId).select(db.practice.ALL)
@@ -153,3 +166,116 @@ def get_practices_state_counts(db):
     
     return st_counts
         
+
+def get_securefile(db,pid):
+    practice = db.practice(id=pid)
+    company = db.company(id = practice.company)
+    alumn = db.auth_user(id=practice.the_user)
+    today = datetime.datetime.now()
+    baseFolder = request.folder
+    output = PdfFileWriter()
+    templatePath = os.path.join(baseFolder, 'static', 'templates', 'Secure.pdf')    
+    pdfTemplate = PdfFileReader(open(templatePath, "rb"))
+    pdfTemplatePage = pdfTemplate.getPage(0)
+    tmpfilename=os.path.join(request.folder,'private',str(uuid4()))
+    doc = SimpleDocTemplate(tmpfilename,pagesize=letter,
+                            rightMargin=72,leftMargin=72,
+                            topMargin=100,bottomMargin=18)
+    styles=getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Left', alignment=TA_LEFT))
+    Story=[]
+    day=today.day
+    months= {
+    1: 'Enero',
+    2: 'Febrero',
+    3: 'Marzo',
+    4: 'Abril',
+    5: 'Mayo',
+    6: 'Junio',
+    7: 'Julio',
+    8: 'Agosto',
+    9: 'Septiembre',
+    10: 'Octubre',
+    11: 'Noviembre',
+    12: 'Diciembre'
+    }
+    month=months[today.month] 
+    year=today.year
+    Category=practice.category #category of practice.
+    Name = alumn.first_name
+    Last_Name=alumn.last_name
+    Company = company.name 
+    period = get_current_next_period(db,0)
+    period_m = months[period['starting'].month]#it's not used
+    period_y = period['starting'].year
+    #default for data is category = 2
+    Year ="sexto" #Year of practice
+    Months="2" #Months of duration.
+    Name_Category="Trabajo en la Empresa 2"; #Name of practice
+    Days="40" #Days of duration practice
+    spec = ""
+    if Category==0: #Obrero
+        Days="20"
+        Name_Category="Obrero"
+        Year="segundo"
+        Months="1"
+    elif Category ==1 : #Trabajo en empresa 1.
+        Days="40"
+        Name_Category="Trabajo en la Empresa 1"
+        Year="cuarto"
+    if alumn.specialty == 1 or alumn.specialty == 3:
+        spec = " en "
+    spec = spec + specialties[alumn.specialty] 
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
+    styles.add(ParagraphStyle(name='RIGHT', alignment=TA_RIGHT))
+    Story.append(Spacer(1, 12))
+    ptext = '<font size=12>Santiago, %s de %s  %s</font>' %(day,month,year)
+    Story.append(Paragraph(ptext, styles["RIGHT"]))
+    ptext = '<font size=12>Señores</font>'
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    ptext = '<font size=12>%s</font>' % Company
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    ptext = '<font size=12>Presente</font>'
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    Story.append(Spacer(1, 12))
+    ptext = '<font size=12>De nuestra consideracion:</font>'
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    Story.append(Spacer(1, 12))
+    Story.append(Spacer(1, 12))
+    ptext = '<font size=12>Me dirijo a ustedes para presentarles al señor(ita) %s, quien es alumno de la carrera de Ingeniería Civil %s.</font>'% (Name+" "+ Last_Name,spec)
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    Story.append(Spacer(1, 12))
+    ptext = '<font size=12>La carrera de Ingeniería Civil %s que ofrece nuestra Facultad incluye una Práctica de %s, que los alumnos deben realizar generalmente al término del %s año. Esta práctica tiene el propósito de insertar al alumno en un equipo profesional de la empresa, para que desarrolle un proyecto de actividades bien definido y previamente acordado con la empresa en cuestión.</font>'%(spec,Name_Category,Year)
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    Story.append(Spacer(1, 12))
+    if Category>0:
+        ptext = '<font size=12>Nos interesa que el estudiante, en el desarrollo de su práctica, responda directamente al ingeniero a cargo del proceso productivo (el Gerente de Producción o su equivalente), el que también deberá participar en la evaluación final de la práctica. En este sentido, esta actividad difiere de las prácticas tradicionales, que son habitualmente supervisadas por profesionales de la Gerencia de Personal. </font>'
+        Story.append(Paragraph(ptext, styles["Justify"]))
+        Story.append(Spacer(1, 12))
+    ptext = '<font size=12>Esta práctica tiene una duración mínima de %s meses (%s días hábiles)  y puede efectuarse desde Diciembre de %s en adelante. </font>'%(Months,Days,period_y)
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    Story.append(Spacer(1, 12))
+    ptext = '<font size=12>La Práctica de Ingeniería Civil %s, que es parte de las exigencias curriculares de la carrera, tiene también, como un propósito más amplio, el de lograr una vinculación lo más estrecha posible de nuestra Facultad con la realidad empresarial del país, de modo de explorar otros posibles vínculos de interés común.</font>' % spec
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    Story.append(Spacer(1, 12))
+    ptext = '<font size=12>La Universidad de los Andes está inscrita con fecha 9 de Febrero de 1990 en el Folio C Nº 38 del Registro de Universidades, y por ende sus alumnos están sujetos al seguro escolar contemplado en el artículo 3º de la ley Nº 16.744 sobre Accidentes del Trabajo y Enfermedades Profesionales, según lo establecido en el Decreto Nº 41 de 1985.</font>' 
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    Story.append(Spacer(1, 12))
+    ptext = '<font size=12>En la espera de poder establecer un vínculo con su empresa a través de esta actividad, lo saluda muy atentamente,</font>' 
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    Story.append(Spacer(1, 12))
+    doc.build(Story)
+    response.headers['Content-Type']='application/pdf'
+    pdf = PdfFileReader(open(tmpfilename, "rb"))
+    for pageNumber in range(pdf.getNumPages()):
+        page = pdf.getPage(pageNumber)
+        page.mergePage(pdfTemplatePage)
+        output.addPage(page)
+    downloadFilename = "Carta Presentacion Practica.pdf"
+    createfolder = os.path.join(request.folder,'private') 
+    filepath = os.path.join(createfolder, downloadFilename)  
+    outputStream = open(filepath, "wb")
+    output.write(outputStream)
+    outputStream.close()
+    return filepath, downloadFilename

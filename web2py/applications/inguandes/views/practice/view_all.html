@@ -69,6 +69,15 @@
             </tbody>
         </table>
     {{ elif p_info is not None: }}
+        {{if p_info['state'] == 'approved':}}
+        <div class="row">
+            <div class="span9">
+                <div class="well well-small">
+                    <p>Para descargar carta de presentación para el seguro presione <a href="{{=URL('get_secure', args=[p_info['id']])}}">aquí</a>.</p>
+                </div>             
+            </div>
+        </div>
+        {{pass}}
         <div class="row">
             <div class="span9">
                 <legend>Alumno <small>datos propios del alumno.</small></legend>
@@ -216,6 +225,3 @@ function showConfirmModal (event) {
 
 </script>
 {{end}}
-
-
-

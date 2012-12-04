@@ -84,7 +84,8 @@
                             <a class="btn btn-success" data-toggle="modal" href="#modal-validate-practice" rel="tooltip" title="Proceder al envío de validación de la práctica."><i class="icon-forward icon-white"></i> Validar</a>
                         {{ pass }}
                     {{ elif p_info['state'] == 'approved': }}
-                        <p>El <span class="label label-info">{{=p_info['approved_date'].strftime(datetime_format)}}</span> la Facultad de Ingeniería y Ciencias Aplicadas <span class="label label-success">aprobó</span> la inscripción de tu práctica. Cualquier duda puedes comunicarte a <span class="label label-info">iuandes@miuandes.cl</span></p>                    
+                        <p>El <span class="label label-info">{{=p_info['approved_date'].strftime(datetime_format)}}</span> la Facultad de Ingeniería y Ciencias Aplicadas <span class="label label-success">aprobó</span> la inscripción de tu práctica. Cualquier duda puedes comunicarte a <span class="label label-info">iuandes@miuandes.cl</span></p>     
+                        <p>Puedes descargar la carta del seguro para tu práctica presionando <a href="{{=URL('get_secure', args=[p_info['id']])}}">aquí</a></p>.          
                     {{ elif p_info['state'] == 'rejected': }}
                         <p>El <span class="label label-info">{{=p_info['approved_date'].strftime(datetime_format)}}</span> la Facultad de Ingeniería y Ciencias Aplicadas <span class="label label-important">rechazó</span> la inscripción de tu práctica. Cualquier duda puedes comunicarte a <span class="label label-info">iuandes@miuandes.cl</span></p>
                     {{ pass }}
@@ -447,6 +448,3 @@ function institutionalEmail(email) {
 };
 </script>
 {{end}}
-
-
-

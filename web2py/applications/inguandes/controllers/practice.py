@@ -148,3 +148,12 @@ def practice_register_evaluation():
                             approved_comment=request.vars.comments if len(request.vars.comments) > 0 else None,
                             approved_date=request.now)
     redirect(URL('view_all', vars={'state':'validation_ready'}))
+    
+    
+def get_secure():
+    p_id = int(request.args[0])
+    filepath, filename = get_securefile(db,p_id)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition']="attachment; filename=Carta_Presentacion_Practica.pdf";
+    data = open(filepath,"rb").read()
+    return data
