@@ -95,9 +95,14 @@ db.define_table('user_section',
         
 ########## Instance content ##########
         
+def max_position():
+    max = db.content_group.position.max()
+    return db().select(max).first()[max]+1
+
 db.define_table('content_group',
         Field('title', type='string'),
-        Field('instance', type=db.instance)
+        Field('instance', type=db.instance),
+        Field('position', type='integer',default=max_position)
         )
         
 db.define_table('content_file',

@@ -17,7 +17,7 @@ def get_instances(db):
     return instances_a
     
 def get_instance_content_group(db, instanceId):
-    return db(db.content_group.instance==instanceId).select(orderby=db.content_group.id)
+    return db(db.content_group.instance==instanceId).select(orderby=db.content_group.position|db.content_group.id)
     
 def get_instance_content(db, instanceId):
     files = db((db.content_file.content_group == db.content_group.id) & (db.content_group.instance == instanceId)).select(db.content_file.ALL, orderby=db.content_file.id)

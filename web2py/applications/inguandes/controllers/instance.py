@@ -65,7 +65,7 @@ def edit_contentgroup():
 def remove_contentgroup():
     instanceId = int(request.vars.instanceid)
     if request.vars.contentgroupid is not None:
-        cgId = int(request.vars.contentgroupid)        
+        cgId = int(request.vars.contentgroupid)
         del db.content_group[cgId]
     redirect(URL('view', args=[instanceId]))
     
@@ -507,3 +507,25 @@ def news():
     news = get_instance_news(db, instanceId)
     
     return dict(inst=inst, news=news)
+	
+@auth.requires_login()    
+def move_up_contentgroup():
+    instanceId = int(request.args[0])
+    cgId = int(request.args[1])
+    old_position=db.content_group[cgId].position
+    cg_downs=db((db.content_group.instance==instanceId)and(db.content_group.position<old_position)).select(orderby=~db.content_group.position|db.content_group.id)[0]
+    new_position = cg_downs.position
+    db.content_group[cgId].update_record(position=new_position)
+    db.content_group[cg_downs.id].update_record(position=old_position)
+    redirect(URL('view', args=[instanceId]))
+
+@auth.requires_login()    
+def move_down_contentgroup():
+    instanceId = int(request.args[0])
+    cgId = int(request.args[1])
+    old_position=db.content_group[cgId].position
+    cg_downs=db((db.content_group.instance==instanceId)and(db.content_group.position>old_position)).select(orderby=db.content_group.position|db.content_group.id)[0]
+    new_position = cg_downs.position
+    db.content_group[cgId].update_record(position=new_position)
+    db.content_group[cg_downs.id].update_record(position=old_position)
+    redirect(URL('view', args=[instanceId]))

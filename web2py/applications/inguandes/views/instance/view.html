@@ -79,7 +79,7 @@
             <div class="accordion-group">
                 <div class="accordion-heading">
                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion_cgs" href="#{{=accordion_group_id}}"><i class="icon-book"></i> {{=cg['title']}}</a>
-                </div>
+				</div>
                 <div id="{{=accordion_group_id}}" class="accordion-body in collapse" style="height: 0px; ">
                     <div class="accordion-inner">
                         <div class="row">
@@ -143,6 +143,12 @@
                                     <ul>
                                         <li><a data-btn-type="edit-content-group" data-cg-id="{{=cg['id']}}" data-cg-title="{{=cg['title']}}" href="#" rel="tooltip" title="Editar nombre grupo de contenidos"><i class="icon-edit"></i><i class="icon-book"></i></a></li>
                                         <li><a data-btn-type="remove-content-group" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Eliminar grupo de contenidos"><i class="icon-remove"></i><i class="icon-book"></i></a></li>
+                                        {{ if cg != c_groups[0]:}}
+                                            <li><a data-btn-type="move-up-content-group" data-cg-id="{{=cg['id']}}" data-cg-title="{{=cg['title']}}"  href="{{=URL('instance', 'move_up_contentgroup', args=[inst['id'],cg['id']])}}" rel="tooltip" title="Subir grupo de contenidos"><i class="icon-arrow-up"></i><i class="icon-book"></i></a></li>
+                                        {{ pass }}
+                                        {{ if cg != c_groups[len(c_groups)-1]:}}
+                                            <li><a data-btn-type="move-down-content-group" data-cg-id="{{=cg['id']}}" data-cg-title="{{=cg['title']}}" href="{{=URL('instance', 'move_down_contentgroup', args=[inst['id'],cg['id']])}}" rel="tooltip" title="Bajar grupo de contenidos"><i class="icon-arrow-down"></i><i class="icon-book"></i></a></li>
+                                        {{ pass }}
                                     </ul>
                                 </nav> 
                             </div>
