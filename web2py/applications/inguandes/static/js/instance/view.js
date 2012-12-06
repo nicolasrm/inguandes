@@ -88,7 +88,7 @@
         else {
             form.find('#edit-content-required').prop("checked", false);
         }
-        
+        $('#button-edit-content').off();
         $('#button-edit-content').on('click', {
                                         content: content
                                     }, confirmEditContent);
@@ -100,7 +100,7 @@
             content = event.data.content;
             
         event.preventDefault();
-            
+        
         $.ajax({
             url: INGUANDES.api_url + 'edit_content/' + content.contentId + '/' + content.contentType,
             type: 'POST',
@@ -308,7 +308,6 @@
     $(document).ready( function () {
         $("[rel=tooltip]").tooltip({placement: 'top'});
         $("[rel=popover]").popover({trigger: 'hover'});
-        $(".collapse").collapse();
         
         $('.modal .modal-action').click( function () {
             $(this).closest('.modal').find('form').submit();

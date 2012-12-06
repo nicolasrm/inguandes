@@ -71,16 +71,20 @@
         <div class="accordion" id="accordion_cgs">
         {{ 
         last_cg = ''
-        for cg in c_groups: 
+        for idx, cg in enumerate(c_groups): 
             if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe' or cg['id'] in contents: 
                 accordion_group_id = 'collapse' + str(cg['id'])
                 last_cg = accordion_group_id
         }}
             <div class="accordion-group">
                 <div class="accordion-heading">
-                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion_cgs" href="#{{=accordion_group_id}}"><i class="icon-book"></i> {{=cg['title']}}</a>
+                    <a class="accordion-toggle" data-toggle="collapse" data-target="#{{=accordion_group_id}}"><i class="icon-book"></i> {{=cg['title']}}</a>
 				</div>
-                <div id="{{=accordion_group_id}}" class="accordion-body in collapse" style="height: 0px; ">
+                {{ if idx == len(c_groups)-1:}}
+                    <div id="{{=accordion_group_id}}" class="collapse in">
+                {{ else: }}
+                    <div id="{{=accordion_group_id}}" class="collapse">
+                {{ pass }}
                     <div class="accordion-inner">
                         <div class="row">
                             <div class="span3">
@@ -134,7 +138,9 @@
                                         <li><a data-btn-type="new-content" data-new-content-type="file" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un archivo"><i class="icon-plus"></i><i class="icon-file"></i></a></li>
                                         <li><a data-btn-type="new-content" data-new-content-type="video" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un video"><i class="icon-plus"></i><i class="icon-facetime-video"></i></a></li>
                                         <li><a data-btn-type="new-content" data-new-content-type="link" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Agregar un link"><i class="icon-plus"></i><i class="icon-bookmark"></i></a></li>
-                                        <li><a data-btn-type="edit-content" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Editar contenidos del grupo"><i class="icon-edit"></i></a></li>
+                                        {{ if cg['id'] in contents: }}
+                                            <li><a data-btn-type="edit-content" data-cg-id="{{=cg['id']}}" href="#" rel="tooltip" title="Editar contenidos del grupo"><i class="icon-edit"></i></a></li>
+                                        {{ pass }}
                                     </ul>
                                 </nav>                                
                             </div>

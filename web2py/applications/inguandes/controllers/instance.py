@@ -513,10 +513,10 @@ def move_up_contentgroup():
     instanceId = int(request.args[0])
     cgId = int(request.args[1])
     old_position=db.content_group[cgId].position
-    cg_downs=db((db.content_group.instance==instanceId)and(db.content_group.position<old_position)).select(orderby=~db.content_group.position|db.content_group.id)[0]
-    new_position = cg_downs.position
+    cg_up=db((db.content_group.instance==instanceId)&(db.content_group.position<old_position)).select(orderby=~db.content_group.position|db.content_group.id)[0]
+    new_position = cg_up.position
     db.content_group[cgId].update_record(position=new_position)
-    db.content_group[cg_downs.id].update_record(position=old_position)
+    db.content_group[cg_up.id].update_record(position=old_position)
     redirect(URL('view', args=[instanceId]))
 
 @auth.requires_login()    
@@ -524,7 +524,7 @@ def move_down_contentgroup():
     instanceId = int(request.args[0])
     cgId = int(request.args[1])
     old_position=db.content_group[cgId].position
-    cg_downs=db((db.content_group.instance==instanceId)and(db.content_group.position>old_position)).select(orderby=db.content_group.position|db.content_group.id)[0]
+    cg_downs=db((db.content_group.instance==instanceId)&(db.content_group.position>old_position)).select(orderby=db.content_group.position|db.content_group.id)[0]
     new_position = cg_downs.position
     db.content_group[cgId].update_record(position=new_position)
     db.content_group[cg_downs.id].update_record(position=old_position)
