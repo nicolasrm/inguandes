@@ -71,16 +71,20 @@
         <div class="accordion" id="accordion_cgs">
         {{ 
         last_cg = ''
+        count_contents = len(contents)
         for idx, cg in enumerate(c_groups): 
             if user_roles[user_role] == 'Profesor' or user_roles[user_role] == 'Ayudante Jefe' or cg['id'] in contents: 
                 accordion_group_id = 'collapse' + str(cg['id'])
                 last_cg = accordion_group_id
+                if cg['id'] in contents:
+                    count_contents = count_contents - 1
+                pass
         }}
             <div class="accordion-group">
                 <div class="accordion-heading">
                     <a class="accordion-toggle" data-toggle="collapse" data-target="#{{=accordion_group_id}}"><i class="icon-book"></i> {{=cg['title']}}</a>
 				</div>
-                {{ if idx == len(c_groups)-1:}}
+                {{ if idx == len(c_groups)-1 or (count_contents == 0 and ( user_roles[user_role] == "Estudiante" or user_roles[user_role] == "Ayudante" )):}}
                     <div id="{{=accordion_group_id}}" class="collapse in">
                 {{ else: }}
                     <div id="{{=accordion_group_id}}" class="collapse">
