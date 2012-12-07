@@ -18,6 +18,7 @@
                     <th>Secciones</th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +27,7 @@
                     <td><a href="{{=URL('instance', 'view', args=[c['id']])}}">{{=c['title']}}</a></td>
                     <td><a class="badge badge-inverse" href="#">{{=c['sections']}}</a></td>
                     <td><a data-btn-type="new-instance-relation" data-instance-id="{{=c['id']}}" data-instance-title="{{=c['title']}}" class="btn btn-success" rel="tooltip" title="Asociar sección a la instancia" href="#"><i class="icon-plus icon-white"></i> Sección</a></td>
+                    <td><a data-btn-type="edit-instance" data-instance-id="{{=c['id']}}" data-instance-title="{{=c['title']}}" rel="tooltip" title="Editar instancia" href="#" class="btn btn-primary" ><i class="icon-edit icon-white"></i></a></td>
                     <td><a data-btn-type="delete" data-instance-id="{{=c['id']}}" data-instance-title="{{=c['title']}}" class="btn btn-danger" rel="tooltip" title="Eliminar instancia" href="#"><i class="icon-remove icon-white"></i></a></td>
                 </tr>
                 {{ pass }}
@@ -75,6 +77,32 @@
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
         <a href="#" class="btn btn-primary modal-action">Eliminar</a>
+    </div>
+</div>
+
+<div class="modal hide fade in" id="modal-edit-instance">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Editar instancia</h3>
+    </div>
+    <div class="modal-body">
+        <form id="form-edit-intances" class="form-horizontal" action="{{=URL('edit_instance')}}" method="POST">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="title">Título</label>
+                    <div class="controls">
+                        <input type="text" id="edit-instance-name" name="title"/>
+                        <p class="help-block">Título para reconocer la instancia de forma interna.</p>
+                    </div>
+                </div>
+                <input type="hidden" class="contentgroup-id" name="contentgroupid" />
+                <input type="hidden" class="instance-id" name="instanceid"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+        <a href="#" class="btn btn-primary modal-action">Editar</a>
     </div>
 </div>
 
@@ -140,6 +168,20 @@ $(document).ready( function () {
         
         modal = $('#modal-new-relation');
         modal.find('#new-relation-instance').text(instanceTitle);
+        modal.find('.instance-id').val(instanceId);
+        
+        modal.modal('show');
+    });
+    
+    $('[data-btn-type="edit-instance"]').click( function ( event ) {
+        var modal, instanceId, instanceTitle;
+        
+        data = $(event.currentTarget).data();
+        instanceId = data.instanceId;
+        instanceTitle = data.instanceTitle;
+        
+        modal = $('#modal-edit-instance');
+        modal.find('#edit-instance-name').val(instanceTitle);
         modal.find('.instance-id').val(instanceId);
         
         modal.modal('show');

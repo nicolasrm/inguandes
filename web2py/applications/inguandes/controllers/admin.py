@@ -161,6 +161,13 @@ def delete_instance():
     redirect(URL('view_instances'))
     
 @auth.requires_membership(role='admin')
+def edit_instance():
+    if request.vars.instanceid is not None:
+        instanceidId = int(request.vars.instanceid)
+        db.instance[instanceidId].update_record(title=request.vars.title)
+    redirect(URL('view_instances'))
+    
+@auth.requires_membership(role='admin')
 def add_instance_relation():    
     if request.vars.section is not None:
         instanceId = int(request.vars.instanceid)
