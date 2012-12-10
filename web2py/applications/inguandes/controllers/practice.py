@@ -87,9 +87,10 @@ def start_validation():
     if len(request.args) == 0:
         redirect(URL('view'))
     p_id = int(request.args[0])
-    p_key = generate_key(p_id)
     practice = db.practice[p_id]
-    practice.update_record(p_key=p_key)
+    if practice.p_key is None:
+        p_key = generate_key(p_id)    
+        practice.update_record(p_key=p_key)
     
     result = send_validation_email(db, p_id)
     
@@ -107,6 +108,7 @@ def start_validation():
 def validate_practice():
     if len(request.args) == 0:
         redirect(URL(''))
+
     p_key = request.args[0]
     practice = db(db.practice.p_key == p_key).select().first()
     validation_result = True if int(request.args[1]) == 1 else False
