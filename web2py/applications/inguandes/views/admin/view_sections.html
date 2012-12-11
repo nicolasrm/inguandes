@@ -31,10 +31,10 @@
                 <tr>
                     <td>{{=s['nrc']}}</td>
                     <td>{{=s['term_name']}}</td>
-                    <td><a class="badge badge-inverse" href="#">{{=s['students']}}</a></td>
-                    <td><a class="badge badge-inverse" href="#">{{=s['assistants']}}</a></td>
-                    <td><a class="badge badge-inverse" href="#">{{=s['assistants_boss']}}</a></td>
-                    <td><a class="badge badge-inverse" href="#">{{=s['professors']}}</a></td>
+                    <td><a data-btn-type="edit-user" data-section-id="{{=s['id']}}" data-type-user ="students"  class="badge badge-inverse"  id="students-{{=s['id']}}" href="#">{{=len(s['students'])}}</a></td>
+                    <td><a data-btn-type="edit-user" data-section-id="{{=s['id']}}" data-type-user ="assistants"  class="badge badge-inverse" id="assistants-{{=s['id']}}" href="#">{{=len(s['assistants'])}}</a></td>
+                    <td><a data-btn-type="edit-user" data-section-id="{{=s['id']}}" data-type-user ="assistants_boss"  class="badge badge-inverse" id="assistants_boss-{{=s['id']}}"href="#">{{=len(s['assistants_boss'])}}</a></td>
+                    <td><a data-btn-type="edit-user" data-section-id="{{=s['id']}}" data-type-user ="professors"  class="badge badge-inverse" id="professors-{{=s['id']}}"  href="#">{{=len(s['professors'])}}</a></td>
                     <td><a data-btn-type="new-relation" data-section-id="{{=s['id']}}" data-section-nrc="{{=s['nrc']}}" class="btn btn-success" rel="tooltip" title="Asociar nuevo usuario a la sección" href="#"><i class="icon-plus icon-white"></i><i class="icon-user icon-white"></i></a></td>
                     <td><a data-btn-type="edit" data-section-id="{{=s['id']}}" data-section-nrc="{{=s['nrc']}}" data-section-term="{{=s['term']}}" class="btn btn-primary" rel="tooltip" title="Editar sección" href="#"><i class="icon-edit icon-white"></i></a></td>
                     <td><a data-btn-type="delete" data-section-id="{{=s['id']}}" data-section-nrc="{{=s['nrc']}}" class="btn btn-danger" rel="tooltip" title="Eliminar sección" href="#"><i class="icon-remove icon-white"></i></a></td>
@@ -47,6 +47,7 @@
         {{ pass }}
     </div>
 </div>
+
 <div class="modal hide fade in" id="modal-new-section">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">x</button>
@@ -186,6 +187,50 @@
     </div>
 </div>
 
+<div class="modal hide fade in" id="modal-edit-user" style="width: 800px; margin: -250px 0 0 -400px; display: none;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3 id="title-user"></h3>
+        <input type="hidden" class="section-id" name="sectionid" />   
+    </div>
+    <div class="modal-body">
+        <div class="row">            
+            <div class="span5">
+                <div class="alert alert-block alert-error fade in" id="alert-remove-user">
+                    <h4 class="alert-heading">Eliminar </h4>
+                    <p>¿Está seguro que desea eliminar a <strong><span id="user-to-remove"></span></strong>?</p>
+                    <p><a class="btn btn-danger" id="alert-remove-user-confirm">Eliminar</a> <a class="btn" onclick="$('#alert-remove-user').fadeOut();" href="#">Cancelar</a></p>
+                </div>
+                <table class="table table-bordered table-condensed" id="table-edit-user">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Email</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id ="tbody-edit-user">
+                    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hide">
+    <table>
+        <tr id="tr-edit-user-template">
+            <td data-first-name></td>
+            <td data-last-name></td>
+            <td data-email></td>
+            <td data-remove-user>
+                <a class="btn btn-danger btn-small" rel="tooltip" title="Eliminar contenido" href="#" data-remove-user><i class="icon-remove icon-white"></i></a>
+            </td>
+        </tr>
+    </table>
+</div>
 {{block pagescripts}}
 <script>
 $(document).ready( function () {
@@ -238,6 +283,139 @@ $(document).ready( function () {
         
         modal.modal('show');
     });
+    
+    $('[data-btn-type="edit-user"]').click( function ( event ) {
+        var modal, sectionId, sectionNRC, typeUser, title, user, alert = $('#alert-remove-user');  
+        
+        $('#tbody-edit-user').empty();
+        alert.hide();
+        
+        data = $(event.currentTarget).data();
+        sectionId = data.sectionId;
+        sectionNRC = data.sectionNrc;
+        typeUser = data.typeUser;
+        
+        if ( typeUser == "professors"){
+            user = 3;
+            title = "Profesores";
+        }
+        else if ( typeUser == "students"){
+            user = 0;
+            title = "Alumnos";
+        }
+        else if ( typeUser == "assistants"){
+            user = 1;
+            title = "Ayudantes";
+        }
+        else if ( typeUser == "assistants_boss"){
+            user = 2;
+            title = "Ay. jefe";
+        }
+        
+        $.ajax({
+                type: 'GET',
+                url: INGUANDES.api_url+'get_user_section.json',
+                datatype: "json",
+                data:{ 
+                    'sectionid' : sectionId ,
+                    'typeuser' : user
+                },
+                success: function(data) {
+                    for(var i = 0 ; i<data.list.length;i++){
+                        addUser(data.list[i].auth_user,sectionId,user);
+                    }
+                }
+        });
+        
+        modal = $('#modal-edit-user');
+        modal.find('.section-id').val(sectionId);
+        modal.find('#title-user').text(title);
+        
+        modal.modal('show');
+    });
+    
+    function addUser (user,sectionId,role) {
+        var table_users = $('#tbody-edit-user'),
+            row_user = $('#tr-edit-user-template').clone();
+        row_user.attr('id','tr-edit-'+user.id+'-'+sectionId);
+        row_user.find('td[data-first-name]').html(user.first_name);
+        row_user.find('td[data-last-name]').html(user.last_name);
+        row_user.find('td[data-email]').html(user.email);
+        
+        row_user.find('[data-remove-user]')
+                .on('click', {
+                    'user': user,
+                    'sectionId' : sectionId,
+                    'role': role
+                }, removeUserAlert);
+            
+        table_users.append(row_user);    
+    }
+    
+    function removeUserAlert (event) {
+        var alert = $('#alert-remove-user'),
+            user = event.data.user,
+            confirm = $('#alert-remove-user-confirm');
+            
+        event.preventDefault();
+        
+        alert.find('#user-to-remove').text(user.first_name + " " +user.last_name);
+        confirm.off();
+        confirm.on('click', {
+                    user: user,
+                    sectionId: event.data.sectionId,
+                    role: event.data.role
+                }, confirmRemoveUser);
+        
+        alert.show();
+        alert.alert();
+    }
+    
+    function confirmRemoveUser (event) {
+        var alert = $('#alert-remove-user'),
+            user = event.data.user;
+            
+        $.ajax({
+            type: 'GET',
+            url: INGUANDES.api_url + 'remove_user_section',
+            data:{
+                'userid' : user.id ,
+                'sectionid' : event.data.sectionId ,
+                'role' : event.data.role
+            },
+            success: function (data) {
+                INGUANDES.notify('success', 'Usuario eliminado con éxito.');
+                removeUserReady(user,event.data.sectionId,event.data.role);
+            },
+            error: function (data) {
+                INGUANDES.notify('error', 'No fue posible eliminar a el Usuario.');
+            }
+        });
+            
+        alert.hide();
+    }
+    
+    function removeUserReady (user,sectionid,role) {
+        var row_content = $('#tr-edit-' + user.id + '-' + sectionid),value
+        
+        if(role == 3){
+            value = $('#professors-'+sectionid)
+        }
+        else if(role == 2){
+            value = $('#assistants_boss-'+sectionid)
+        }
+        else if (role == 1){
+            value = $('#assistants-'+sectionid)
+        }
+        else if (role == 0){
+            value = $('#students-'+sectionid)
+        }
+        
+        count = value.text()-1;
+        
+        value.text(count);        
+        row_content.remove();
+    }
 });
 </script>
 {{end}}

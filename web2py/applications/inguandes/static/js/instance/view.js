@@ -151,7 +151,7 @@
         event.preventDefault();
         
         alert.find('#content-to-remove').text(content.contentName);
-        
+        confirm.off();
         confirm.on('click', {
                     content: content
                 }, confirmRemoveContent);
@@ -176,7 +176,7 @@
             }
         });
             
-        alert.alert('close');
+        alert.hide();
     }
     
     function removeContentReady (content) {

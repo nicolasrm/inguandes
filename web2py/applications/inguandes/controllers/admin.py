@@ -83,7 +83,15 @@ def view_sections():
     terms = db().select(db.term.ALL)
         
     return dict(the_course=course, courseTitle=courseTitle, sections=sections, terms=terms)
-
+ 
+@auth.requires_membership(role='admin') 
+def get_user_section():
+    sectionsId = int(request.vars.sectionid)
+    user = int(request.vars.typeuser)
+    list_user = db((db.user_section.section==sectionsId) & (db.user_section.the_role==user)&(db.user_section.the_user==db.auth_user.id)).select().as_list()
+    
+    return dict(list=list_user)
+    
 @auth.requires_membership(role='admin')
 def add_section():
     courseId = int(request.vars.courseid)
@@ -135,6 +143,15 @@ def add_relation():
                                 the_role=request.vars.user_role
                                 )
     redirect(URL('view_sections', args=[courseId]))
+
+@auth.requires_membership(role='admin')
+def remove_user_section():
+    sectionId = int(request.vars.sectionid)
+    userId = int(request.vars.userid)
+    role = int(request.vars.role)
+    idRelation =  db((db.user_section.the_user == userId)&(db.user_section.section == sectionId)&(db.user_section.the_role == role)).select()[0].id
+    del db.user_section[idRelation]
+    return 0
     
 ##############################################################################
 
