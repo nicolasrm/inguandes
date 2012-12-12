@@ -33,6 +33,11 @@
         </div>
     </div>    
     <div class="span9">
+    {{if selected_state is not None and selected_state == 'approved':}}
+    <a class="btn btn btn-primary pull-right" href="view_all_summary" style="margin-bottom:10px">
+        Resumen de practicas
+    </a>
+    {{pass}}
     {{ if practices is not None: }}    
         <table class="table table-bordered table-condensed">
             <thead>

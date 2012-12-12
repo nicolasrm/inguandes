@@ -135,7 +135,34 @@ def send_validation_email(db, pId):
     return mail_iua.send(   to=tos,
                             subject=subject,
                             message=message)
+							
 
+	
+
+def get_practice_by_especialty(db):
+    count = db.auth_user.specialty.count()
+    practices = db((db.practice.the_user==db.auth_user.id) & (db.practice.approved==True)).select(db.practice.category, db.auth_user.specialty, count, groupby=(db.auth_user.specialty, db.practice.category), orderby=(db.auth_user.specialty | db.practice.category))
+    ps_info=[]
+    for i in range(4):
+        print i
+        n_info = {}
+        count_op = 0
+        count_e1 = 0
+        count_e2 = 0
+        for n in practices:
+            if n['practice.category'] == 0 and n['auth_user.specialty']==i:
+                count_op = n['COUNT(auth_user.specialty)']
+            if n['practice.category'] == 1 and n['auth_user.specialty']==i:
+                count_e1 = n['COUNT(auth_user.specialty)']
+            if n['practice.category'] == 2 and n['auth_user.specialty']==i:
+                count_e2 = n['COUNT(auth_user.specialty)']                
+        n_info['specialty'] = specialties[i]
+        n_info['ammount_OP'] = count_op
+        n_info['ammount_E1'] = count_e1
+        n_info['ammount_E2'] = count_e2
+        ps_info.append(n_info)
+    return ps_info 
+    
 def get_practice_by_state_ids(db, state):
     pids = []
     if state == 'pending':

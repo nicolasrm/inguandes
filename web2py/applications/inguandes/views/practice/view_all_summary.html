@@ -1,0 +1,118 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="span12">
+        <div class="page-header">
+            <h2>Prácticas</h2>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="span3">        
+        <div class="well well-small">
+            <ul class="nav nav-list">
+                <li class="nav-header">Estados</li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'pending' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'pending'})}}">Borradores ({{=st_counts['pending']}})</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'validation_sent' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'validation_sent'})}}">En Validación ({{=st_counts['validation_sent']}})</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'validation_ready' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'validation_ready'})}}">Aprobación Pendiente ({{=st_counts['validation_ready']}})</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'approved' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'approved'})}}">Activas ({{=st_counts['approved']}})</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'rejected' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'rejected'})}}">Rechazadas ({{=st_counts['rejected']}})</a>
+                </li>
+                <li class="{{='active' if selected_state is not None and selected_state == 'ended' else ''}}">
+                    <a href="{{=URL('view_all', vars={'state':'ended'})}}">Finalizadas ({{=st_counts['ended']}})</a>
+                </li>
+            </ul>
+        </div>
+    </div>    
+    <div class="span9">
+    {{ if practices is not None: }}    
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+					<th>Especialidad</th>
+                    <th>Operario</th>
+                    <th>Empresa I</th>
+                    <th>Empresa II</th>
+                    {{ if selected_state is not None and selected_state == 'validation_ready': }}
+                    {{ pass }}
+                </tr>
+            </thead>
+            <tbody>
+            {{ for p in practices: }}
+                <tr>
+					<td>{{=p['specialty']}}</td>
+                    <td>{{=p['ammount_OP']}}</td>
+                    <td>{{=p['ammount_E1']}}</td>
+					<td>{{=p['ammount_E2']}}</td>
+                    {{ pass }}
+                </tr>
+            {{ pass }}
+            </tbody>
+        </table>
+        
+    {{ pass }}
+    </div>    
+</div>
+
+<div class="modal hide fade in" id="modal-confirm-evaluation">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Confirmar evaluación de inscripción de práctica</h3>
+    </div>
+    <div class="modal-body">
+        <p><span id="modal-confirm-text"></span> <span class="label label-info" id="modal-confirm-user"></span></p>
+        <form class="form-horizontal" action="{{=URL('practice_register_evaluation')}}" method="POST">
+            <div class="control-group">
+                <label class="control-label" for="practice-comments">Comentario</label>
+                <div class="controls">
+                    <textarea id="practice-comments" name="comments" placeholder="Comentarios del resultado..."></textarea>
+                </div>
+            </div>
+            <input type="hidden" id="practice-id" name="practiceid" />
+            <input type="hidden" id="approve-result" name="approveresult" />
+        </form>        
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Cancelar</a>
+        <a href="#" class="btn btn-primary modal-action">Confirmar</a>
+    </div>
+</div>
+
+{{block pagescripts}}
+<script>
+$(document).ready( function () {
+    $("[rel=tooltip]").tooltip({placement: 'top'});    
+    
+    $('.modal .modal-action').click( function () {
+        $(this).closest('.modal').find('form').submit();
+    });
+    
+    $('[data-btn-type="confirm-evaluation"]').click(showConfirmModal);
+});
+
+function showConfirmModal (event) {
+    var modal = $('#modal-confirm-evaluation'),    
+        data = $(event.currentTarget).data(),
+        confirmUser = data.user,
+        confirmText = data.confirmText,
+        practiceId = data.practiceId,
+        approveResult = data.approveResult;
+                        
+    modal.find('#modal-confirm-text').text(confirmText);
+    modal.find('#modal-confirm-user').text(confirmUser);
+    modal.find('#practice-id').val(practiceId);
+    modal.find('#approve-result').val(approveResult);
+    
+    modal.modal('show');
+}
+
+</script>
+{{end}}

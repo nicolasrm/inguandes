@@ -140,7 +140,20 @@ def view_all():
     st_counts = get_practices_state_counts(db)
         
     return dict(selected_state=selected_state, practices=practices, p_info=p_info, st_counts=st_counts)
-
+	
+@auth.requires_membership(role='ing-admin')   
+def view_all_summary():
+    selected_state = request.vars.state
+    if selected_state is None:
+        selected_state = 'approved'
+       
+    practices = None
+    p_info = None
+    practices = get_practice_by_especialty(db)
+    st_counts = get_practices_state_counts(db)
+        
+    return dict(selected_state=selected_state, practices=practices, p_info=p_info, st_counts=st_counts)
+	
 @auth.requires_membership(role='ing-admin')       
 def practice_register_evaluation():    
     p_id = int(request.vars.practiceid)
