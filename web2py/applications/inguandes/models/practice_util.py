@@ -140,6 +140,9 @@ def get_practice_by_especialty(db):
     count = db.auth_user.specialty.count()
     practices = db((db.practice.the_user==db.auth_user.id) & (db.practice.approved==True)).select(db.practice.category, db.auth_user.specialty, count, groupby=(db.auth_user.specialty, db.practice.category), orderby=(db.auth_user.specialty | db.practice.category))
     ps_info=[]
+    total_op = 0
+    total_e1 = 0
+    total_e2 = 0     
     for i in specialties:
         n_info = {}
         count_op = 0
@@ -157,6 +160,19 @@ def get_practice_by_especialty(db):
         n_info['ammount_E1'] = count_e1
         n_info['ammount_E2'] = count_e2
         ps_info.append(n_info)
+    for n in practices:
+        if n['practice.category'] == 0:
+            total_op += n['COUNT(auth_user.specialty)']
+        elif n['practice.category'] == 1:
+            total_e1 += n['COUNT(auth_user.specialty)']
+        elif n['practice.category'] == 2:
+            total_e2 += n['COUNT(auth_user.specialty)']
+    n_info = {}
+    n_info['specialty'] = 'Total'
+    n_info['ammount_OP'] = total_op
+    n_info['ammount_E1'] = total_e1
+    n_info['ammount_E2'] = total_e2
+    ps_info.append(n_info)   
     return ps_info 
     
 def get_practice_by_state_ids(db, state):
