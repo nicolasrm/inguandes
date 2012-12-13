@@ -175,6 +175,7 @@
 'Version': 'Versión',
 'Versioning': 'Versioning',
 'Views': 'Vistas',
+'Web Framework': 'Web Framework',
 'Welcome to web2py': 'Bienvenido a web2py',
 'YES': 'SI',
 'additional code for your application': 'código adicional para su aplicación',

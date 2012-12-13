@@ -18,66 +18,9 @@ def add_practice():
     redirect(URL('view', args=[p_id]))
 
 @auth.requires_login()    
-def update_company():
+def update_all():
     p_id = request.vars.practiceid
-    practice = db.practice[p_id]
-    
-    if practice.company is None:
-        com_id = db.company.insert( rut=request.vars.rut,
-                                    name=request.vars.name,
-                                    business_line=request.vars.businessLine,
-                                    address=request.vars.address,
-                                    city=request.vars.city,
-                                    country=request.vars.country)
-        practice.update_record(company=com_id)
-    else:
-        com = db.company[practice.company]
-        com.update_record(  rut=request.vars.rut,
-                            name=request.vars.name,
-                            business_line=request.vars.businessLine,
-                            address=request.vars.address,
-                            city=request.vars.city,
-                            country=request.vars.country)
-        
-    session.flash = 'Datos guardados con éxito.'
-    session.flash_level = 'success'
-    redirect(URL('view', args=[p_id]))
-
-@auth.requires_login()    
-def update_validator():
-    p_id = request.vars.practiceid
-    practice = db.practice[p_id]
-    if practice.validator is None:
-        emp_id = db.company_employee.insert(company=practice.company,
-                                            first_name=request.vars.first_name,
-                                            last_name=request.vars.last_name,
-                                            position=request.vars.position,
-                                            department=request.vars.department,
-                                            phone=request.vars.phone,
-                                            email=request.vars.email)
-        practice.update_record(validator=emp_id)
-    else:
-        emp = db.company_employee[practice.validator]
-        emp.update_record(  company=practice.company,
-                            first_name=request.vars.first_name,
-                            last_name=request.vars.last_name,
-                            position=request.vars.position,
-                            department=request.vars.department,
-                            phone=request.vars.phone,
-                            email=request.vars.email)
-    
-    session.flash = 'Datos guardados con éxito.'
-    session.flash_level = 'success'
-    redirect(URL('view', args=[p_id]))
-
-@auth.requires_login()
-def update_practice():
-    p_id = request.vars.practiceid
-    practice = db.practice[p_id]
-    practice.update_record( description=request.vars.description,
-                            starting=request.vars.starting,
-                            ending=request.vars.ending)
-    
+    save_practice(p_id)
     session.flash = 'Datos guardados con éxito.'
     session.flash_level = 'success'
     redirect(URL('view', args=[p_id]))
@@ -150,8 +93,7 @@ def view_all_summary():
     practices = None
     p_info = None
     practices = get_practice_by_especialty(db)
-    st_counts = get_practices_state_counts(db)
-        
+    st_counts = get_practices_state_counts(db)   
     return dict(selected_state=selected_state, practices=practices, p_info=p_info, st_counts=st_counts)
 	
 @auth.requires_membership(role='ing-admin')       

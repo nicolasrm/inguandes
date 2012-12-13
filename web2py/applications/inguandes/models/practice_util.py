@@ -135,16 +135,12 @@ def send_validation_email(db, pId):
     return mail_iua.send(   to=tos,
                             subject=subject,
                             message=message)
-							
-
-	
 
 def get_practice_by_especialty(db):
     count = db.auth_user.specialty.count()
     practices = db((db.practice.the_user==db.auth_user.id) & (db.practice.approved==True)).select(db.practice.category, db.auth_user.specialty, count, groupby=(db.auth_user.specialty, db.practice.category), orderby=(db.auth_user.specialty | db.practice.category))
     ps_info=[]
-    for i in range(4):
-        print i
+    for i in specialties:
         n_info = {}
         count_op = 0
         count_e1 = 0
@@ -306,3 +302,50 @@ def get_securefile(db,pid):
     output.write(outputStream)
     outputStream.close()
     return filepath, downloadFilename
+
+def save_practice(p_id):
+    practice = db.practice[p_id]
+    # save company
+    if practice.company is None:
+        com_id = db.company.insert( rut=request.vars.rut,
+                                    name=request.vars.name,
+                                    business_line=request.vars.businessLine,
+                                    address=request.vars.address,
+                                    city=request.vars.city,
+                                    country=request.vars.country)
+        practice.update_record(company=com_id)
+    else:
+        com = db.company[practice.company]
+        com.update_record(  rut=request.vars.rut,
+                            name=request.vars.name,
+                            business_line=request.vars.businessLine,
+                            address=request.vars.address,
+                            city=request.vars.city,
+                            country=request.vars.country)
+        p_id = request.vars.practiceid
+    # save validator
+    if practice.validator is None:
+        emp_id = db.company_employee.insert(company=practice.company,
+                                            first_name=request.vars.first_name,
+                                            last_name=request.vars.last_name,
+                                            position=request.vars.position,
+                                            department=request.vars.department,
+                                            phone=request.vars.phone,
+                                            email=request.vars.email)
+        practice.update_record(validator=emp_id)
+    else:
+        emp = db.company_employee[practice.validator]
+        emp.update_record(  company=practice.company,
+                            first_name=request.vars.first_name,
+                            last_name=request.vars.last_name,
+                            position=request.vars.position,
+                            department=request.vars.department,
+                            phone=request.vars.phone,
+                            email=request.vars.email)    
+    #save practice
+    p_id = request.vars.practiceid
+    practice = db.practice[p_id]
+    practice.update_record( description=request.vars.description,
+                            starting=request.vars.starting,
+                            ending=request.vars.ending)
+    return                        
