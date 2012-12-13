@@ -33,7 +33,7 @@
         </div>
     </div>    
     <div class="span9">
-    {{if selected_state is not None and selected_state == 'approved':}}
+    {{if selected_state is not None and selected_state == 'approved' and st_counts['approved']>0:}}
     <a class="btn btn btn-primary pull-right" href="view_all_summary" style="margin-bottom:10px">
         Resumen de practicas
     </a>
